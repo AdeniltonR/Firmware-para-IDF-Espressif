@@ -1,0 +1,22 @@
+CMake Error at C:/Users/adenilton.ribeiro/esp/v5.3/esp-idf/tools/cmake/component.cmake:225 (message):
+  CMake Error at
+  C:/Users/adenilton.ribeiro/esp/v5.3/esp-idf/tools/cmake/scripts/component_get_requirements.cmake:3
+  (include):
+
+    include could not find requested file:
+
+  
+
+      G:/Meu Drive/Meus Projetos/GitHub/Exemplos-de-Codigo/Espressif-IDF/Firmware-para-IDF-Espressif/wifi_manager/build/build_properties.temp.cmake
+
+  
+
+  
+
+Call Stack (most recent call first):
+  C:/Users/adenilton.ribeiro/esp/v5.3/esp-idf/tools/cmake/build.cmake:586 (__component_get_requirements)
+  C:/Users/adenilton.ribeiro/esp/v5.3/esp-idf/tools/cmake/project.cmake:710 (idf_build_process)
+  CMakeLists.txt:8 (project)
+
+
+ninja: error: rebuilding 'build.ninja': subcommand failed
