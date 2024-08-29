@@ -40,6 +40,6 @@ São exemplos de fimware para Espressif IDF.
 
 ### Wi-Fi Manager
 
-Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDE-Arduino/tree/main/Terminal-com-ESP)__ a seguir.
+Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/wifi_manager)__ a seguir.
 
 ![Console.png](Docs/Console.png)
