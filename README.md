@@ -10,6 +10,7 @@
 - [Boas Práticas para Commits](#boas-práticas-para-commits)
 - [Resumo](#resumo)
     - [Exemplo do main para ESP-IDF](#exemplo-do-main-para-esp-idf)
+    - [Arquivo .gitignore](#arquivo-.gitignore)
     - [Wi-Fi Manager](#wi-fi-manager)
     - [RGB-Ws2812B](#rgb-ws2812b)
 
@@ -87,6 +88,10 @@ void app_main(void) {
     }
 }
 ```
+
+### Arquivo .gitignore
+
+[.gitignore](Docs/)
 
 ### Wi-Fi Manager
 
