@@ -20,7 +20,7 @@
 |--------|------------|--------------|----------------------|
 | 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto    |
 | 1.0.0  | 29/08/2024 | Adenilton R  | Wi-Fi Manager        |
-| 1.0.0  | 31/01/2025 | Adenilton R  | Wi-Fi Manager        |
+| 1.0.0  | 31/01/2025 | Adenilton R  | RGB-Ws2812B          |
 
 ---
 
@@ -95,12 +95,12 @@ void app_main(void) {
 
 ### Wi-Fi Manager
 
-Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/wifi_manager)__ a seguir.
+Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/wifi_manager)__ a seguir.
 
 `[Adicionar Imagen ou Gif…]`
 
 ### RGB-Ws2812B
 
-Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/RGB-Ws2812B) a seguir.
 
 `[Adicionar Imagen ou Gif…]`
