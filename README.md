@@ -1,4 +1,4 @@
-# Projetos
+# _Projetos_
 
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue)
 
@@ -9,7 +9,9 @@
 - [Histórico de Versão](#histórico-de-versão)
 - [Boas Práticas para Commits](#boas-práticas-para-commits)
 - [Resumo](#resumo)
+    - [Exemplo do main para ESP-IDF](#exemplo-do-main-para-esp-idf)
     - [Wi-Fi Manager](#wi-fi-manager)
+    - [RGB-Ws2812B](#rgb-ws2812b)
 
 ## Histórico de Versão
 
@@ -17,6 +19,7 @@
 |--------|------------|--------------|----------------------|
 | 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto    |
 | 1.0.0  | 29/08/2024 | Adenilton R  | Wi-Fi Manager        |
+| 1.0.0  | 31/01/2025 | Adenilton R  | Wi-Fi Manager        |
 
 ---
 
@@ -36,10 +39,63 @@ Para manter um histórico de commits organizado, siga as seguintes diretrizes:
 
 ## Resumo
 
-São exemplos de fimware para Espressif IDF.
+Este conjunto de exemplos de firmware foi desenvolvido para facilitar a utilização e aprendizado na Espressif IDF. Os códigos incluem funcionalidades básicas e avançadas, abrangendo diferentes aplicações práticas, como controle de dispositivos, leitura de sensores e comunicação entre módulos.
+
+### Exemplo do main para ESP-IDF
+
+```c
+/*
+ * NOME: Nome
+ * DATA: 31/01/2025
+ * PROJETO: Nome do projeto
+ * VERSAO: 1.0.0
+ * DESCRICAO: - feat: Descrição.
+ *            - docs: ESP-IDF v5.4.0 e Simulador PICSimLab 0.9.1
+ * LINKS: 
+*/
+
+// ========================================================================================================
+//---BIBLIOTECAS AUXILIARES---
+
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+#include "esp_spi_flash.h"
+
+// ========================================================================================================
+//---MAPEAMENTO DE ESTADO---
+
+// ========================================================================================================
+//---MAPEAMENTO DE HARDWARE---
+
+// ========================================================================================================
+//---VARIAVEIS GLOBAIS---
+
+// ========================================================================================================
+//---PROTOTIPO DA FUNCAO---
+
+// ========================================================================================================
+/**
+ * @brief Void main
+ *
+ */
+void app_main(void) {
+
+    while(1) {
+        //...
+    }
+}
+```
 
 ### Wi-Fi Manager
 
 Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/wifi_manager)__ a seguir.
 
-![Console.png](Docs/Console.png)
+`[Adicionar Imagen ou Gif…]`
+
+### RGB-Ws2812B
+
+Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
+
+`[Adicionar Imagen ou Gif…]`
