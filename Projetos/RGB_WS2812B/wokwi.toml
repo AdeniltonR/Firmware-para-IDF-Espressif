@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/RGB_WS2812B.bin'
+elf = 'build/RGB_WS2812B.bin'
