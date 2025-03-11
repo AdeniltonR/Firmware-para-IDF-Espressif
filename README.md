@@ -13,6 +13,7 @@
     - [Arquivo .gitignore](#arquivo-.gitignore)
     - [Wi-Fi Manager](#wi-fi-manager)
     - [RGB-Ws2812B](#rgb-ws2812b)
+    - [Emonlib](#emonlib)
 
 ## Histórico de Versão
 
@@ -21,6 +22,7 @@
 | 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto    |
 | 1.0.0  | 29/08/2024 | Adenilton R  | Wi-Fi Manager        |
 | 1.0.0  | 31/01/2025 | Adenilton R  | RGB-Ws2812B          |
+| 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib              |
 
 ---
 
@@ -62,7 +64,6 @@ Este conjunto de exemplos de firmware foi desenvolvido para facilitar a utiliza�
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
-#include "esp_spi_flash.h"
 
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---
@@ -104,3 +105,9 @@ Para obter mais informações sobre o projeto, clique no __[**link**](https://gi
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/RGB-Ws2812B) a seguir.
 
 `[Adicionar Imagen ou Gif…]`
+
+### Emonlib
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/RGB-Ws2812B) a seguir.
+
+![Emonlib.png](Docs/Emonlib.png)
