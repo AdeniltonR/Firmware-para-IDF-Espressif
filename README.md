@@ -108,6 +108,6 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 ### Emonlib
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/RGB-Ws2812B) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/emonlib) a seguir.
 
 ![Emonlib.png](Docs/Emonlib.png)

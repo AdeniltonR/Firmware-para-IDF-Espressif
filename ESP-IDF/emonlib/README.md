@@ -74,11 +74,11 @@ Canais ADC1:
 
 ## Bibliotecas
 
-emonlib-esp-idf.c
+[emonlib-esp-idf.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/emonlib/components/emonlib-esp-idf/emonlib-esp-idf.c)
 
-emonlib-esp-idf.h
+[emonlib-esp-idf.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/emonlib/components/emonlib-esp-idf/include/emonlib-esp-idf.h)
 
-CMakeLists.txt
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/emonlib/components/emonlib-esp-idf/CMakeLists.txt)
 
 ## Configuração do Firmware
 
