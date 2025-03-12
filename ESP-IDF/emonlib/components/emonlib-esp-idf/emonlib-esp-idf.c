@@ -78,6 +78,9 @@ unsigned long millisec() {
  * @return ESP_OK em caso de sucesso, ou erro caso contrário.
  */
 esp_err_t emonlib_init(double _VCAL, double _PHASECAL, double _ICAL) {
+    esp_err_t ret = ESP_OK;
+
+    //---log dos valores de calibração---
     ESP_LOGD(TAG, "Calibration values: VCal = %f; PhaseCal = %f; ICal = %f", _VCAL, _PHASECAL, _ICAL);
     VCAL = _VCAL;
     PHASECAL = _PHASECAL;
@@ -92,23 +95,42 @@ esp_err_t emonlib_init(double _VCAL, double _PHASECAL, double _ICAL) {
         .unit_id = ADC_UNIT_1,  // Usar ADC_UNIT_1 para GPIOs 32-39
         .ulp_mode = ADC_ULP_MODE_DISABLE,
     };
-    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &adc_handle));
+
+    //---inicializa a unidade ADC---
+    ret = adc_oneshot_new_unit(&init_config, &adc_handle);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao inicializar a unidade ADC: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    ESP_LOGI(TAG, "Unidade ADC inicializada com sucesso.");
 
     //---configuração do canal de tensão---
     adc_oneshot_chan_cfg_t channel_config = {
         .bitwidth = ADC_BITWIDTH_12,  // Resolução de 12 bits
         .atten = ADC_ATTEN_DB_12,     // Atenuação de 12 dB (para leitura de até 3.3V)
     };
-    //---configuração do canal de tensão---
+
+    //---configura o canal de tensão (se habilitado)---
     if (USE_VOLTAGE_SENSOR) {
-        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, PIN_tensao, &channel_config));
+        ret = adc_oneshot_config_channel(adc_handle, PIN_tensao, &channel_config);
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Falha ao configurar o canal de tensão (GPIO %d): %s", PIN_tensao, esp_err_to_name(ret));
+            return ret;
+        }
+        ESP_LOGI(TAG, "Canal de tensão (GPIO %d) configurado com sucesso.", PIN_tensao);
     }
 
     //---configuração do canal de corrente---
     for (int i = 0; i < NUM_SENSORS; i++) {
-        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, current_channels[i], &channel_config));
+        ret = adc_oneshot_config_channel(adc_handle, current_channels[i], &channel_config);
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Falha ao configurar o canal de corrente %d (GPIO %d): %s", i, current_channels[i], esp_err_to_name(ret));
+            return ret;
+        }
+        ESP_LOGI(TAG, "Canal de corrente %d (GPIO %d) configurado com sucesso.", i, current_channels[i]);
     }
 
+    ESP_LOGI(TAG, "emonlib_init concluída com sucesso.");
     return ESP_OK;
 }
 
