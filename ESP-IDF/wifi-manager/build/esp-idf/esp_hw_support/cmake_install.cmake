@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/adenilton.ribeiro/esp/v5.4/esp-idf/components/esp_hw_support
+# Install script for directory: C:/Users/adeni/esp/v5.4/esp-idf/components/esp_hw_support
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,11 +39,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/adenilton.ribeiro/Documents/Pessoal/GitHub/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/build/esp-idf/esp_hw_support/port/esp32/cmake_install.cmake")
+  include("C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/build/esp-idf/esp_hw_support/port/esp32/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/adenilton.ribeiro/Documents/Pessoal/GitHub/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/build/esp-idf/esp_hw_support/lowpower/cmake_install.cmake")
+  include("C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/build/esp-idf/esp_hw_support/lowpower/cmake_install.cmake")
 endif()
 

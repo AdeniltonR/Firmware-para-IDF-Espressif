@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/adenilton.ribeiro/esp/v5.4/esp-idf/components/usb
+# Install script for directory: C:/Users/adeni/esp/v5.4/esp-idf/components/usb
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/adenilton.ribeiro/Documents/Pessoal/GitHub/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/main
+# Install script for directory: C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

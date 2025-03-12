@@ -1,6 +1,6 @@
 /* Automatically generated file; DO NOT EDIT */
 /* Espressif IoT Development Framework Linker Script */
-/* Generated from: C:\Users\adenilton.ribeiro\Documents\Pessoal\GitHub\Firmware-para-IDF-Espressif\ESP-IDF\wifi-manager\build\esp-idf\esp_system\ld\sections.ld.in */
+/* Generated from: C:\Users\adeni\OneDrive\Documentos\Espressif\pessoal\Firmware-para-IDF-Espressif\ESP-IDF\wifi-manager\build\esp-idf\esp_system\ld\sections.ld.in */
 
 /*
 

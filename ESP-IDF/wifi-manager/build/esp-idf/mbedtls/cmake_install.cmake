@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/adenilton.ribeiro/esp/v5.4/esp-idf/components/mbedtls
+# Install script for directory: C:/Users/adeni/esp/v5.4/esp-idf/components/mbedtls
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/adenilton.ribeiro/Documents/Pessoal/GitHub/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/build/esp-idf/mbedtls/mbedtls/cmake_install.cmake")
+  include("C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/wifi-manager/build/esp-idf/mbedtls/mbedtls/cmake_install.cmake")
 endif()
 
