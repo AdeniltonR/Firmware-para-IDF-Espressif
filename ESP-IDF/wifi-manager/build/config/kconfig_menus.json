@@ -29402,6 +29402,144 @@
                 "id": "component-config-wi-fi-provisioning-manager",
                 "title": "Wi-Fi Provisioning Manager",
                 "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Tasks spawn by the manager will have a priority of WIFI_MANAGER_TASK_PRIORITY-1. For this particular reason, minimum recommended task priority is 2.",
+                        "id": "WIFI_MANAGER_TASK_PRIORITY",
+                        "name": "WIFI_MANAGER_TASK_PRIORITY",
+                        "range": null,
+                        "title": "RTOS Task Priority for the wifi_manager",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Defines the time to wait before an attempt to re-connect to a saved wifi is made after connection is lost or another unsuccesful attempt is made.",
+                        "id": "WIFI_MANAGER_RETRY_TIMER",
+                        "name": "WIFI_MANAGER_RETRY_TIMER",
+                        "range": null,
+                        "title": "Time (in ms) between each retry attempt",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Defines the maximum number of failed retries allowed before the WiFi manager starts its own access point.",
+                        "id": "WIFI_MANAGER_MAX_RETRY_START_AP",
+                        "name": "WIFI_MANAGER_MAX_RETRY_START_AP",
+                        "range": null,
+                        "title": "Max Retry before starting the AP",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Defines the time (in ms) to wait after a succesful connection before shutting down the access point.",
+                        "id": "WIFI_MANAGER_SHUTDOWN_AP_TIMER",
+                        "name": "WIFI_MANAGER_SHUTDOWN_AP_TIMER",
+                        "range": null,
+                        "title": "Time (in ms) to wait before shutting down the AP",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This parameter helps you relocate the wifimanager to another URL, for instance /wifimanager/ The trailing slash is important and should be included",
+                        "id": "WEBAPP_LOCATION",
+                        "name": "WEBAPP_LOCATION",
+                        "range": null,
+                        "title": "Defines the URL where the wifi manager is located",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "SSID (network name) the the esp32 will broadcast.",
+                        "id": "DEFAULT_AP_SSID",
+                        "name": "DEFAULT_AP_SSID",
+                        "range": null,
+                        "title": "Access Point SSID",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Password used for the Access Point. Leave empty and set AUTH MODE to WIFI_AUTH_OPEN for no password.",
+                        "id": "DEFAULT_AP_PASSWORD",
+                        "name": "DEFAULT_AP_PASSWORD",
+                        "range": null,
+                        "title": "Access Point Password",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Be careful you might not see the access point if you use a channel not allowed in your country.",
+                        "id": "DEFAULT_AP_CHANNEL",
+                        "name": "DEFAULT_AP_CHANNEL",
+                        "range": null,
+                        "title": "Access Point WiFi Channel",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This is used for the redirection to the captive portal. It is recommended to leave unchanged.",
+                        "id": "DEFAULT_AP_IP",
+                        "name": "DEFAULT_AP_IP",
+                        "range": null,
+                        "title": "Access Point IP Address",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This is used for the redirection to the captive portal. It is recommended to leave unchanged.",
+                        "id": "DEFAULT_AP_GATEWAY",
+                        "name": "DEFAULT_AP_GATEWAY",
+                        "range": null,
+                        "title": "Access Point IP Gateway",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This is used for the redirection to the captive portal. It is recommended to leave unchanged.",
+                        "id": "DEFAULT_AP_NETMASK",
+                        "name": "DEFAULT_AP_NETMASK",
+                        "range": null,
+                        "title": "Access Point Netmask",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Max is 4.",
+                        "id": "DEFAULT_AP_MAX_CONNECTIONS",
+                        "name": "DEFAULT_AP_MAX_CONNECTIONS",
+                        "range": null,
+                        "title": "Access Point Max Connections",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "100ms is the recommended default.",
+                        "id": "DEFAULT_AP_BEACON_INTERVAL",
+                        "name": "DEFAULT_AP_BEACON_INTERVAL",
+                        "range": null,
+                        "title": "Access Point Beacon Interval (ms)",
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-wifi-manager-configuration",
+                "title": "Wifi Manager Configuration",
+                "type": "menu"
             }
         ],
         "depends_on": null,

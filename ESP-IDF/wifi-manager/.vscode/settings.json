@@ -8,5 +8,9 @@
     ],
     "idf.toolsPathWin": "c:\\Espressif",
     "idf.portWin": "COM3",
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "files.associations": {
+        "bitset": "c",
+        "netdb.h": "c"
+    }
 }
