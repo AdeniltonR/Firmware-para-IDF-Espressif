@@ -1,32 +1,94 @@
-# _Sample project_
+# _Access Point com ESP32_
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+![Firmware version](https://img.shields.io/badge/Firmware_version-1.0.0-blue)
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+---
+
+## Sumário
+
+- [Histórico de Versão](#histórico-de-versão)
+- [Resumo](#resumo)
+- [Objetivo](#objetivo)
+- [Links para estudos](#links-para-estudos)
+- [Pinos do projeto eletrônico](#pinos-do-projeto-eletrônico)
+- [Bibliotecas](#bibliotecas)
+- [Configuração do Firmware](#configuração-do-firmware)
+- [Informações](#informações)
 
 
+## Histórico de versão
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+| Versão | Data       | Autor         | Descrição          |
+|--------|------------|---------------|--------------------|
+| 1.0.0  | 13/03/2025 | Adenilton R   | Inicio do projeto  |
 
-## Example folder contents
+---
 
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
+## Resumo
 
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
+Este projeto tem como objetivo criar um Access Point (AP) Wi-Fi utilizando o ESP32, permitindo que dispositivos se conectem a ele e controlem um LED através de uma interface web. O ESP32 atua como um servidor web, fornecendo uma página HTML que permite ligar e desligar o LED conectado ao pino GPIO.
 
-Below is short explanation of remaining files in the project folder.
+O projeto utiliza o framework ESP-IDF e inclui funcionalidades como:
 
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+- Configuração de um Access Point Wi-Fi.
+- Servidor HTTP para servir uma página web.
+- Controle de um LED via requisições HTTP.
+- Suporte a Captive Portal Detection para dispositivos Android, iOS e Windows.
+
+## Objetivo
+
+O objetivo principal deste projeto é demonstrar como configurar um ESP32 como um Access Point e criar uma interface web simples para controle de hardware. Os objetivos específicos incluem:
+
+1. **Configuração do Access Point**:
+    - Configurar o ESP32 para funcionar como um Access Point Wi-Fi com SSID e senha personalizados.
+    - Limitar o número máximo de conexões simultâneas.
+2. **Servidor HTTP**:
+    - Implementar um servidor HTTP que sirva uma página web para controle do LED.
+    - Suportar requisições para ligar e desligar o LED.
+3. **Captive Portal Detection**:
+    - Implementar suporte a Captive Portal Detection para dispositivos Android, iOS e Windows, permitindo que os dispositivos se conectem automaticamente ao Access Point.
+4. **Controle de LED**:
+    - Controlar um LED conectado ao pino GPIO do ESP32 através de requisições HTTP.
+
+## Links para estudos
+
+[**ESP-IDF Documentation**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html)
+
+[**ESP32 HTTP Server Example**](https://github.com/espressif/esp-idf/tree/master/examples/protocols/http_server)
+
+[**Captive Portal Detection**](https://en.wikipedia.org/wiki/Captive_portal)
+
+## Pinos do projeto eletrônico
+
+| Nome         | Pino GPIO  |
+|--------------|------------|
+| LED_GPIO_PIN | GPIO_NUM_2 |
+
+## Bibliotecas
+
+[access_point.c]()
+
+[access_point.h]()
+
+[html.c]()
+
+[html.h]()
+
+## Configuração do Firmware
+
+O Access Point é configurado com os seguintes parâmetros no arquivo `access_point.h`:
+
+![code_1.png](Docs/code_1.png)
+
+Página HTML:
+
+![pisca_led.png](Docs/pisca_led.png)
+
+## Informações
+
+| Info        | Modelo        |
+|-------------|---------------|
+| uC          | ESP32 32D     |
+| Placa       | ESP32 Module  |
+| Arquitetura | Xtensa / RISC |
+| IDE         | IDF v5.4.0    |

@@ -1,6 +1,23 @@
+/*
+ * NOME: Adenilton Ribeiro
+ * DATA: 13/03/2025
+ * PROJETO: html.c
+ * VERSAO: 1.0.0
+ * DESCRICAO: - feat: Biblioteca atualizada para criar um access point e abrir uma página HTML para controle de um led.
+ *            - docs: ESP32 32D - ESP-IDF v5.4.0
+ * LINKS:
+*/
+
+// ========================================================================================================
+// ---BIBLIOTECA---
+
 #include "html.h"
 
-// Define o conteúdo HTML como uma string constante
+// ========================================================================================================
+/**
+ * @brief Define o conteúdo HTML como uma string constante
+ * 
+ */
 const char index_html[] = R"rawliteral(
 <!DOCTYPE html>
 <html lang="pt-BR">
