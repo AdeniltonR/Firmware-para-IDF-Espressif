@@ -74,6 +74,8 @@ Canais ADC1:
 
 ## Bibliotecas
 
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/emonlib/main/main.c)
+
 [emonlib-esp-idf.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/emonlib/components/emonlib-esp-idf/emonlib-esp-idf.c)
 
 [emonlib-esp-idf.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/emonlib/components/emonlib-esp-idf/include/emonlib-esp-idf.h)
