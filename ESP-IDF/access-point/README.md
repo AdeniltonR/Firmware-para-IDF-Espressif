@@ -66,13 +66,17 @@ O objetivo principal deste projeto é demonstrar como configurar um ESP32 como u
 
 ## Bibliotecas
 
-[access_point.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/access-point/main/main.c)
 
-[access_point.h]()
+[access_point.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/access-point/components/access_point/access_point.c)
 
-[html.c]()
+[access_point.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/access-point/components/access_point/include/access_point.h)
 
-[html.h]()
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/access-point/components/access_point/CMakeLists.txt)
+
+[html.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/access-point/components/html/html.c)
+
+[html.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/access-point/components/html/include/html.h)
 
 ## Configuração do Firmware
 

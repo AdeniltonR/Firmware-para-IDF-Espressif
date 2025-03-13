@@ -116,6 +116,6 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 ### Access Point com ESP32
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/emonlib) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/access-point) a seguir.
 
 ![pisca_led.png](Docs/pisca_led.png)
