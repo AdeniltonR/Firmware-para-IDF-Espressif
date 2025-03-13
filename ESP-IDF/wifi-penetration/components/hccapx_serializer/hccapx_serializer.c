@@ -7,6 +7,7 @@
  * @brief Implements HCCAPX serializer
  */
 #include "hccapx_serializer.h"
+#include <lwip/inet.h>
 
 #include <stdint.h>
 #include <string.h>

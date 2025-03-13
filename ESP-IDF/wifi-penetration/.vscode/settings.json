@@ -6,5 +6,8 @@
         "board/esp32-wrover-kit-3.3v.cfg"
     ],
     "idf.portWin": "COM5",
-    "idf.toolsPathWin": "c:\\Espressif"
+    "idf.toolsPathWin": "c:\\Espressif",
+    "files.associations": {
+        "esp_event.h": "c"
+    }
 }
