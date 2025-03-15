@@ -62,7 +62,6 @@ void wifi_init_softap(void);
 void start_webserver(void);
 void start_dns_server(void);
 void stop_webserver(void);
-void reset_wifi_and_http_server();
 // Manipuladores de eventos Wi-Fi
 void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 // Manipuladores de requisições HTTP

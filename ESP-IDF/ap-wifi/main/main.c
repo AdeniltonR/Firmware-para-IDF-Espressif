@@ -30,6 +30,8 @@
 
 static const char *TAG = "wifi softAP";
 
+volatile bool ap_started = false; 
+
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
 
@@ -75,7 +77,7 @@ void app_main(void)
  * @param pvParameter Parâmetro da tarefa (não utilizado)
  */
 void check_button_task(void *pvParameter) {
-    bool ap_started = false;
+    ESP_LOGI(TAG, "Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
 
     while (1) {
         // Verifica o uso da pilha

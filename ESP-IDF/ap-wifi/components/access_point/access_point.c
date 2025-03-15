@@ -25,6 +25,8 @@
 static const char *TAG = "wifi softAP";
 static httpd_handle_t server = NULL; 
 
+extern volatile bool ap_started;
+
 // ========================================================================================================
 /**
  * @brief Manipulador de eventos Wi-Fi
@@ -122,7 +124,6 @@ esp_err_t captive_portal_detection_windows_handler(httpd_req_t *req) {
  * @brief Iniciar o servidor HTTP com suporte a Captive Portal Detection
  */
 void start_webserver(void) {
-    httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
     if (httpd_start(&server, &config) == ESP_OK) {
@@ -232,11 +233,26 @@ void start_dns_server(void) {
  * @brief Configurar e iniciar o Wi-Fi softAP
  */
 void wifi_init_softap(void) {
-    // Reinicializa o Wi-Fi e o servidor HTTP
-    reset_wifi_and_http_server();
-
+    // Mostra o endereço de memória do server antes de tentar parar
+    ESP_LOGI(TAG, "Endereço atual do server: %p", (void*)server);
+    
     ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    // Verifica se o loop de eventos já foi criado antes de criar um novo
+    esp_err_t err = esp_event_loop_create_default();
+    if (err == ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Loop de eventos já criado, ignorando...");
+    } else {
+        ESP_ERROR_CHECK(err);
+    }
+
+    // Remover interfaces existentes antes de criar uma nova
+    esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
+    if (netif) {
+        ESP_LOGW(TAG, "Removendo interface de rede existente...");
+        esp_netif_destroy(netif);
+    }
+
     esp_netif_create_default_wifi_ap();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -262,10 +278,13 @@ void wifi_init_softap(void) {
             },
         },
     };
+
     if (strlen(EXAMPLE_ESP_WIFI_PASS) == 0) {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;
     }
 
+    // Parar e reinicializar o Wi-Fi antes de configurar
+    ESP_ERROR_CHECK(esp_wifi_stop());
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
@@ -274,8 +293,7 @@ void wifi_init_softap(void) {
              EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS, EXAMPLE_ESP_WIFI_CHANNEL);
 
     start_webserver(); // Iniciar o servidor HTTP após o Wi-Fi estar pronto
-
-    start_dns_server(); // iniciar o servidor DNS
+    start_dns_server(); // Iniciar o servidor DNS
 }
 
 // ========================================================================================================
@@ -347,27 +365,34 @@ esp_err_t wifi_connect_handler(httpd_req_t *req) {
  * @return ESP_OK se a requisição foi tratada com sucesso
  */
 esp_err_t close_ap_handler(httpd_req_t *req) {
+    // Responde ao cliente antes de parar o servidor
+    httpd_resp_set_status(req, "200 OK");
+    httpd_resp_send(req, "AP e servidor fechados com sucesso!", HTTPD_RESP_USE_STRLEN);
+
     // Aguarda um curto período para garantir que a resposta seja enviada
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Fechando Access Point e servidor HTTP...");
 
+    // Reinicializa a variável ap_started
+    ap_started = false;
+    ESP_LOGI(TAG, "Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
+
     // Para o servidor HTTP
     stop_webserver();
 
-    // Fecha o Access Point, mas mantém o Wi-Fi ativo
-    esp_wifi_stop();
-    esp_wifi_deinit();
+    // Para a interface Wi-Fi
+    ESP_ERROR_CHECK(esp_wifi_stop());
+    ESP_ERROR_CHECK(esp_wifi_deinit());
+
+    // Aguarda 1 segundo para garantir que os sockets fecham corretamente
+    vTaskDelay(1000 / portTICK_PERIOD_MS); 
 
     ESP_LOGI(TAG, "Access Point e servidor HTTP fechados.");
 
-    // Responde ao cliente
-    httpd_resp_set_status(req, "200 OK");
-    httpd_resp_send(req, "AP e servidor fechados com sucesso!", HTTPD_RESP_USE_STRLEN);
-
-    // Reinicia o ESP32
-    //ESP_LOGI(TAG, "Reiniciando o ESP32...");
-    //esp_restart();
+    // Reinicia o ESP32 (opcional)
+    // ESP_LOGI(TAG, "Reiniciando o ESP32...");
+    // esp_restart();
 
     return ESP_OK;
 }
@@ -380,11 +405,12 @@ void stop_webserver(void) {
     if (server) {
         ESP_LOGI(TAG, "Parando o servidor HTTP...");
 
-        // Aguarda um curto período para garantir que todas as conexões sejam finalizadas
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        // Mostra o endereço de memória do server antes de tentar parar
+        ESP_LOGI(TAG, "Endereço atual do server: %p", (void*)server);
 
-        // Finaliza todas as conexões ativas
-        httpd_sess_trigger_close(server, HTTPD_SOCK_ERR_TIMEOUT);
+        // Reinicia o ESP32 (opcional)
+        ESP_LOGI(TAG, "Reiniciando o ESP32...");
+        esp_restart();
 
         // Para o servidor HTTP
         httpd_stop(server);
@@ -394,29 +420,6 @@ void stop_webserver(void) {
     } else {
         ESP_LOGI(TAG, "Servidor HTTP já está parado.");
     }
-}
-
-void reset_wifi_and_http_server() {
-    // Logs para verificar o estado do Wi-Fi antes de reinicializar
-    wifi_mode_t current_mode;
-    esp_wifi_get_mode(&current_mode);
-    ESP_LOGI(TAG, "Estado do Wi-Fi antes de reinicializar: %d", current_mode);
-
-    // Para o servidor HTTP, se estiver ativo
-    if (server) {
-        stop_webserver();
-    }
-
-    // Para o Wi-Fi, se estiver ativo
-    if (current_mode != WIFI_MODE_NULL) {
-        esp_wifi_stop();
-        esp_wifi_deinit();
-    }
-
-    // Limpa o handle do servidor HTTP
-    server = NULL;
-
-    ESP_LOGI(TAG, "Wi-Fi e servidor HTTP reinicializados.");
 }
 
 // ========================================================================================================
