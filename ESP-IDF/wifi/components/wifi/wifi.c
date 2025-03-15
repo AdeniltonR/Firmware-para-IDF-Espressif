@@ -1,5 +1,10 @@
 #include "wifi.h"
 
+/* Definições para o SSID e senha da rede Wi-Fi */
+#define EXAMPLE_ESP_WIFI_SSID      "Adenilton"  /* SSID da rede Wi-Fi */
+#define EXAMPLE_ESP_WIFI_PASS      "@adeRibeiro18085634"  /* Senha da rede Wi-Fi */
+#define EXAMPLE_ESP_MAXIMUM_RETRY  10             /* Número máximo de tentativas de conexão */
+
 /* Grupo de eventos do FreeRTOS para sinalizar quando estamos conectados */
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -23,6 +28,8 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         } else {
             /* Se exceder o número máximo de tentativas, sinaliza falha */
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+            ESP_LOGI(TAG, "Número máximo de tentativas excedido. Reiniciando o ESP32...");
+            esp_restart();  // Reinicia o ESP32
         }
         ESP_LOGI(TAG, "falha ao conectar ao AP");
     } 

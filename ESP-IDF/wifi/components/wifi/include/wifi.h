@@ -13,10 +13,9 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-/* Definições para o SSID e senha da rede Wi-Fi */
-#define EXAMPLE_ESP_WIFI_SSID      "WIFI-FACENS"  /* SSID da rede Wi-Fi */
-#define EXAMPLE_ESP_WIFI_PASS      "iOt#F@c0504"  /* Senha da rede Wi-Fi */
-#define EXAMPLE_ESP_MAXIMUM_RETRY  10             /* Número máximo de tentativas de conexão */
+#include <stdio.h>
+#include <time.h>
+#include "esp_sntp.h"
 
 /* Configurações para o modo de operação WPA3 SAE (Simultaneous Authentication of Equals) */
 #if CONFIG_ESP_WPA3_SAE_PWE_HUNT_AND_PECK
@@ -58,7 +57,8 @@
 /* Tag para identificação nos logs */
 static const char *TAG = "wifi station";
 
-/* Declaração da função para inicializar o Wi-Fi no modo estação (STA) */
+//void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+
 void wifi_init_sta(void);
 
 #endif // WIFI_H
