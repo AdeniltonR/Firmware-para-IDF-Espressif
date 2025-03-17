@@ -16,6 +16,7 @@
 #ifndef __HTML_H__
 #define __HTML_H__
 
+//---arquivos de HTML---
 extern const char index_html[];
 extern const char connected_html[];
 

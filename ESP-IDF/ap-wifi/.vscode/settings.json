@@ -1,7 +1,12 @@
 {
-    "idf.portWin": "COM3",
+    "idf.portWin": "COM5",
     "idf.flashType": "UART",
     "files.associations": {
-        "inttypes.h": "c"
-    }
+        "inttypes.h": "c",
+        "html.h": "c",
+        "access_point.h": "c"
+    },
+    "idf.espIdfPathWin": "C:\\Users\\adenilton.ribeiro\\esp\\v5.4\\esp-idf",
+    "idf.toolsPathWin": "c:\\Espressif",
+    "idf.pythonInstallPath": "c:\\Espressif\\tools\\idf-python\\3.11.2\\python.exe"
 }

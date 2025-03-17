@@ -14,17 +14,13 @@
 #include "access_point.h"
 
 // ========================================================================================================
-//---MAPEAMENTO DE ESTADO---
-
-// ========================================================================================================
-//---MAPEAMENTO DE HARDWARE---
-
-// ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-static const char *TAG = "wifi softAP";
+//---tag para identificação nos logs---
+static const char *TAG_AP = "wifi softAP";
+//---variável htpp---
 static httpd_handle_t server = NULL; 
-
+//---variável para travar botão---
 extern volatile bool ap_started;
 
 // ========================================================================================================
@@ -38,10 +34,10 @@ extern volatile bool ap_started;
 void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
-        ESP_LOGI(TAG, "Estação " MACSTR " conectada, AID=%d", MAC2STR(event->mac), event->aid);
+        ESP_LOGI(TAG_AP, "Estação " MACSTR " conectada, AID=%d", MAC2STR(event->mac), event->aid);
     } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
-        ESP_LOGI(TAG, "Estação " MACSTR " desconectada, AID=%d, motivo=%d", MAC2STR(event->mac), event->aid, event->reason);
+        ESP_LOGI(TAG_AP, "Estação " MACSTR " desconectada, AID=%d, motivo=%d", MAC2STR(event->mac), event->aid, event->reason);
     }
 }
 
@@ -88,7 +84,8 @@ esp_err_t favicon_handler(httpd_req_t *req) {
  * @return ESP_OK se a requisição foi tratada com sucesso
  */
 esp_err_t captive_portal_detection_android_handler(httpd_req_t *req) {
-    httpd_resp_set_status(req, "204 No Content");
+    httpd_resp_set_status(req, "302 Found"); 
+    httpd_resp_set_hdr(req, "Location", "/");
     httpd_resp_send(req, NULL, 0);
     return ESP_OK;
 }
@@ -199,7 +196,7 @@ void start_webserver(void) {
         };
         httpd_register_uri_handler(server, &captive_portal_windows_uri);
 
-        ESP_LOGI(TAG, "Servidor HTTP com Captive Portal Detection iniciado");
+        ESP_LOGI(TAG_AP, "Servidor HTTP com Captive Portal Detection iniciado");
     }
 }
 
@@ -211,7 +208,7 @@ void start_dns_server(void) {
     esp_netif_t *ap_netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
 
     if (ap_netif == NULL) {
-        ESP_LOGE(TAG, "Falha ao obter a interface de rede AP");
+        ESP_LOGE(TAG_AP, "Falha ao obter a interface de rede AP");
         return;
     }
 
@@ -220,36 +217,40 @@ void start_dns_server(void) {
 
     //---configura o servidor DNS---
     ip_addr_t dns_addr;
-    dns_addr.type = IPADDR_TYPE_V4;  // Define o tipo de endereço como IPv4
+    dns_addr.type = IPADDR_TYPE_V4;                            // Define o tipo de endereço como IPv4
     dns_addr.u_addr.ip4.addr = ip4_addr_get_u32(&ip_info.ip);  // Configura o endereço IP
 
-    dns_setserver(0, &dns_addr);  // Configura o servidor DNS
+    dns_setserver(0, &dns_addr);                               // Configura o servidor DNS
 
-    ESP_LOGI(TAG, "Servidor DNS iniciado");
+    ESP_LOGI(TAG_AP, "Servidor DNS iniciado");
 }
 
 // ========================================================================================================
 /**
  * @brief Configurar e iniciar o Wi-Fi softAP
  */
+// ========================================================================================================
+/**
+ * @brief Configurar e iniciar o Wi-Fi softAP
+ */
 void wifi_init_softap(void) {
-    // Mostra o endereço de memória do server antes de tentar parar
-    ESP_LOGI(TAG, "Endereço atual do server: %p", (void*)server);
+    //---mostra o endereço de memória do server antes de tentar parar---
+    ESP_LOGI(TAG_AP, "Endereço atual do server: %p", (void*)server);
     
     ESP_ERROR_CHECK(esp_netif_init());
 
-    // Verifica se o loop de eventos já foi criado antes de criar um novo
+    //---verifica se o loop de eventos já foi criado antes de criar um novo---
     esp_err_t err = esp_event_loop_create_default();
     if (err == ESP_ERR_INVALID_STATE) {
-        ESP_LOGW(TAG, "Loop de eventos já criado, ignorando...");
+        ESP_LOGW(TAG_AP, "Loop de eventos já criado, ignorando...");
     } else {
         ESP_ERROR_CHECK(err);
     }
 
-    // Remover interfaces existentes antes de criar uma nova
+    //---remover interfaces existentes antes de criar uma nova---
     esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
     if (netif) {
-        ESP_LOGW(TAG, "Removendo interface de rede existente...");
+        ESP_LOGW(TAG_AP, "Removendo interface de rede existente...");
         esp_netif_destroy(netif);
     }
 
@@ -260,13 +261,14 @@ void wifi_init_softap(void) {
 
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
 
+    //---configuração da rede Wi-Fi---
     wifi_config_t wifi_config = {
         .ap = {
-            .ssid = EXAMPLE_ESP_WIFI_SSID,
-            .ssid_len = strlen(EXAMPLE_ESP_WIFI_SSID),
+            .ssid = {0},          // Inicializa o array ssid com zeros
+            .password = {0},      // Inicializa o array password com zeros
             .channel = EXAMPLE_ESP_WIFI_CHANNEL,
-            .password = EXAMPLE_ESP_WIFI_PASS,
             .max_connection = EXAMPLE_MAX_STA_CONN,
+            .ssid_hidden = 0,     // Certifique-se de que está definido como 0
 #ifdef CONFIG_ESP_WIFI_SOFTAP_SAE_SUPPORT
             .authmode = WIFI_AUTH_WPA3_PSK,
             .sae_pwe_h2e = WPA3_SAE_PWE_BOTH,
@@ -279,20 +281,31 @@ void wifi_init_softap(void) {
         },
     };
 
-    if (strlen(EXAMPLE_ESP_WIFI_PASS) == 0) {
+    //---copia o SSID e a senha para a configuração Wi-Fi---
+    strncpy((char *)wifi_config.ap.ssid, EXAMPLE_ESP_WIFI_SSID, sizeof(wifi_config.ap.ssid) - 1);
+    wifi_config.ap.ssid[sizeof(wifi_config.ap.ssid) - 1] = '\0'; // Garante terminação nula
+
+    strncpy((char *)wifi_config.ap.password, EXAMPLE_ESP_WIFI_PASS, sizeof(wifi_config.ap.password) - 1);
+    wifi_config.ap.password[sizeof(wifi_config.ap.password) - 1] = '\0'; // Garante terminação nula
+
+    //---define o comprimento do SSID---
+    wifi_config.ap.ssid_len = strlen((char *)wifi_config.ap.ssid);
+
+    //---se a senha estiver em branco, define o modo de autenticação como aberto---
+    if (strlen((char *)wifi_config.ap.password) == 0) {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;
     }
 
-    // Parar e reinicializar o Wi-Fi antes de configurar
+    //---parar e reinicializar o Wi-Fi antes de configurar---
     ESP_ERROR_CHECK(esp_wifi_stop());
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 
-    ESP_LOGI(TAG, "wifi_init_softap finalizado. SSID:%s senha:%s canal:%d",
+    ESP_LOGI(TAG_AP, "wifi_init_softap finalizado. SSID:%s senha:%s canal:%d",
              EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS, EXAMPLE_ESP_WIFI_CHANNEL);
 
-    start_webserver(); // Iniciar o servidor HTTP após o Wi-Fi estar pronto
+    start_webserver();  // Iniciar o servidor HTTP após o Wi-Fi estar pronto
     start_dns_server(); // Iniciar o servidor DNS
 }
 
@@ -306,7 +319,7 @@ esp_err_t wifi_connect_handler(httpd_req_t *req) {
     char buffer[128];
     int ret, remaining = req->content_len;
 
-    // Lê os dados da requisição
+    //---lê os dados da requisição---
     if ((ret = httpd_req_recv(req, buffer, MIN(remaining, sizeof(buffer) - 1))) <= 0) {
         if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
             httpd_resp_send_408(req); // Responde com timeout se a leitura falhar
@@ -314,16 +327,19 @@ esp_err_t wifi_connect_handler(httpd_req_t *req) {
         return ESP_FAIL;
     }
 
-    // Adiciona null-terminator ao buffer
+    //---cancela o timeout---
+    wifi_manager_cancel_timeout();
+
+    //---adiciona null-terminator ao buffer---
     buffer[ret] = '\0';
 
-    // Converte os dados recebidos em uma string e imprime as informações
-    ESP_LOGI(TAG, "Dados recebidos: %s", buffer);
+    //---converte os dados recebidos em uma string e imprime as informações---
+    ESP_LOGI(TAG_AP, "Dados recebidos: %s", buffer);
 
-    // Extrai o SSID e a senha do JSON recebido
+    //---extrai o SSID e a senha do JSON recebido---
     cJSON *root = cJSON_Parse(buffer);
     if (root == NULL) {
-        ESP_LOGE(TAG, "Erro ao analisar JSON");
+        ESP_LOGE(TAG_AP, "Erro ao analisar JSON");
         httpd_resp_send_500(req);
         return ESP_FAIL;
     }
@@ -332,26 +348,26 @@ esp_err_t wifi_connect_handler(httpd_req_t *req) {
     cJSON *password = cJSON_GetObjectItem(root, "password");
 
     if (ssid == NULL || password == NULL) {
-        ESP_LOGE(TAG, "JSON inválido: SSID ou senha ausentes");
+        ESP_LOGE(TAG_AP, "JSON inválido: SSID ou senha ausentes");
         cJSON_Delete(root);
         httpd_resp_send_500(req);
         return ESP_FAIL;
     }
 
-    // Salva o SSID e a senha na NVS
+    //---salva o SSID e a senha na NVS---
     if (save_wifi_credentials(ssid->valuestring, password->valuestring) != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao salvar as credenciais na NVS");
+        ESP_LOGE(TAG_AP, "Erro ao salvar as credenciais na NVS");
         cJSON_Delete(root);
         httpd_resp_send_500(req);
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "SSID: %s", ssid->valuestring);
-    ESP_LOGI(TAG, "Senha: %s", password->valuestring);
+    ESP_LOGI(TAG_AP, "SSID: %s", ssid->valuestring);
+    ESP_LOGI(TAG_AP, "Senha: %s", password->valuestring);
 
     cJSON_Delete(root);
 
-    // Responde ao cliente que a conexão foi bem-sucedida
+    //---responde ao cliente que a conexão foi bem-sucedida---
     httpd_resp_set_status(req, "200 OK");
     httpd_resp_send(req, "Credenciais salvas com sucesso!", HTTPD_RESP_USE_STRLEN);
 
@@ -365,34 +381,30 @@ esp_err_t wifi_connect_handler(httpd_req_t *req) {
  * @return ESP_OK se a requisição foi tratada com sucesso
  */
 esp_err_t close_ap_handler(httpd_req_t *req) {
-    // Responde ao cliente antes de parar o servidor
+    //---responde ao cliente antes de parar o servidor---
     httpd_resp_set_status(req, "200 OK");
     httpd_resp_send(req, "AP e servidor fechados com sucesso!", HTTPD_RESP_USE_STRLEN);
 
-    // Aguarda um curto período para garantir que a resposta seja enviada
+    //---aguarda um curto período para garantir que a resposta seja enviada---
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-    ESP_LOGI(TAG, "Fechando Access Point e servidor HTTP...");
+    ESP_LOGI(TAG_AP, "Fechando Access Point e servidor HTTP...");
 
-    // Reinicializa a variável ap_started
+    //---reinicializa a variável ap_started---
     ap_started = false;
-    ESP_LOGI(TAG, "Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
+    ESP_LOGI(TAG_AP, "Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
 
-    // Para o servidor HTTP
+    //---para o servidor HTTP---
     stop_webserver();
 
-    // Para a interface Wi-Fi
+    //---para a interface Wi-Fi---
     ESP_ERROR_CHECK(esp_wifi_stop());
     ESP_ERROR_CHECK(esp_wifi_deinit());
 
-    // Aguarda 1 segundo para garantir que os sockets fecham corretamente
+    //---aguarda 1 segundo para garantir que os sockets fecham corretamente---
     vTaskDelay(1000 / portTICK_PERIOD_MS); 
 
-    ESP_LOGI(TAG, "Access Point e servidor HTTP fechados.");
-
-    // Reinicia o ESP32 (opcional)
-    // ESP_LOGI(TAG, "Reiniciando o ESP32...");
-    // esp_restart();
+    ESP_LOGI(TAG_AP, "Access Point e servidor HTTP fechados.");
 
     return ESP_OK;
 }
@@ -403,22 +415,24 @@ esp_err_t close_ap_handler(httpd_req_t *req) {
  */
 void stop_webserver(void) {
     if (server) {
-        ESP_LOGI(TAG, "Parando o servidor HTTP...");
+        //---aguarda um curto período para garantir que a resposta seja enviada---
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-        // Mostra o endereço de memória do server antes de tentar parar
-        ESP_LOGI(TAG, "Endereço atual do server: %p", (void*)server);
+        ESP_LOGI(TAG_AP, "Parando o servidor HTTP...");
 
-        // Reinicia o ESP32 (opcional)
-        ESP_LOGI(TAG, "Reiniciando o ESP32...");
-        esp_restart();
+        //---mostra o endereço de memória do server antes de tentar parar---
+        ESP_LOGI(TAG_AP, "Endereço atual do server: %p", (void*)server);
 
-        // Para o servidor HTTP
+        //---reiniciando em modo STA---
+        reset_STA();
+
+        //---para o servidor HTTP---
         httpd_stop(server);
         server = NULL;
 
-        ESP_LOGI(TAG, "Servidor HTTP parado.");
+        ESP_LOGI(TAG_AP, "Servidor HTTP parado.");
     } else {
-        ESP_LOGI(TAG, "Servidor HTTP já está parado.");
+        ESP_LOGI(TAG_AP, "Servidor HTTP já está parado.");
     }
 }
 
@@ -433,43 +447,43 @@ esp_err_t save_wifi_credentials(const char *ssid, const char *password) {
     nvs_handle_t nvs_handle;
     esp_err_t err;
 
-    // Abre a partição NVS no modo de leitura e escrita
+    //---abre a partição NVS no modo de leitura e escrita---
     err = nvs_open("storage", NVS_READWRITE, &nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
         return err;
     }
 
-    // Apaga os dados antigos (se existirem)
+    //---apaga os dados antigos (se existirem)---
     nvs_erase_key(nvs_handle, "ssid");
     nvs_erase_key(nvs_handle, "password");
 
-    // Salva o SSID na NVS
+    //---salva o SSID na NVS---
     err = nvs_set_str(nvs_handle, "ssid", ssid);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao salvar o SSID na NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao salvar o SSID na NVS: %s", esp_err_to_name(err));
         nvs_close(nvs_handle);
         return err;
     }
 
-    // Salva a senha na NVS
+    //---salva a senha na NVS---
     err = nvs_set_str(nvs_handle, "password", password);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao salvar a senha na NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao salvar a senha na NVS: %s", esp_err_to_name(err));
         nvs_close(nvs_handle);
         return err;
     }
 
-    // Confirma as alterações na NVS
+    //---confirma as alterações na NVS---
     err = nvs_commit(nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao confirmar as alterações na NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao confirmar as alterações na NVS: %s", esp_err_to_name(err));
     }
 
-    // Fecha a NVS
+    //---fecha a NVS---
     nvs_close(nvs_handle);
 
-    ESP_LOGI(TAG, "SSID e senha salvos na NVS com sucesso!");
+    ESP_LOGI(TAG_AP, "SSID e senha salvos na NVS com sucesso!");
     return ESP_OK;
 }
 
@@ -484,33 +498,33 @@ esp_err_t load_wifi_credentials(char *ssid, size_t ssid_size, char *password, si
     nvs_handle_t nvs_handle;
     esp_err_t err;
 
-    // Abre a partição NVS no modo de leitura
+    //---abre a partição NVS no modo de leitura---
     err = nvs_open("storage", NVS_READONLY, &nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
         return err;
     }
 
-    // Recupera o SSID da NVS
+    //---recupera o SSID da NVS---
     err = nvs_get_str(nvs_handle, "ssid", ssid, &ssid_size);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao recuperar o SSID da NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao recuperar o SSID da NVS: %s", esp_err_to_name(err));
         nvs_close(nvs_handle);
         return err;
     }
 
-    // Recupera a senha da NVS
+    //---recupera a senha da NVS---
     err = nvs_get_str(nvs_handle, "password", password, &password_size);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Erro ao recuperar a senha da NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG_AP, "Erro ao recuperar a senha da NVS: %s", esp_err_to_name(err));
         nvs_close(nvs_handle);
         return err;
     }
 
-    // Fecha a NVS
+    //---Fecha a NVS---
     nvs_close(nvs_handle);
 
-    ESP_LOGI(TAG, "SSID e senha recuperados da NVS com sucesso!");
+    ESP_LOGI(TAG_AP, "SSID e senha recuperados da NVS com sucesso!");
     return ESP_OK;
 }
 
@@ -522,11 +536,11 @@ void show_saved_wifi_credentials(void) {
     char ssid[32] = {0};
     char password[64] = {0};
 
-    // Recupera o SSID e a senha da NVS
+    //---recupera o SSID e a senha da NVS---
     if (load_wifi_credentials(ssid, sizeof(ssid), password, sizeof(password)) == ESP_OK) {
-        ESP_LOGI(TAG, "SSID salvo: %s", ssid);
-        ESP_LOGI(TAG, "Senha salva: %s", password);
+        ESP_LOGI(TAG_AP, "SSID salvo: %s", ssid);
+        ESP_LOGI(TAG_AP, "Senha salva: %s", password);
     } else {
-        ESP_LOGI(TAG, "Nenhum SSID ou senha salvo encontrado na NVS.");
+        ESP_LOGI(TAG_AP, "Nenhum SSID ou senha salvo encontrado na NVS.");
     }
 }

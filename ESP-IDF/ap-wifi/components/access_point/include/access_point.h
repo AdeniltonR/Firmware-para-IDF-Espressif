@@ -31,50 +31,49 @@
 #include "lwip/inet.h"
 #include "lwip/err.h"
 #include "lwip/dns.h"
-#include "esp_system.h" // Adicione esta linha no início do arquivo para usar esp_restar
-#include "cJSON.h"      // Adiciona suporte para manipulação de JSON
-
-#include "html.h"       // Inclui o arquivo HTML
-
+#include "esp_system.h" 
+#include "cJSON.h"      
+#include "html.h"       
+#include "wifi_manager.h"
 #include "lwip/err.h" 
 #include "lwip/sys.h"
+
+// ========================================================================================================
+//---CONSTANTS---
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 // ========================================================================================================
-//---CONSTANTS---
+//---MAPEAMENTO DE ESTADO---
 
-#define EXAMPLE_ESP_WIFI_SSID      "ESP-IDF"  // Define o SSID (nome da rede) do Access Point Wi-Fi que será criado pelo ESP32.
-#define EXAMPLE_ESP_WIFI_PASS      "12345678" // Define a senha do Access Point Wi-Fi. Se a senha for deixada em branco (""), a rede será aberta (sem senha).
-#define EXAMPLE_ESP_WIFI_CHANNEL   6          // Define o canal de frequência Wi-Fi que o Access Point usará. O canal 6 é comum para redes 2.4 GHz.
-#define EXAMPLE_MAX_STA_CONN       2          // Define o número máximo de dispositivos (estações) que podem se conectar ao Access Point simultaneamente.
-
-// ========================================================================================================
-//---MAPEAMENTO DE HARDWARE---
+extern const char *EXAMPLE_ESP_WIFI_SSID;
+extern const char *EXAMPLE_ESP_WIFI_PASS;
+extern int EXAMPLE_ESP_WIFI_CHANNEL;
+extern int EXAMPLE_MAX_STA_CONN;
 
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
 
-// Funções de inicialização e configuração
+//---funções de inicialização e configuração---
 void wifi_init_softap(void);
 void start_webserver(void);
 void start_dns_server(void);
 void stop_webserver(void);
-// Manipuladores de eventos Wi-Fi
+//---manipuladores de eventos Wi-Fi---
 void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
-// Manipuladores de requisições HTTP
+//---manipuladores de requisições HTTP---
 esp_err_t root_handler(httpd_req_t *req);
 esp_err_t wifi_connect_handler(httpd_req_t *req); 
 esp_err_t close_ap_handler(httpd_req_t *req);
 esp_err_t connected_html_handler(httpd_req_t *req);
 esp_err_t favicon_handler(httpd_req_t *req);
-// Manipuladores de Captive Portal Detection
+//---manipuladores de Captive Portal Detection---
 esp_err_t captive_portal_detection_android_handler(httpd_req_t *req);
 esp_err_t captive_portal_detection_ios_handler(httpd_req_t *req);
 esp_err_t captive_portal_detection_windows_handler(httpd_req_t *req);
-// Funções para manipulação de credenciais Wi-Fi
+//---funções para manipulação de credenciais Wi-Fi---
 esp_err_t save_wifi_credentials(const char *ssid, const char *password);  
 esp_err_t load_wifi_credentials(char *ssid, size_t ssid_size, char *password, size_t password_size);  
 void show_saved_wifi_credentials(void);  
