@@ -17,9 +17,9 @@
 //---MAPEAMENTO DE ESTADO---
 
 //---definições para o SSID e senha da rede Wi-Fi---
-#define EXAMPLE_ESP_WIFI_SSID      "Adenilton"            // SSID da rede Wi-Fi 
-#define EXAMPLE_ESP_WIFI_PASS      "@adeRibeiro18085634"  // Senha da rede Wi-Fi 
-#define EXAMPLE_ESP_MAXIMUM_RETRY  10                     // Número máximo de tentativas de conexão 
+#define EXAMPLE_ESP_WIFI_SSID      "Nome"            // SSID da rede Wi-Fi 
+#define EXAMPLE_ESP_WIFI_PASS      "Senha"           // Senha da rede Wi-Fi 
+#define EXAMPLE_ESP_MAXIMUM_RETRY  10                // Número máximo de tentativas de conexão 
 
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---

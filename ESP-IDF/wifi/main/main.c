@@ -42,6 +42,7 @@ void app_main(void) {
 
     //---inicializa Wi-Fi---
     wifi_init_sta();
+    
     //---configura o fuso horário---
     initialize_hora();
     //---testa a conexão com a internet e obtém a hora---
