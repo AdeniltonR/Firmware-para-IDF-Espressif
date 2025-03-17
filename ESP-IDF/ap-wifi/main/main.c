@@ -16,6 +16,7 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"  
 #include "access_point.h"
+#include "wifi_manager"
 
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---
@@ -52,15 +53,32 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
+    //---mostra os dados salvos na NVS---
+    show_saved_wifi_credentials();
+    // Exibe as credenciais Wi-Fi salvas
+    wifi_manager_show_saved_credentials();
+
+    // Verifica o modo Wi-Fi salvo na NVS
+    wifi_mode_t mode = wifi_manager_get_mode();
+
+    // Inicia no modo correspondente
+    if (mode == WIFI_MODE_AP) {
+        ESP_LOGI(TAG, "Iniciando no modo Access Point...");
+        wifi_init_softap();
+    } else if (mode == WIFI_MODE_STA) {
+        ESP_LOGI(TAG, "Iniciando no modo Station...");
+        //wifi_init_sta();
+    } else {
+        ESP_LOGI(TAG, "Modo Wi-Fi desconhecido. Iniciando no modo padrão (AP).");
+        wifi_init_softap();
+    }
+
     //---configura o pino do botão como entrada---
     gpio_reset_pin(PIN_start_ap);
     gpio_set_direction(PIN_start_ap, GPIO_MODE_INPUT);
     gpio_set_pull_mode(PIN_start_ap, GPIO_PULLUP_ONLY);  // Habilita o resistor de pull-up interno
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
-
-    //---mostra os dados salvos na NVS---
-    show_saved_wifi_credentials();
 
     //---cria uma tarefa para verificar o botão---
     xTaskCreate(&check_button_task, "check_button_task", 4096, NULL, 5, NULL);
