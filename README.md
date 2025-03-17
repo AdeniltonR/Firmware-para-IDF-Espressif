@@ -15,6 +15,7 @@
     - [RGB-Ws2812B](#rgb-ws2812b)
     - [Emonlib](#emonlib)
     - [Access Point com ESP32](#access-point-com-esp32)
+    - [WiFi](#wifi)
 
 ## Histórico de Versão
 
@@ -25,6 +26,7 @@
 | 1.0.0  | 31/01/2025 | Adenilton R  | RGB-Ws2812B             |
 | 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib                 |
 | 1.0.0  | 13/03/2025 | Adenilton R  | Access Point com ESP32  |
+| 1.0.0  | 16/03/2025 | Adenilton R  | Wi-FI Manual            |
 
 ---
 
@@ -119,3 +121,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/access-point) a seguir.
 
 ![pisca_led.png](Docs/pisca_led.png)
+
+### WiFi
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+
+![code_3.png](Docs/code_3.png)

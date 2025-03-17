@@ -64,13 +64,15 @@ Este projeto não utiliza pinos específicos do ESP32, pois foca na configuraç�
 
 ## Bibliotecas
 
-[main.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/main/main.c)
 
-[wifi.c]()
+[wifi.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/components/wifi/wifi.c)
 
-[wifi.h]()
+[wifi.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/components/wifi/include/wifi.h)
 
-[Kconfig.projbuild]()
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/components/wifi/CMakeLists.txt)
+
+[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/main/Kconfig.projbuild)
 
 ## Configuração do Firmware
 
@@ -98,7 +100,7 @@ Dados do monitor serial:
 
 ![code_3.png](Docs/code_3.png)
 
-Importande adicionar o arquivo dentro da pasta main [Kconfig.projbuild]():
+Importande adicionar o arquivo dentro da pasta main [Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/main/Kconfig.projbuild):
 
 ## Informações
 
