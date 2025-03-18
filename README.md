@@ -106,7 +106,7 @@ Para obter mais informações sobre o projeto, clique no __[**link**](https://gi
 
 ### RGB-Ws2812B
 
-Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/rgb-ws2812b) a seguir.
 
 ![RGB.png](Docs/RGB.png)
 
