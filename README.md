@@ -23,7 +23,7 @@
 |--------|------------|--------------|-------------------------|
 | 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto       |
 | 1.0.0  | 29/08/2024 | Adenilton R  | Wi-Fi Manager           |
-| 1.0.0  | 31/01/2025 | Adenilton R  | RGB-Ws2812B             |
+| 1.0.0  | 18/03/2025 | Adenilton R  | RGB-Ws2812B             |
 | 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib                 |
 | 1.0.0  | 13/03/2025 | Adenilton R  | Access Point com ESP32  |
 | 1.0.0  | 16/03/2025 | Adenilton R  | Wi-FI Manual            |
@@ -57,12 +57,12 @@ Este conjunto de exemplos de firmware foi desenvolvido para facilitar a utiliza�
  * PROJETO: Nome do projeto
  * VERSAO: 1.0.0
  * DESCRICAO: - feat: Descrição.
- *            - docs: ESP-IDF v5.4.0 e Simulador PICSimLab 0.9.1
+ *            - docs: ESP32-32D - ESP-IDF v5.4.0 e Simulador PICSimLab 0.9.1
  * LINKS: 
 */
 
 // ========================================================================================================
-//---BIBLIOTECAS AUXILIARES---
+//---BIBLIOTECAS---
 
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -106,9 +106,9 @@ Para obter mais informações sobre o projeto, clique no __[**link**](https://gi
 
 ### RGB-Ws2812B
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/RGB-Ws2812B) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
 
-`[Adicionar Imagen ou Gif…]`
+![RGB.png](Docs/RGB.png)
 
 ### Emonlib
 

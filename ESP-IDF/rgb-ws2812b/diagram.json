@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "author": "Adenilton Ribeiro",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": -9.78,
+      "left": 90.97,
+      "attrs": { "builder": "esp-idf" }
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb1",
+      "top": 121.3,
+      "left": 18.2,
+      "rotate": 180,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:5V", "rgb1:VDD", "red", [ "h-38.45", "v-76.8" ] ],
+    [ "esp:GND.1", "rgb1:VSS", "black", [ "h-96.05", "v-96" ] ],
+    [ "rgb1:DIN", "esp:48", "green", [ "h-8.6", "v122.4", "h201.6", "v-96" ] ]
+  ],
+  "dependencies": {}
+}
