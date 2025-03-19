@@ -1,13 +1,13 @@
 # Target labels
  bootloader
 # Source files and their labels
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/CMakeFiles/bootloader
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/CMakeFiles/bootloader.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/CMakeFiles/bootloader-complete.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
-/home/adeniltonr/GitHub/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/CMakeFiles/bootloader
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/CMakeFiles/bootloader.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/CMakeFiles/bootloader-complete.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/Users/adeni/OneDrive/Documentos/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/termina-espidf/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
