@@ -1,7 +1,7 @@
 {
     "C_Cpp.intelliSenseEngine": "default",
     "idf.espIdfPathWin": "C:\\Users\\adeni\\esp\\v5.4\\esp-idf",
-    "idf.pythonInstallPath": "c:\\Espressif\\tools\\idf-python\\3.11.2\\python.exe",
+    "idf.pythonInstallPath": "/usr/bin/python3",
     "idf.openOcdConfigs": [
         "interface/ftdi/esp32_devkitj_v1.cfg",
         "target/esp32s3.cfg"
@@ -25,5 +25,6 @@
         "sstream": "c"
     },
     "idf.flashType": "UART",
-    "idf.portWin": "COM4"
+    "idf.portWin": "COM4",
+    "idf.port": "/dev/ttyACM0"
 }
