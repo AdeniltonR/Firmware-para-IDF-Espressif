@@ -13,7 +13,8 @@
         "task.h": "c",
         "esp_log.h": "c",
         "rmt.h": "c",
-        "rmt_tx.h": "c"
+        "rmt_tx.h": "c",
+        "esp_attr.h": "c"
     },
     "idf.flashType": "UART"
 }
