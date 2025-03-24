@@ -136,18 +136,18 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 ### DFPlayer Mini
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/dfplayer-mini) a seguir.
 
 ![code_3.png](Docs/code_3.png)
 
 ### Touch Pad
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/touch-pad) a seguir.
 
 ![code_3.png](Docs/code_3.png)
 
 ### Led Strip
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/led-strip) a seguir.
 
 ![Led-strip.png](Docs/Led-strip.png)
