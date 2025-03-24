@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/led-strip.bin'
+elf = 'build/led-strip.bin'

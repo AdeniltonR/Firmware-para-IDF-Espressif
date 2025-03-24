@@ -62,13 +62,13 @@ O objetivo principal desta biblioteca é fornecer uma interface simples e eficie
 
 ## Bibliotecas
 
-[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/main/main.c)
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/led-strip/main/main.c)
 
-[led_strip.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/ws2812b.c)
+[led_strip.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/led-strip/components/led_strip/led_strip.c)
 
-[led_strip.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/include/ws2812b.h)
+[led_strip.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/led-strip/components/led_strip/include/led_strip.h)
 
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/CMakeLists.txt)
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/led-strip/components/led_strip/CMakeLists.txt)
 
 ## Configuração do Firmware
 
@@ -98,7 +98,7 @@ static spi_settings_t spi_settings = {
 
 Como isso led altera de cores:
 
-![RGB.png](Docs/RGB.png)
+![Led-strip.png](Docs/Led-strip.png)
 
 ## Informações
 

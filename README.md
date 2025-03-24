@@ -16,6 +16,9 @@
     - [Emonlib](#emonlib)
     - [Access Point com ESP32](#access-point-com-esp32)
     - [WiFi](#wifi)
+    - [DFPlayer Mini](#dfplayer-mini)
+    - [Touch Pad](#touch-pad)
+    - [Led Strip](#led-strip)
 
 ## Histórico de Versão
 
@@ -27,6 +30,9 @@
 | 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib                 |
 | 1.0.0  | 13/03/2025 | Adenilton R  | Access Point com ESP32  |
 | 1.0.0  | 16/03/2025 | Adenilton R  | Wi-FI Manual            |
+| 1.0.0  | 19/03/2025 | Adenilton R  | DFPlayer Mini           |
+| 1.0.0  | 19/03/2025 | Adenilton R  | Touch Pad               |
+| 1.0.0  | 20/03/2025 | Adenilton R  | Led Strip               |
 
 ---
 
@@ -127,3 +133,21 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
 
 ![code_3.png](Docs/code_3.png)
+
+### DFPlayer Mini
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+
+![code_3.png](Docs/code_3.png)
+
+### Touch Pad
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+
+![code_3.png](Docs/code_3.png)
+
+### Led Strip
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi) a seguir.
+
+![Led-strip.png](Docs/Led-strip.png)

@@ -1,32 +1,110 @@
-# _Sample project_
+# _Led Strip_
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+![Firmware version](https://img.shields.io/badge/Firmware_version-1.0.0-blue)
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+---
+
+## Sumário
+
+- [Histórico de Versão](#histórico-de-versão)
+- [Resumo](#resumo)
+- [Objetivo](#objetivo)
+- [Links para estudos](#links-para-estudos)
+- [Pinos do projeto eletrônico](#pinos-do-projeto-eletrônico)
+- [Bibliotecas](#bibliotecas)
+- [Configuração do Firmware](#configuração-do-firmware)
+- [Informações](#informações)
 
 
+## Histórico de versão
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+| Versão | Data       | Autor         | Descrição          |
+|--------|------------|---------------|--------------------|
+| 1.0.0  | 20/03/2025 | Adenilton R   | Inicio do projeto  |
 
-## Example folder contents
+---
 
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
+## Resumo
 
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
+A biblioteca led_strip foi desenvolvida para controlar tiras de LEDs WS2812B utilizando o periférico RMT (Remote Control Transceiver) do ESP32. Ela permite o controle individual de cada LED na tira, definindo cores RGB e atualizando a tira de LEDs com novas cores.
 
-Below is short explanation of remaining files in the project folder.
+## Objetivo
 
+O objetivo principal desta biblioteca é fornecer uma interface simples e eficiente para controlar tiras de LEDs WS2812B no ESP32. Os objetivos específicos incluem:
+
+1. **Inicialização da Tira de LEDs**:
+    - Configurar o ESP32 para enviar dados aos LEDs WS2812B via RMT.
+    - Suportar diferentes modelos de tiras de LED (WS2812B e WS2815).
+2. **Controle de Cores**:
+    - Permitir o controle individual de cada LED na tira.
+    - Definir cores RGB para cada LED.
+3. **Atualização da Tira de LEDs**:
+    - Atualizar a tira de LEDs com novas cores enviadas pelo ESP32.
+4. **Exemplo de Uso**:
+    - Demonstrar o uso da biblioteca para acender LEDs em diferentes cores (vermelho, verde, azul, amarelo, roxo).
+
+## Links para estudos
+
+[**Link de Referência**](https://www.youtube.com/watch?v=xdxsDxw2iOc)
+
+[**ESP-IDF Documentation**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html)
+
+[**WS2812B Datasheet**](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
+
+[**RMT Protocol**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/rmt.html)
+
+## Pinos do projeto eletrônico
+
+| Nome      | Pino |
+|-----------|------|
+| PIN_rgb_1 | D19  |
+| PIN_rgb_1 | D23  |
+
+## Bibliotecas
+
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/main/main.c)
+
+[led_strip.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/ws2812b.c)
+
+[led_strip.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/include/ws2812b.h)
+
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/CMakeLists.txt)
+
+## Configuração do Firmware
+
+O controle dos LEDs WS2812B é configurado com os seguintes parâmetros no arquivo led_strip.c:
+
+```c
+static spi_settings_t spi_settings = {
+    .host = SPI2_HOST,           // Host SPI (SPI2)
+    .dma_chan = SPI_DMA_CH_AUTO, // Canal DMA automático
+    .buscfg = {
+        .miso_io_num = -1,       // Pino MISO não utilizado
+        .sclk_io_num = -1,       // Pino SCLK não utilizado
+        .quadwp_io_num = -1,     // Pino QUADWP não utilizado
+        .quadhd_io_num = -1,     // Pino QUADHD não utilizado
+    },
+    .devcfg = {
+        .clock_speed_hz = 3.2 * 1000 * 1000, // Clock de 3.2 MHz
+        .mode = 0,                           // Modo SPI 0
+        .spics_io_num = -1,                  // Pino CS não utilizado
+        .queue_size = 1,                     // Tamanho da fila de transmissão
+        .command_bits = 0,                   // Sem bits de comando
+        .address_bits = 0,                   // Sem bits de endereço
+        .flags = SPI_DEVICE_TXBIT_LSBFIRST,  // Transmissão LSB primeiro
+    },
+};
 ```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+
+Como isso led altera de cores:
+
+![RGB.png](Docs/RGB.png)
+
+## Informações
+
+| Info        | Modelo           |
+|-------------|------------------|
+| uC          | ESP32 32D        |
+| Placa       | ESP32 Module     |
+| Arquitetura | Xtensa / RISC    |
+| IDE         | IDF v5.4.0       |
