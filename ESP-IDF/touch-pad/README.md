@@ -1,4 +1,4 @@
-# _Led Strip_
+# _Touch Pad_
 
 ![Firmware version](https://img.shields.io/badge/Firmware_version-1.0.0-blue)
 
@@ -20,85 +20,75 @@
 
 | Versão | Data       | Autor         | Descrição          |
 |--------|------------|---------------|--------------------|
-| 1.0.0  | 20/03/2025 | Adenilton R   | Inicio do projeto  |
+| 1.0.0  | 19/03/2025 | Adenilton R   | Inicio do projeto  |
 
 ---
 
 ## Resumo
 
-A biblioteca led_strip foi desenvolvida para controlar tiras de LEDs WS2812B utilizando o periférico RMT (Remote Control Transceiver) do ESP32. Ela permite o controle individual de cada LED na tira, definindo cores RGB e atualizando a tira de LEDs com novas cores.
+O firmware Touch Pad foi desenvolvido para detectar toques em dois pinos capacitivos do ESP32 usando a ESP-IDF v5.4.0. Ele implementa um sistema de debounce para evitar múltiplas detecções de um único toque e utiliza FreeRTOS para leitura assíncrona dos sensores.
 
 ## Objetivo
 
-O objetivo principal desta biblioteca é fornecer uma interface simples e eficiente para controlar tiras de LEDs WS2812B no ESP32. Os objetivos específicos incluem:
+O objetivo principal deste firmware é fornecer uma interface confiável para detecção de toques em sensores capacitivos do ESP32. Os objetivos específicos incluem:
 
-1. **Inicialização da Tira de LEDs**:
-    - Configurar o ESP32 para enviar dados aos LEDs WS2812B via RMT.
-    - Suportar diferentes modelos de tiras de LED (WS2812B e WS2815).
-2. **Controle de Cores**:
-    - Permitir o controle individual de cada LED na tira.
-    - Definir cores RGB para cada LED.
-3. **Atualização da Tira de LEDs**:
-    - Atualizar a tira de LEDs com novas cores enviadas pelo ESP32.
-4. **Exemplo de Uso**:
-    - Demonstrar o uso da biblioteca para acender LEDs em diferentes cores (vermelho, verde, azul, amarelo, roxo).
+1. **Configuração dos Touch Pads**:
+    - Inicialização correta dos sensores capacitivos
+    - Configuração de tensão e limiares de detecção
+2. **Leitura Confiável**:
+    - Implementação de debounce para evitar detecções múltiplas
+    - Leitura assíncrona usando FreeRTOS
+3. **Saída de Log**:
+    - Registro claro dos eventos de toque
+    - Detecção de erros na leitura dos sensores
 
 ## Links para estudos
 
-[**Link de Referência**](https://www.youtube.com/watch?v=xdxsDxw2iOc)
+[**ESP-IDF Touch Pad Documentation**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html)
 
-[**ESP-IDF Documentation**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html)
+[**FreeRTOS Documentation**](https://www.freertos.org/Documentation/RTOS_book.html)
 
-[**WS2812B Datasheet**](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
-
-[**RMT Protocol**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/rmt.html)
+[**ESP32 Capacitive Touch Sensing**](https://www.youtube.com/watch?v=JmFJz0H3J6o)
 
 ## Pinos do projeto eletrônico
 
-| Nome      | Pino |
-|-----------|------|
-| PIN_rgb_1 | D19  |
-| PIN_rgb_1 | D23  |
+| Nome        | Pino ESP32 | Touch Pad |
+|-------------|------------|-----------|
+| TOUCH_PAD_1 | GPIO13     | T4        |
+| TOUCH_PAD_2 | GPIO27     | T7        |
+
+**Tabela de Touch Pads do ESP32:**
+
+| Touch Pad | TOUCH_PAD_NUM  | Pino GPIO | Observações                               |
+|-----------|----------------|-----------|-------------------------------------------|
+| T0        | TOUCH_PAD_NUM0 | GPIO4     | Disponível na maioria das placas          |
+| T1        | TOUCH_PAD_NUM1 | GPIO0     | **Cuidado**: Pino de boot                 |
+| T2        | TOUCH_PAD_NUM2 | GPIO2     | Conectado ao LED onboard em muitas placas |
+| T3        | TOUCH_PAD_NUM3 | GPIO15    | Pode precisar de pull-down no boot        |
+| T4        | TOUCH_PAD_NUM4 | GPIO13    | Disponível na maioria das placas          |
+| T5        | TOUCH_PAD_NUM5 | GPIO12    | Disponível na maioria das placas          |
+| T6        | TOUCH_PAD_NUM6 | GPIO14    | Disponível na maioria das placas          |
+| T7        | TOUCH_PAD_NUM7 | GPIO27    | Disponível na maioria das placas          |
+| T8        | TOUCH_PAD_NUM8 | GPIO33    | Disponível apenas em ESP32 com 36 pinos   |
+| T9        | TOUCH_PAD_NUM9 | GPIO32    | Disponível apenas em ESP32 com 36 pinos   |
 
 ## Bibliotecas
 
-[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/main/main.c)
-
-[led_strip.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/ws2812b.c)
-
-[led_strip.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/include/ws2812b.h)
-
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/CMakeLists.txt)
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/touch-pad/main/main.c)
 
 ## Configuração do Firmware
 
-O controle dos LEDs WS2812B é configurado com os seguintes parâmetros no arquivo led_strip.c:
+O firmware é configurado com os seguintes parâmetros:
 
-```c
-static spi_settings_t spi_settings = {
-    .host = SPI2_HOST,           // Host SPI (SPI2)
-    .dma_chan = SPI_DMA_CH_AUTO, // Canal DMA automático
-    .buscfg = {
-        .miso_io_num = -1,       // Pino MISO não utilizado
-        .sclk_io_num = -1,       // Pino SCLK não utilizado
-        .quadwp_io_num = -1,     // Pino QUADWP não utilizado
-        .quadhd_io_num = -1,     // Pino QUADHD não utilizado
-    },
-    .devcfg = {
-        .clock_speed_hz = 3.2 * 1000 * 1000, // Clock de 3.2 MHz
-        .mode = 0,                           // Modo SPI 0
-        .spics_io_num = -1,                  // Pino CS não utilizado
-        .queue_size = 1,                     // Tamanho da fila de transmissão
-        .command_bits = 0,                   // Sem bits de comando
-        .address_bits = 0,                   // Sem bits de endereço
-        .flags = SPI_DEVICE_TXBIT_LSBFIRST,  // Transmissão LSB primeiro
-    },
-};
-```
+![Touch-pad.png](Docs/Touch-pad.png)
 
-Como isso led altera de cores:
+O firmware opera da seguinte maneira:
 
-![RGB.png](Docs/RGB.png)
+1. Inicializa os sensores touch pad
+2. Cria uma tarefa FreeRTOS para leitura contínua
+3. Verifica se os valores lidos estão dentro do intervalo configurado
+4. Implementa lógica de debounce para evitar detecções múltiplas
+5. Registra eventos de toque no log quando detectados
 
 ## Informações
 
