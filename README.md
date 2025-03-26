@@ -106,9 +106,9 @@ void app_main(void) {
 
 ### Wi-Fi Manager
 
-Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/Projetos/wifi_manager)__ a seguir.
+Para obter mais informações sobre o projeto, clique no __[**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/wifi-manager)__ a seguir.
 
-`[Adicionar Imagen ou Gif…]`
+![code_3.png](Docs/code_3.png)
 
 ### RGB-Ws2812B
 
