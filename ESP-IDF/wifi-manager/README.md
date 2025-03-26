@@ -9,6 +9,7 @@
 - [Histórico de Versão](#histórico-de-versão)
 - [Resumo](#resumo)
 - [Objetivo](#objetivo)
+- [Fluxograma](#fluxograma)
 - [Links para estudos](#links-para-estudos)
 - [Pinos do projeto eletrônico](#pinos-do-projeto-eletrônico)
 - [Bibliotecas](#bibliotecas)
