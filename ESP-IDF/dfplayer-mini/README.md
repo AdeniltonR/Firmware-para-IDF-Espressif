@@ -141,7 +141,7 @@ O firmware detecta automaticamente:
 
 Dados do monitor serial:
 
-![RGB.png](Docs/RGB.png)
+![DFPlayer_mini.png](Docs/DFPlayer_mini.png)
 
 ## Informações
 

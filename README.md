@@ -138,7 +138,7 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/dfplayer-mini) a seguir.
 
-![code_3.png](Docs/code_3.png)
+![DFPlayer_mini.png](Docs/DFPlayer_mini.png)
 
 ### Touch Pad
 

@@ -26,7 +26,14 @@
 
 ## Resumo
 
-A biblioteca led_strip foi desenvolvida para controlar tiras de LEDs WS2812B utilizando o periférico RMT (Remote Control Transceiver) do ESP32. Ela permite o controle individual de cada LED na tira, definindo cores RGB e atualizando a tira de LEDs com novas cores.
+A biblioteca `led_strip` foi desenvolvida para oferecer controle completo e eficiente de tiras de LEDs WS2812B/WS2815 utilizando o periférico RMT (Remote Control Transceiver) do ESP32. Esta solução permite:
+
+- **Controle multi-pino**: Gerencie simultaneamente várias tiras de LEDs conectadas a diferentes pinos GPIO do ESP32
+- **Controle individual**: Ajuste cores RGB para cada LED de forma independente na tira
+- **Alta eficiência**: Utiliza o periférico RMT para comunicação precisa com os LEDs
+- **Compatibilidade**: Suporte para diferentes modelos de tiras de LED (WS2812B e WS2815)
+
+⚠️ **Atenção**: Na versão 5.4 do ESP-IDF, a implementação atual da biblioteca utiliza a API legada do RMT que está **depreciada**. Recomenda-se migrar para as novas APIs `driver/rmt_tx.h` e `driver/rmt_rx.h` para garantir compatibilidade com versões futuras.
 
 ## Objetivo
 
