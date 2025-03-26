@@ -71,11 +71,11 @@ O objetivo principal é fornecer uma interface robusta para controle do DFPlayer
 
 [DFRobotDFPlayerMini.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/DFRobotDFPlayerMini.c)
 
-[DFRobotDFPlayerMini.h]()
+[DFRobotDFPlayerMini.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/include/DFRobotDFPlayerMini.h)
 
 [serial.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/serial.c)
 
-[serial.h]()
+[serial.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/include/serial.h)
 
 [CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/CMakeLists.txt)
 
