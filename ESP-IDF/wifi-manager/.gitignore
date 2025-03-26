@@ -1,18 +1,3 @@
-# Ignorar diretÃ³rios de build
 build/
+sdkconfig
 sdkconfig.old
-sdkconfig.cmake
-*.elf
-*.bin
-*.map
-*.log
-
-# Ignorar arquivos temporÃ¡rios do Python
-__pycache__/
-*.pyc
-venv/
-.env/
-
-# Ignorar dependÃªncias do ESP-IDF
-esp-idf/
-components/esp-idf/

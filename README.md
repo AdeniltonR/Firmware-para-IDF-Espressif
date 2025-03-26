@@ -25,7 +25,7 @@
 | Versão | Data       | Autor        | Descrição               |
 |--------|------------|--------------|-------------------------|
 | 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto       |
-| 1.0.0  | 29/08/2024 | Adenilton R  | Wi-Fi Manager           |
+| 1.0.0  | 17/03/2025 | Adenilton R  | Wi-Fi Manager           |
 | 1.0.0  | 18/03/2025 | Adenilton R  | RGB-Ws2812B             |
 | 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib                 |
 | 1.0.0  | 13/03/2025 | Adenilton R  | Access Point com ESP32  |

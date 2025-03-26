@@ -1,79 +1,106 @@
 /*
-Copyright (c) 2017-2019 Tony Pottier
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-@file main.c
-@author Tony Pottier
-@brief Entry point for the ESP32 application.
-@see https://idyl.io
-@see https://github.com/tonyp7/esp32-wifi-manager
+ * NOME: Adenilton Ribeiro
+ * DATA: 17/03/2025
+ * PROJETO: Manager
+ * VERSAO: 1.0.0
+ * DESCRICAO: - feat: Biblioteca atualizada para Manager e conexão de internet.
+ *            - docs: ESP32 32D - ESP-IDF v5.4.0
+ * LINKS:
 */
 
+// ========================================================================================================
+//---BIBLIOTECAS AUXILIARES---
+
 #include <stdio.h>
-#include <string.h>
-#include <esp_wifi.h>
-#include <esp_netif.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_system.h"
-#include "esp_log.h"
-
+#include "driver/gpio.h"  
+#include "access_point.h"
 #include "wifi_manager.h"
+#include "wifi.h"
 
-/* @brief tag used for ESP serial console messages */
-static const char TAG[] = "main";
+// ========================================================================================================
+//---MAPEAMENTO DE ESTADO---
 
+const char *EXAMPLE_ESP_WIFI_SSID = "ESPIDF";   // Define o SSID (nome da rede) do Access Point Wi-Fi que será criado pelo ESP32.
+const char *EXAMPLE_ESP_WIFI_PASS = "12345678"; // Define a senha do Access Point Wi-Fi. Se a senha for deixada em branco (""), a rede será aberta (sem senha).
+int EXAMPLE_ESP_WIFI_CHANNEL      = 1;          // Define o canal de frequência Wi-Fi que o Access Point usará. O canal 6 é comum para redes 2.4 GHz.
+int EXAMPLE_MAX_STA_CONN          = 2;          // Define o número máximo de dispositivos (estações) que podem se conectar ao Access Point simultaneamente.
+int EXAMPLE_ESP_MAXIMUM_RETRY     = 10;         // Número máximo de tentativas de conexão 
+
+// ========================================================================================================
+//---MAPEAMENTO DE HARDWARE---
+
+#define PIN_start_ap GPIO_NUM_0 
+
+// ========================================================================================================
+//---VARIAVEIS GLOBAIS---
+
+//---tag para identificação nos logs---
+static const char *TAG_MAIN = "Main";
+//---variável para travar botão---
+volatile bool ap_started = false; 
+
+// ========================================================================================================
+//---PROTOTIPO DA FUNCAO---
+
+void check_button_task(void *pvParameter); // Tarefa para verificar o botão
+
+// ========================================================================================================
 /**
- * @brief RTOS task that periodically prints the heap memory available.
- * @note Pure debug information, should not be ever started on production code! This is an example on how you can integrate your code with wifi-manager
+ * @brief Void main
+ *
  */
-void monitoring_task(void *pvParameter)
-{
-	for(;;){
-		ESP_LOGI(TAG, "free heap: %" PRIu32, esp_get_free_heap_size());
-		vTaskDelay( pdMS_TO_TICKS(10000) );
-	}
+void app_main(void) {
+    //---inicia o timeout  Manager (180 segundos, por exemplo)---
+    wifi_manager_start_timeout(180);
+
+    //---inicialização da Manager---
+    init_manager();
+    
+    //---configura o pino do botão como entrada---
+    gpio_reset_pin(PIN_start_ap);
+    gpio_set_direction(PIN_start_ap, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(PIN_start_ap, GPIO_PULLUP_ONLY);  // Habilita o resistor de pull-up interno
+
+    //---cria uma tarefa para verificar o botão---
+    xTaskCreate(&check_button_task, "check_button_task", 4096, NULL, 5, NULL);
+
+    while (1) {
+        //ESP_LOGI(TAG, "Aguardando pressionamento do botão para iniciar o Access Point...");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);  
+    }
 }
 
-
+// ========================================================================================================
 /**
- * @brief this is an exemple of a callback that you can setup in your own app to get notified of wifi manager event.
+ * @brief Tarefa para verificar o estado do botão
+ * @param pvParameter Parâmetro da tarefa (não utilizado)
  */
-void cb_connection_ok(void *pvParameter){
-	ip_event_got_ip_t* param = (ip_event_got_ip_t*)pvParameter;
+void check_button_task(void *pvParameter) {
+    ESP_LOGI(TAG_MAIN, "Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
 
-	/* transform IP to human readable string */
-	char str_ip[16];
-	esp_ip4addr_ntoa(&param->ip_info.ip, str_ip, IP4ADDR_STRLEN_MAX);
+    while (1) {
+        //---verifica o uso da pilha---
+        //UBaseType_t stack_high_water_mark = uxTaskGetStackHighWaterMark(NULL);
+        //ESP_LOGI(TAG_MAIN, "Stack high water mark: %d", stack_high_water_mark);
 
-	ESP_LOGI(TAG, "I have a connection and my IP is %s!", str_ip);
-}
+        //---verifica se o botão foi pressionado---
+        if (gpio_get_level(PIN_start_ap) == 0) {
+            if (!ap_started) {
+                ESP_LOGI(TAG_MAIN, "Botão pressionado! Iniciando modo Access Point...");
 
-void app_main()
-{
-	/* start the wifi manager */
-	wifi_manager_start();
+                //---reiniciando em modo AP---
+                reset_AP();
 
-	/* register a callback as an example to how you can integrate your code with the wifi manager */
-	wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_connection_ok);
-
-	/* your code should go here. Here we simply create a task on core 2 that monitors free heap memory */
-	xTaskCreatePinnedToCore(&monitoring_task, "monitoring_task", 2048, NULL, 1, NULL, 1);
+                ap_started = true;
+            } else {
+                ESP_LOGI(TAG_MAIN, "Access Point já está ativo.");
+            }
+            //---debounce---
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+        }
+        //---aguarda um curto período antes de verificar novamente---
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
 }
