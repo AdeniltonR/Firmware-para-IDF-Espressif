@@ -1,4 +1,4 @@
-# _Led Strip_
+# _DFPlayer Mini_
 
 ![Firmware version](https://img.shields.io/badge/Firmware_version-1.0.0-blue)
 
@@ -20,83 +20,126 @@
 
 | Versão | Data       | Autor         | Descrição          |
 |--------|------------|---------------|--------------------|
-| 1.0.0  | 20/03/2025 | Adenilton R   | Inicio do projeto  |
+| 1.0.0  | 19/03/2025 | Adenilton R   | Inicio do projeto  |
 
 ---
 
 ## Resumo
 
-A biblioteca led_strip foi desenvolvida para controlar tiras de LEDs WS2812B utilizando o periférico RMT (Remote Control Transceiver) do ESP32. Ela permite o controle individual de cada LED na tira, definindo cores RGB e atualizando a tira de LEDs com novas cores.
+Este firmware foi desenvolvido para controlar o módulo DFPlayer Mini utilizando o ESP32. Ele permite:
+
+- Reprodução de arquivos de áudio
+- Controle de volume
+- Leitura de informações do cartão SD
+- Monitoramento de eventos do player
 
 ## Objetivo
 
-O objetivo principal desta biblioteca é fornecer uma interface simples e eficiente para controlar tiras de LEDs WS2812B no ESP32. Os objetivos específicos incluem:
+O objetivo principal é fornecer uma interface robusta para controle do DFPlayer Mini via ESP32, com:
 
-1. **Inicialização da Tira de LEDs**:
-    - Configurar o ESP32 para enviar dados aos LEDs WS2812B via RMT.
-    - Suportar diferentes modelos de tiras de LED (WS2812B e WS2815).
-2. **Controle de Cores**:
-    - Permitir o controle individual de cada LED na tira.
-    - Definir cores RGB para cada LED.
-3. **Atualização da Tira de LEDs**:
-    - Atualizar a tira de LEDs com novas cores enviadas pelo ESP32.
-4. **Exemplo de Uso**:
-    - Demonstrar o uso da biblioteca para acender LEDs em diferentes cores (vermelho, verde, azul, amarelo, roxo).
+1. **Inicialização segura**:
+    - Controle do pino de enable
+    - Configuração automática da comunicação serial
+2. **Controle de reprodução**:
+    - Seleção de músicas por índice
+    - Ajuste de volume (0-30)
+3. **Monitoramento**:
+    - Detecção de eventos (término de reprodução, erros)
+    - Verificação de arquivos no cartão SD
 
 ## Links para estudos
 
-[**Link de Referência**](https://www.youtube.com/watch?v=xdxsDxw2iOc)
+[**Referência do Projeto**](https://github.com/nopnop2002/esp-idf-DFPlayerMini/tree/main)
 
-[**ESP-IDF Documentation**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html)
+[**Documentação ESP-IDF**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html)
 
-[**WS2812B Datasheet**](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
+[**Datasheet DFPlayer Mini**](https://www.dfrobot.com/product-1121.html)
 
-[**RMT Protocol**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/rmt.html)
+[**Protocolo Serial DFPlayer**](https://www.dfrobot.com/wiki/index.php/DFPlayer_Mini_SKU:DFR0299)
 
 ## Pinos do projeto eletrônico
 
-| Nome      | Pino |
-|-----------|------|
-| PIN_rgb_1 | D19  |
-| PIN_rgb_1 | D23  |
+| Função       | Pino ESP32 | Pino DFPlayer |
+|--------------|------------|---------------|
+| TX (saída)   | GPIO18     | RX            |
+| RX (entrada) | GPIO4      | TX            |
+| Enable       | GPIO16     | VCC/Enable    |
 
 ## Bibliotecas
 
-[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/main/main.c)
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/main/main.c)
 
-[led_strip.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/ws2812b.c)
+[DFRobotDFPlayerMini.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/DFRobotDFPlayerMini.c)
 
-[led_strip.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/include/ws2812b.h)
+[DFRobotDFPlayerMini.h]()
 
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/rgb-ws2812b/components/ws2812b/CMakeLists.txt)
+[serial.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/serial.c)
+
+[serial.h]()
+
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/CMakeLists.txt)
+
+[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/dfplayer-mini/components/DFRobotDFPlayerMini/Kconfig.projbuild)
 
 ## Configuração do Firmware
 
-O controle dos LEDs WS2812B é configurado com os seguintes parâmetros no arquivo led_strip.c:
+Inicialização Serial:
 
 ```c
-static spi_settings_t spi_settings = {
-    .host = SPI2_HOST,           // Host SPI (SPI2)
-    .dma_chan = SPI_DMA_CH_AUTO, // Canal DMA automático
-    .buscfg = {
-        .miso_io_num = -1,       // Pino MISO não utilizado
-        .sclk_io_num = -1,       // Pino SCLK não utilizado
-        .quadwp_io_num = -1,     // Pino QUADWP não utilizado
-        .quadhd_io_num = -1,     // Pino QUADHD não utilizado
-    },
-    .devcfg = {
-        .clock_speed_hz = 3.2 * 1000 * 1000, // Clock de 3.2 MHz
-        .mode = 0,                           // Modo SPI 0
-        .spics_io_num = -1,                  // Pino CS não utilizado
-        .queue_size = 1,                     // Tamanho da fila de transmissão
-        .command_bits = 0,                   // Sem bits de comando
-        .address_bits = 0,                   // Sem bits de endereço
-        .flags = SPI_DEVICE_TXBIT_LSBFIRST,  // Transmissão LSB primeiro
-    },
-};
+//---inicializa o DFPlayer Mini---
+    bool ret = DF_begin(PIN_tx, PIN_rx, true, true, debug);
+    ESP_LOGI(TAG, "DF_begin=%d", ret);  // Log do resultado da inicialização
 ```
 
-Como isso led altera de cores:
+Parâmetros:
+
+- `PIN_tx`: Pino TX do ESP32;
+- `PIN_rx`: Pino RX do ESP32;
+- `ACK`: Habilita confirmação de comandos;
+- `Reset`: Executa reset no inicialização;
+- `Debug`: Habilita modo de depuração.
+
+Controle de Energia:
+
+```c
+/**
+ * @brief Função para ativar o DFPlayer Mini
+ *
+ */
+void enable_dfplayer() {
+    //---configura o pino de energia como saída---
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_DISABLE;          // Desabilita interrupções
+    io_conf.mode = GPIO_MODE_OUTPUT;                // Configura o pino como saída
+    io_conf.pin_bit_mask = (1ULL << PIN_en);        // Define o pino PIN_en como saída
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;   // Desabilita pull-down
+    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;       // Desabilita pull-up
+    gpio_config(&io_conf);                          // Aplica a configuração
+
+    //---ativa o módulo (HIGH) e espera 1 segundo para estabilizar---
+    gpio_set_level(PIN_en, 1);  
+    ESP_LOGI(TAG, "Enable ativado!"); 
+    vTaskDelay(1000 / portTICK_PERIOD_MS);  
+}
+```
+
+Fluxo Principal:
+
+1. Ativação do módulo via pino GPIO16
+2. Inicialização da comunicação serial (9600 baud)
+3. Verificação do cartão SD
+4. Reprodução da música selecionada
+5. Monitoramento contínuo de eventos
+
+Tratamento de Eventos:
+
+O firmware detecta automaticamente:
+
+- Término de reprodução (evento duplo)
+- Erros no cartão SD
+- Problemas de comunicação
+
+Dados do monitor serial:
 
 ![RGB.png](Docs/RGB.png)
 
