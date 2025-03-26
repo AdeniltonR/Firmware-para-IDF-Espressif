@@ -1,9 +1,9 @@
 /*
  * NOME: Adenilton Ribeiro
  * DATA: 17/03/2025
- * PROJETO: Manager
+ * PROJETO: Wi-Fi Manager
  * VERSAO: 1.0.0
- * DESCRICAO: - feat: Biblioteca atualizada para Manager e conexão de internet.
+ * DESCRICAO: - feat: Biblioteca atualizada para Wi-Fi Manager e conexão de internet.
  *            - docs: ESP32 32D - ESP-IDF v5.4.0
  * LINKS:
 */

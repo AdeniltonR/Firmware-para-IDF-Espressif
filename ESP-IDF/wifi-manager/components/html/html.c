@@ -1,7 +1,7 @@
 /*
  * NOME: Adenilton Ribeiro
  * DATA: 14/03/2025
- * PROJETO: ap wifi
+ * PROJETO: access point
  * VERSAO: 1.0.0
  * DESCRICAO: - feat: Biblioteca atualizada para criar um access point e conexão de internet.
  *            - docs: ESP32 32D - ESP-IDF v5.4.0

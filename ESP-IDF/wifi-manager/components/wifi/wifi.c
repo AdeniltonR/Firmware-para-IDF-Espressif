@@ -50,8 +50,16 @@ void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, voi
             //---se exceder o número máximo de tentativas, sinaliza falha---
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
             ESP_LOGW(TAG_STA, "Número máximo de tentativas excedido. Reiniciando o ESP32...");
-            //---reiniciando em modo AP---
-            reset_AP();  
+            
+            //---1 para abilitar ele entrar no modo AP, 0 para ESP32 só reiniciar---
+            if (NUMERO_MAX_TENTATIVAS) {
+                //---reiniciando em modo AP---
+                reset_AP();
+            } else {
+                //---reinicia o ESP32---
+                ESP_LOGW(TAG_MG, "Reiniciando o ESP32...");
+                esp_restart();
+            }
         }
         ESP_LOGI(TAG_STA, "falha ao conectar ao AP");
     } 

@@ -264,11 +264,11 @@ void wifi_init_softap(void) {
     //---configuração da rede Wi-Fi---
     wifi_config_t wifi_config = {
         .ap = {
-            .ssid = {0},          // Inicializa o array ssid com zeros
-            .password = {0},      // Inicializa o array password com zeros
+            .ssid = {0},                             // Inicializa o array ssid com zeros
+            .password = {0},                         // Inicializa o array password com zeros
             .channel = EXAMPLE_ESP_WIFI_CHANNEL,
             .max_connection = EXAMPLE_MAX_STA_CONN,
-            .ssid_hidden = 0,     // Certifique-se de que está definido como 0
+            .ssid_hidden = 0,                        // Certifique-se de que está definido como 0
 #ifdef CONFIG_ESP_WIFI_SOFTAP_SAE_SUPPORT
             .authmode = WIFI_AUTH_WPA3_PSK,
             .sae_pwe_h2e = WPA3_SAE_PWE_BOTH,

@@ -26,81 +26,135 @@
 
 ## Resumo
 
-Este projeto tem como objetivo configurar o ESP32 para se conectar a uma rede Wi-Fi manualmente, testar a conexão com a internet e sincronizar o horário usando o protocolo NTP (Network Time Protocol). O ESP32 atua como um dispositivo cliente (STA) que se conecta a um Access Point (AP) com SSID e senha pré-definidos.
+Este projeto implementa um **Wi-Fi Manager** completo para ESP32, com capacidade de alternar entre:
+- Modo **Access Point (AP)**: Para configuração via interface web
+- Modo **Station (STA)**: Para conexão a redes Wi-Fi existentes
 
-O projeto utiliza o framework ESP-IDF e inclui funcionalidades como:
+**Principais características:**
 
-- Conexão manual a uma rede Wi-Fi.
-- Teste de conexão com a internet.
-- Sincronização de horário usando NTP.
-- Configuração de fuso horário.
+- Interface web para configuração (Captive Portal)
+- Armazenamento seguro de credenciais em NVS
+- Sincronização de horário via NTP
+- Sistema de timeout automático
+- Botão físico para ativação do modo AP
 
 ## Objetivo
 
-O objetivo principal deste projeto é demonstrar como configurar o ESP32 para se conectar a uma rede Wi-Fi, testar a conexão com a internet e sincronizar o horário. Os objetivos específicos incluem:
+**1. Gerenciamento de Conexão**
+- **Modo AP**:
+  - SSID: `ESP-IDF`
+  - Senha: `12345678`
+  - Interface web em `http://192.168.4.1`
+  - Captive Portal Detection (Android/iOS/Windows)
 
-1. **Configuração do Wi-Fi**:
-    - Configurar o ESP32 para se conectar a uma rede Wi-Fi com SSID e senha personalizados.
-    - Implementar tentativas de reconexão em caso de falha.
-2. **Teste de Conexão com a Internet**:
-    - Verificar se o ESP32 está conectado à internet.
-    - Sincronizar o horário usando o protocolo NTP.
-3. **Configuração de Fuso Horário**:
-    - Configurar o fuso horário para Brasília (BRT/BRST).
-4. **Obtenção de Horário**:
-    - Obter e exibir a hora atual sincronizada com o servidor NTP.
+- **Modo STA**:
+  - Conexão automática às redes salvas
+  - Tentativas de reconexão (máx. 10 tentativas)
+  - Sincronização de horário via NTP
+
+**2. Armazenamento**
+- Credenciais Wi-Fi salvas na NVS
+- Estado do modo (AP/STA) persistente
+
+**3. Segurança**
+- Autenticação WPA2/WPA3
+- Reset seguro após timeout (180s padrão)
+
+## Fluxograma
+
+![Fluxograma.png](Docs/Fluxograma.png)
 
 ## Links para estudos
 
-[**ESP-IDF Documentation**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html)
+[**Documentação ESP-IDF**](https://docs.espressif.com/projects/esp-idf/en/v5.4/esp32/index.html)
 
-[**ESP32 Wi-Fi Example**](https://github.com/espressif/esp-idf/tree/master/examples/wifi)
+[**Exemplos Oficiais Wi-Fi**](https://github.com/espressif/esp-idf/tree/v5.4/examples/wifi)
 
-[**NTP Protocol**](https://en.wikipedia.org/wiki/Network_Time_Protocol)
+[**Protocolo NTP**](https://pt.wikipedia.org/wiki/Network_Time_Protocol)
 
 ## Pinos do projeto eletrônico
 
-Este projeto não utiliza pinos específicos do ESP32, pois foca na configuração de Wi-Fi e sincronização de horário.
+| Função          | Pino ESP32 |
+|-----------------|------------|
+| Botão Modo AP   | GPIO_NUM_0 |
 
 ## Bibliotecas
 
-[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/main/main.c)
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/main/main.c)
 
-[wifi.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/components/wifi/wifi.c)
+[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/main/Kconfig.projbuild)
 
-[wifi.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/components/wifi/include/wifi.h)
+[wifi.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi/wifi.c)
 
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/components/wifi/CMakeLists.txt)
+[wifi.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi/include/wifi.h)
 
-[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/main/Kconfig.projbuild)
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi/CMakeLists.txt)
+
+[wifi_manager.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi_manager/wifi_manager.c)
+
+[wifi_manager.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi_manager/include/wifi_manager.h)
+
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi_manager/CMakeLists.txt)
+
+[access_point.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/access_point/access_point.c)
+
+[access_point.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/access_point/include/access_point.h)
+
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/access_point/CMakeLists.txt)
+
+[html.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/html/html.c)
+
+[html.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/html/include/html.h)
+
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/html/CMakeLists.txt)
 
 ## Configuração do Firmware
 
-O Wi-Fi é configurado com os seguintes parâmetros no arquivo `wifi.c`:
+**Parâmetros Ajustáveis:**
 
-![code_1.png](Docs/code_1.png)
+![access_point.png](Docs/access_point.png)
 
-Para poder testar a conexão de internet pode chamar as funções para puxar hora e data, as funções estão no arquivo `wifi.c`:
-
-![code_2.png](Docs/code_2.png)
-
-Configura o fuso horário:
+**Estrutura do Projeto:**
 
 ```c
-initialize_hora();
+components/
+├── wifi_manager/          # Lógica central
+│   ├── include/
+│   │   └── wifi_manager.h
+│   └── wifi_manager.c
+├── access_point/          # Modo AP
+│   ├── include/
+│   │   └── access_point.h  
+│   └── access_point.c
+├── wifi/                  # Modo STA
+│   ├── include/
+│   │   └── wifi.h
+│   └── wifi.c
+└── html/                  # Interface Web
+    ├── include/
+    │   └── html.h
+    └── html.c
 ```
 
-Testa a conexão com a internet e obtém a hora:
+**Como Usar:**
 
-```c
-test_ntp_connection();
-```
+1. **Primeira inicialização**:
+    - O ESP32 inicia em modo AP
+    - Conecte-se à rede `ESP-IDF`
+    - Acesse `http://192.168.4.1`
+    - Insira as credenciais da sua rede Wi-Fi
+2. **Conexão automática**:
+    - Após configuração, o ESP32 reinicia em modo STA
+    - Conecta-se automaticamente à rede salva
+3. **Forçar modo AP**:
+    - Pressione o botão GPIO0 por 1 segundo
+    - Útil para reconfiguração
 
-Dados do monitor serial:
+Importande adicionar o arquivo dentro da pasta main [Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/main/Kconfig.projbuild):
 
-![code_3.png](Docs/code_3.png)
+Página web:
 
-Importande adicionar o arquivo dentro da pasta main [Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi/main/Kconfig.projbuild):
+![wi-fi.png](Docs/wi-fi.png)
 
 ## Informações
 

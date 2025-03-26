@@ -1,9 +1,9 @@
 /*
  * NOME: Adenilton Ribeiro
  * DATA: 17/03/2025
- * PROJETO: Manager
+ * PROJETO: Wi-Fi Manager
  * VERSAO: 1.0.0
- * DESCRICAO: - feat: Biblioteca atualizada para Manager e conexão de internet.
+ * DESCRICAO: - feat: Biblioteca atualizada para Wi-Fi Manager e conexão de internet.
  *            - docs: ESP32 32D - ESP-IDF v5.4.0
  * LINKS:
 */
@@ -27,6 +27,7 @@ const char *EXAMPLE_ESP_WIFI_PASS = "12345678"; // Define a senha do Access Poin
 int EXAMPLE_ESP_WIFI_CHANNEL      = 1;          // Define o canal de frequência Wi-Fi que o Access Point usará. O canal 6 é comum para redes 2.4 GHz.
 int EXAMPLE_MAX_STA_CONN          = 2;          // Define o número máximo de dispositivos (estações) que podem se conectar ao Access Point simultaneamente.
 int EXAMPLE_ESP_MAXIMUM_RETRY     = 10;         // Número máximo de tentativas de conexão 
+int NUMERO_MAX_TENTATIVAS         = 0;          // 1 para abilitar ele entrar no modo AP, 0 para ESP32 só reiniciar
 
 // ========================================================================================================
 //---MAPEAMENTO DE HARDWARE---

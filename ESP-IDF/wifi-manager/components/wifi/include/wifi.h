@@ -39,6 +39,7 @@
 //---MAPEAMENTO DE ESTADO---
  
 extern int EXAMPLE_ESP_MAXIMUM_RETRY;   
+extern int NUMERO_MAX_TENTATIVAS;
 
 // ========================================================================================================
 //---MACROS---
