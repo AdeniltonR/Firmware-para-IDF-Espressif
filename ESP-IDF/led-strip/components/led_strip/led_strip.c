@@ -15,7 +15,8 @@
 
 #define RMT_TX_CHANNEL RMT_CHANNEL_0  // Canal RMT padrão para transmissão
 
-static const char *TAG = "ws2812";    // Tag para logs
+/// @brief Tag para identificação dos logs deste módulo (led-strip)
+static const char *TAG = "led-strip";  
 
 //---macro para verificação de erros---
 #define STRIP_CHECK(a, str, goto_tag, ret_value, ...)                             \
