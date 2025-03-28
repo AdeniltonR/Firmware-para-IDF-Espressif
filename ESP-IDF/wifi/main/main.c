@@ -11,6 +11,10 @@
 // ========================================================================================================
 //---BIBLIOTECAS---
 
+#include <string.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_log.h"
 #include "wifi.h"
 
 // ========================================================================================================
@@ -21,6 +25,9 @@
 
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
+
+/// @brief Tag para identificação dos logs deste módulo (main)
+static const char *TAG = "main";
 
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
@@ -38,13 +45,14 @@ void app_main(void) {
       ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
+    ESP_LOGI(TAG, "📶 ESP_WIFI_MODE_STA");
 
     //---inicializa Wi-Fi---
     wifi_init_sta();
     
     //---configura o fuso horário---
     initialize_hora();
+
     //---testa a conexão com a internet e obtém a hora---
     test_ntp_connection();
 

@@ -22,7 +22,8 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-static const char *TAG = "wifi softAP";
+/// @brief Tag para identificação dos logs deste módulo (wifi-AP)
+static const char *TAG = "wifi-AP";
 
 // ========================================================================================================
 /**
@@ -63,7 +64,7 @@ esp_err_t root_handler(httpd_req_t *req) {
  */
 esp_err_t led_on_handler(httpd_req_t *req) {
     gpio_set_level(LED_GPIO_PIN, 1);  // Liga o LED
-    ESP_LOGI(TAG, "LED ligado");
+    ESP_LOGI(TAG, "💡 LED ligado");
     httpd_resp_send(req, "LED ligado", HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
@@ -76,7 +77,7 @@ esp_err_t led_on_handler(httpd_req_t *req) {
  */
 esp_err_t led_off_handler(httpd_req_t *req) {
     gpio_set_level(LED_GPIO_PIN, 0);  // Desliga o LED
-    ESP_LOGI(TAG, "LED desligado");
+    ESP_LOGI(TAG, "🚫 LED desligado");
     httpd_resp_send(req, "LED desligado", HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
@@ -202,7 +203,7 @@ void start_webserver(void) {
         };
         httpd_register_uri_handler(server, &captive_portal_windows_uri);
 
-        ESP_LOGI(TAG, "Servidor HTTP com Captive Portal Detection iniciado");
+        ESP_LOGI(TAG, "✅ Servidor HTTP com Captive Portal Detection iniciado");
     }
 }
 
@@ -214,7 +215,7 @@ void start_dns_server(void) {
     esp_netif_t *ap_netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
 
     if (ap_netif == NULL) {
-        ESP_LOGE(TAG, "Falha ao obter a interface de rede AP");
+        ESP_LOGE(TAG, "❌ Falha ao obter a interface de rede AP");
         return;
     }
 
@@ -228,7 +229,7 @@ void start_dns_server(void) {
 
     dns_setserver(0, &dns_addr);  // Configura o servidor DNS
 
-    ESP_LOGI(TAG, "Servidor DNS iniciado");
+    ESP_LOGI(TAG, "✅ Servidor DNS iniciado");
 }
 
 // ========================================================================================================
@@ -271,7 +272,7 @@ void wifi_init_softap(void) {
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 
-    ESP_LOGI(TAG, "wifi_init_softap finalizado. SSID:%s senha:%s canal:%d",
+    ESP_LOGI(TAG, "✅ wifi_init_softap finalizado. SSID:%s senha:%s canal:%d",
              EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS, EXAMPLE_ESP_WIFI_CHANNEL);
 
     start_webserver(); // Iniciar o servidor HTTP após o Wi-Fi estar pronto

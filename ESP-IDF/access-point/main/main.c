@@ -14,7 +14,9 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
 #include "access_point.h"
+
 
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---
@@ -25,7 +27,8 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-static const char *TAG = "wifi softAP";
+/// @brief Tag para identificação dos logs deste módulo (main)
+static const char *TAG = "main";
 
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
@@ -49,7 +52,7 @@ void app_main(void)
     gpio_reset_pin(LED_GPIO_PIN);
     gpio_set_direction(LED_GPIO_PIN, GPIO_MODE_OUTPUT);
 
-    ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
+    ESP_LOGI(TAG, "📶 ESP_WIFI_MODE_AP");
 
     //---inicializa o Wi-Fi no modo Access Point---
     wifi_init_softap();  

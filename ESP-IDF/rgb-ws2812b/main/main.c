@@ -30,7 +30,9 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-static const char *TAG = "example";
+/// @brief Tag para identificação dos logs deste módulo (main)
+static const char *TAG = "main";
+
 CRGB* ws2812_buffer;
 
 // ========================================================================================================
