@@ -16,6 +16,9 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
+/// @brief Tag para identificação dos logs deste módulo (ws2812b)
+static const char *TAG = "ws2812b";
+
 //---array para mapear os bits de cor para o formato SPI---
 static const uint16_t timing_bits[16] = {
     0x1111, 0x7111, 0x1711, 0x7711, 0x1171, 0x7171, 0x1771, 0x7771,
@@ -79,9 +82,11 @@ esp_err_t ws28xx_init(int pin, led_strip_model_t model, int num_of_leds, CRGB **
     //---aloca memória para o buffer de pixels---
     ws28xx_pixels = malloc(sizeof(CRGB) * n_of_leds);
     if (ws28xx_pixels == NULL) {
+        ESP_LOGE(TAG, "❌ Falha na alocação do buffer de pixels (Memória insuficiente)");
         return ESP_ERR_NO_MEM;
     }
     *led_buffer_ptr = ws28xx_pixels;
+    ESP_LOGI(TAG, "✅ Buffer de pixels alocado com sucesso");
 
     //---configura o pino MOSI (dados) no barramento SPI---
     spi_settings.buscfg.mosi_io_num = pin;
@@ -90,23 +95,32 @@ esp_err_t ws28xx_init(int pin, led_strip_model_t model, int num_of_leds, CRGB **
     //---inicializa o barramento SPI---
     err = spi_bus_initialize(spi_settings.host, &spi_settings.buscfg, spi_settings.dma_chan);
     if (err != ESP_OK) {
+        ESP_LOGE(TAG, "❌ Falha na inicialização do SPI: %s", esp_err_to_name(err));
         free(ws28xx_pixels);
         return err;
     }
+    ESP_LOGI(TAG, "✅ Barramento SPI inicializado com sucesso");
 
     //---adiciona o dispositivo SPI ao barramento---
     err = spi_bus_add_device(spi_settings.host, &spi_settings.devcfg, &spi_settings.spi);
     if (err != ESP_OK) {
+        ESP_LOGE(TAG, "❌ Falha ao adicionar dispositivo SPI: %s", esp_err_to_name(err));
         free(ws28xx_pixels);
         return err;
     }
+    ESP_LOGI(TAG, "✅ Dispositivo SPI configurado com sucesso");
 
     //---aloca memória para o buffer DMA (deve ser memória DMA)---
     dma_buffer = heap_caps_malloc(dma_buf_size, MALLOC_CAP_DMA);
     if (dma_buffer == NULL) {
+        ESP_LOGE(TAG, "❌ Falha na alocação do buffer DMA (Memória insuficiente)");
         free(ws28xx_pixels);
         return ESP_ERR_NO_MEM;
     }
+    ESP_LOGI(TAG, "✅ Buffer DMA alocado com sucesso");
+
+    //---log de sucesso geral---
+    ESP_LOGI(TAG, "✅ Tira de LEDs inicializada com sucesso no pino GPIO %d", pin);
 
     return ESP_OK;
 }
