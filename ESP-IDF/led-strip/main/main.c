@@ -107,29 +107,29 @@ void set_rgb_leds(void) {
     //---inicializa a primeira tira de LEDs---
     strip_1 = led_strip_init(0, PIN_rgb_1, LED_NUM);
     if (strip_1 == NULL) {
-        ESP_LOGE("TAG", "❌ Falha ao inicializar tira 1 (Pino %d, %d LEDs)", PIN_rgb_1, LED_NUM);
+        ESP_LOGE(TAG, "❌ Falha ao inicializar tira 1 (Pino %d, %d LEDs)", PIN_rgb_1, LED_NUM);
         return;
     }
-    ESP_LOGI("TAG", "✅ Tira 1 inicializada - Pino: %d, LEDs: %d", PIN_rgb_1, LED_NUM);
+    ESP_LOGI(TAG, "✅ Tira 1 inicializada - Pino: %d, LEDs: %d", PIN_rgb_1, LED_NUM);
 
     //---inicializa a segunda tira de LEDs---
     strip_2 = led_strip_init(1, PIN_rgb_2, LED_NUM);
     if (strip_2 == NULL) {
-        ESP_LOGE("TAG", "❌ Falha ao inicializar tira 2 (Pino %d, %d LEDs)", PIN_rgb_2, LED_NUM);
+        ESP_LOGE(TAG, "❌ Falha ao inicializar tira 2 (Pino %d, %d LEDs)", PIN_rgb_2, LED_NUM);
         return;
     }
-    ESP_LOGI("TAG", "✅ Tira 2 inicializada - Pino: %d, LEDs: %d", PIN_rgb_2, LED_NUM);
+    ESP_LOGI(TAG, "✅ Tira 2 inicializada - Pino: %d, LEDs: %d", PIN_rgb_2, LED_NUM);
 
     //---limpa as tiras de LEDs---
     esp_err_t ret1 = strip_1->clear(strip_1, 100);
     esp_err_t ret2 = strip_2->clear(strip_2, 100);
 
     if (ret1 != ESP_OK || ret2 != ESP_OK) {
-        ESP_LOGE("TAG", "❌ Falha ao limpar tiras - Tira1: %s, Tira2: %s", 
+        ESP_LOGE(TAG, "❌ Falha ao limpar tiras - Tira1: %s, Tira2: %s", 
                 esp_err_to_name(ret1), esp_err_to_name(ret2));
         return;
     }
-    ESP_LOGI("TAG", "✅ Tiras de LEDs limpas/prontas");  
+    ESP_LOGI(TAG, "✅ Tiras de LEDs limpas/prontas");  
 
-    ESP_LOGI("TAG", "✅ Sistema de LEDs inicializado com sucesso!");
+    ESP_LOGI(TAG, "✅ Sistema de LEDs inicializado com sucesso!");
 }
