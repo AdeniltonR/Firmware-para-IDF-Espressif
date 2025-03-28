@@ -13,14 +13,13 @@
  * @brief wifi.h
  * 
  */
-#ifndef __WIFI_H__
-#define __WIFI_H__
+#ifndef WIFI_H
+#define WIFI_H
 
 // ========================================================================================================
 //---BIBLIOTECAS---
 
 #include <string.h>
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -80,9 +79,6 @@
 #define WIFI_CONNECTED_BIT BIT0  // Bit para sinalizar conexão bem-sucedida 
 #define WIFI_FAIL_BIT      BIT1  // Bit para sinalizar falha na conexão 
 
-//---tag para identificação nos logs---
-static const char *TAG = "wifi station";
-
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
 
@@ -96,4 +92,4 @@ void set_timezone(void);
 char* get_current_time(void);
 void test_ntp_connection(void);
 
-#endif // wifi.h
+#endif //wifi.h
