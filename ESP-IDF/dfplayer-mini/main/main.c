@@ -32,8 +32,11 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-//---tag para logs---
-static const char *TAG = "MAIN"; 
+//// @brief Tag para identificação dos logs deste módulo (main)
+static const char *TAG = "main";
+
+//---controle de volume---
+int DEFAULT_VOLUME = 15;
 
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO--- 
@@ -57,33 +60,31 @@ void app_main() {
 
     //---inicializa o DFPlayer Mini---
     bool ret = DF_begin(PIN_tx, PIN_rx, true, true, debug);
-    ESP_LOGI(TAG, "DF_begin=%d", ret);  // Log do resultado da inicialização
+    ESP_LOGI(TAG, "✅ DF_begin=%d", ret);  // Log do resultado da inicialização
 
     //---verifica se a inicialização foi bem-sucedida---
     if (!ret) {
-        ESP_LOGE(TAG, "DFPlayer Mini offline."); 
+        ESP_LOGE(TAG, "🔇 DFPlayer Mini offline."); 
         while (1) {
             vTaskDelay(1); 
         }
     }
-    ESP_LOGI(TAG, "DFPlayer Mini online.");  
+    ESP_LOGI(TAG, "✅ DFPlayer Mini online.");  
 
     //---define o volume (0 a 30)---
-    DF_volume(10); 
-    ESP_LOGI(TAG, "Volume definido para 10.");
+    DF_volume(DEFAULT_VOLUME); 
+    ESP_LOGI(TAG, "🔊 Volume definido para %d", DEFAULT_VOLUME);
 
     //---lê o número de músicas disponíveis no cartão SD---
     int num_musicas = DF_readFileCounts(DFPLAYER_DEVICE_SD);
     if (num_musicas > 0) {
-        ESP_LOGI(TAG, "Número de músicas no cartão SD: %d", num_musicas);  
+        ESP_LOGI(TAG, "🎵 Músicas encontradas: %d | 📂 SD Card OK", num_musicas);  
     } else {
-        ESP_LOGE(TAG, "Nenhuma música encontrada no cartão SD!");  
+        ESP_LOGE(TAG, "❌ Nenhuma música encontrada no cartão SD!");  
         return; 
     }
 
-    //---toca a segunda música---
-    DF_play(2);  
-    ESP_LOGI(TAG, "Tocando a segunda música...");
+    ESP_LOGI(TAG, "✅ Sistema inicializado com sucesso!");
 
     /*
     Espera até que a reprodução termine.
@@ -96,6 +97,10 @@ void app_main() {
     received:7E FF 6 3D 0 0 1 FE BD EF
     Number:1 Play Finished!
     */
+
+    //---toca a segunda música---
+    DF_play(1);  
+    ESP_LOGI(TAG, "▶️ Tocando a segunda música...");
 
     while (1) {
         if (DF_available()) {              // Verifica se há eventos disponíveis
@@ -126,6 +131,6 @@ void enable_dfplayer() {
 
     //---ativa o módulo (HIGH) e espera 1 segundo para estabilizar---
     gpio_set_level(PIN_en, 1);  
-    ESP_LOGI(TAG, "Enable ativado!"); 
+    ESP_LOGI(TAG, "✅ Enable ativado!"); 
     vTaskDelay(1000 / portTICK_PERIOD_MS);  
 }
