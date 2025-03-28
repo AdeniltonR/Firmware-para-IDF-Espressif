@@ -29,6 +29,9 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
+/// @brief Tag para identificação dos logs deste módulo (touch-pad)
+//static const char *TAG = "touch-pad";
+
 //---touch dependo do ambiente fica entre o valor 1000 a 1200, clicando nele abaixa para 130 a 185 então ajuste conforme o projeto---
 int touch_min = 100;
 int touch_max = 200;
@@ -51,29 +54,35 @@ void app_main() {
     //---inicializa o controlador de touch pad---
     esp_err_t ret = touch_pad_init();
     if (ret != ESP_OK) {
-        ESP_LOGE("TOUCH", "Falha ao inicializar touch pad: %s", esp_err_to_name(ret));
+        ESP_LOGE("TAG", "❌ Falha ao inicializar touch pad: %s", esp_err_to_name(ret));
         return;
     }
+    ESP_LOGI("TAG", "✅ Touch pad inicializado com sucesso");
 
     //---configura a voltagem dos touch pads---
     ret = touch_pad_set_voltage(TOUCH_HVOLT_2V7, TOUCH_LVOLT_0V5, TOUCH_HVOLT_ATTEN_1V);
     if (ret != ESP_OK) {
-        ESP_LOGE("TOUCH", "Falha ao configurar voltagem: %s", esp_err_to_name(ret));
+        ESP_LOGE("TAG", "❌ Falha ao configurar voltagem: %s", esp_err_to_name(ret));
         return;
     }
+    ESP_LOGI("TAG", "✅ Voltagem configurada: HV=2.7V, LV=0.5V");
 
     //---configura os touch pads---
     ret = touch_pad_config(TOUCH_PAD_1, 0);
     if (ret != ESP_OK) {
-        ESP_LOGE("TOUCH", "Falha ao configurar Touch Pad 1: %s", esp_err_to_name(ret));
+        ESP_LOGE("TAG", "❌ Falha ao configurar Touch Pad 1: %s", esp_err_to_name(ret));
         return;
     }
+    ESP_LOGI("TAG", "✅ Touch Pad 1 (GPIO%d) configurado", TOUCH_PAD_NUM4);
 
     ret = touch_pad_config(TOUCH_PAD_2, 0);
     if (ret != ESP_OK) {
-        ESP_LOGE("TOUCH", "Falha ao configurar Touch Pad 2: %s", esp_err_to_name(ret));
+        ESP_LOGE("TAG", "❌ Falha ao configurar Touch Pad 2: %s", esp_err_to_name(ret));
         return;
     }
+    ESP_LOGI("TAG", "✅ Touch Pad 2 (GPIO%d) configurado", TOUCH_PAD_NUM7);
+
+    ESP_LOGI("TAG", "✅ Touch pads inicializados e prontos para uso");
 
     //---cria a tarefa para leitura dos touch pads---
     xTaskCreate(touch_pad_task, "Touch_Pad_Task", 2048, NULL, 1, NULL);
@@ -112,7 +121,7 @@ void touch_pad_task(void *pvParameter) {
             if (touch_value_1 > touch_min && touch_value_1 < touch_max) {
                 if (!button_1_pressed) {
                     //---botão 1 foi tocado---
-                    ESP_LOGI("TOUCH", "Botão 1 tocado! Valor: %d", touch_value_1);
+                    ESP_LOGI("TAG", "👆 Botão 1 tocado! Valor: %d", touch_value_1);
                     button_1_pressed = true; // Atualiza o estado do botão
                 }
             } else {
@@ -120,7 +129,7 @@ void touch_pad_task(void *pvParameter) {
                 button_1_pressed = false; // Atualiza o estado do botão
             }
         } else {
-            ESP_LOGE("TOUCH", "Erro ao ler Touch Pad 1: %s", esp_err_to_name(ret1));
+            ESP_LOGE("TAG", "❌ Erro ao ler Touch Pad 1: %s", esp_err_to_name(ret1));
         }
 
         if (ret2 == ESP_OK) {
@@ -128,7 +137,7 @@ void touch_pad_task(void *pvParameter) {
             if (touch_value_2 > touch_min && touch_value_2 < touch_max) {
                 if (!button_2_pressed) {
                     //---botão 2 foi tocado---
-                    ESP_LOGI("TOUCH", "Botão 2 tocado! Valor: %d", touch_value_2);
+                    ESP_LOGI("TAG", "👆 Botão 2 tocado! Valor: %d", touch_value_2);
                     button_2_pressed = true; // Atualiza o estado do botão
                 }
             } else {
@@ -136,7 +145,7 @@ void touch_pad_task(void *pvParameter) {
                 button_2_pressed = false; // Atualiza o estado do botão
             }
         } else {
-            ESP_LOGE("TOUCH", "Erro ao ler Touch Pad 2: %s", esp_err_to_name(ret2));
+            ESP_LOGE("TAG", "❌ Erro ao ler Touch Pad 2: %s", esp_err_to_name(ret2));
         }
 
         //---aguarda 100ms antes da próxima leitura---
