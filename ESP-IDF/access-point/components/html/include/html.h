@@ -13,9 +13,9 @@
  * @brief html.h
  * 
  */
-#ifndef __HTML_H__
-#define __HTML_H__
+#ifndef HTML_H
+#define HTML_H
 
 extern const char index_html[];
 
-#endif // html.h
+#endif //html.h

@@ -13,8 +13,8 @@
  * @brief ccess_point.h
  * 
  */
-#ifndef __ACCESS_POINT_H__
-#define __ACCESS_POINT_H__
+#ifndef ACCESS_POINT_H
+#define ACCESS_POINT_H
 
 // ========================================================================================================
 // ---BIBLIOTECA---
@@ -65,4 +65,4 @@ void start_webserver(void);
 void start_dns_server(void);
 void wifi_init_softap(void);
 
-#endif // access_point.h
+#endif //access_point.h
