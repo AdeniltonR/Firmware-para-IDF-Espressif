@@ -28,6 +28,8 @@
 
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
+
+/// @brief Tag para identificação dos logs deste módulo (emonlib)
 static const char *TAG = "emonlib";
 
 //---calibration coefficients---
@@ -99,10 +101,10 @@ esp_err_t emonlib_init(double _VCAL, double _PHASECAL, double _ICAL) {
     //---inicializa a unidade ADC---
     ret = adc_oneshot_new_unit(&init_config, &adc_handle);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Falha ao inicializar a unidade ADC: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "❌ Falha ao inicializar a unidade ADC: %s", esp_err_to_name(ret));
         return ret;
     }
-    ESP_LOGI(TAG, "Unidade ADC inicializada com sucesso.");
+    ESP_LOGI(TAG, "✅ Unidade ADC inicializada com sucesso.");
 
     //---configuração do canal de tensão---
     adc_oneshot_chan_cfg_t channel_config = {
@@ -114,23 +116,23 @@ esp_err_t emonlib_init(double _VCAL, double _PHASECAL, double _ICAL) {
     if (USE_VOLTAGE_SENSOR) {
         ret = adc_oneshot_config_channel(adc_handle, PIN_tensao, &channel_config);
         if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "Falha ao configurar o canal de tensão (GPIO %d): %s", PIN_tensao, esp_err_to_name(ret));
+            ESP_LOGE(TAG, "❌ Falha ao configurar o canal de tensão (GPIO %d): %s", PIN_tensao, esp_err_to_name(ret));
             return ret;
         }
-        ESP_LOGI(TAG, "Canal de tensão (GPIO %d) configurado com sucesso.", PIN_tensao);
+        ESP_LOGI(TAG, "✅ Canal de tensão (GPIO %d) configurado com sucesso.", PIN_tensao);
     }
 
     //---configuração do canal de corrente---
     for (int i = 0; i < NUM_SENSORS; i++) {
         ret = adc_oneshot_config_channel(adc_handle, current_channels[i], &channel_config);
         if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "Falha ao configurar o canal de corrente %d (GPIO %d): %s", i, current_channels[i], esp_err_to_name(ret));
+            ESP_LOGE(TAG, "❌ Falha ao configurar o canal de corrente %d (GPIO %d): %s", i, current_channels[i], esp_err_to_name(ret));
             return ret;
         }
-        ESP_LOGI(TAG, "Canal de corrente %d (GPIO %d) configurado com sucesso.", i, current_channels[i]);
+        ESP_LOGI(TAG, "✅ Canal de corrente %d (GPIO %d) configurado com sucesso.", i, current_channels[i]);
     }
 
-    ESP_LOGI(TAG, "emonlib_init concluída com sucesso.");
+    ESP_LOGI(TAG, "✅ emonlib_init concluída com sucesso.");
     return ESP_OK;
 }
 

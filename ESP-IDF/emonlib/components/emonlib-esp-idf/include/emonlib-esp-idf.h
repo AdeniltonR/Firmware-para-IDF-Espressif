@@ -13,8 +13,8 @@
  * @brief emonlib-esp-idf.h
  * 
  */
-#ifndef __EMONLIB_ESP_IDF_H__
-#define __EMONLIB_ESP_IDF_H__
+#ifndef EMONLIB_ESP_IDF_H
+#define EMONLIB_ESP_IDF_H
 
 // ========================================================================================================
 // ---BIBLIOTECA---
@@ -58,4 +58,4 @@ unsigned long millisec();
 esp_err_t emonlib_init(double _VCAL, double _PHASECAL, double _ICAL);
 esp_err_t emonlib_calc_vi(unsigned int crossings, unsigned int timeout, emonlib_esp_idf_data_t *data);
 
-#endif // emonlib-esp-idf
+#endif // emonlib-esp-idf.h
