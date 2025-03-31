@@ -9,6 +9,7 @@
     "idf.portWin": "COM5",
     "idf.flashType": "UART",
     "files.associations": {
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "nvs_flash.h": "c"
     }
 }

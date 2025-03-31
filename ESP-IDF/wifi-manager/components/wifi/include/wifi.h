@@ -13,8 +13,8 @@
  * @brief wifi.h
  * 
  */
-#ifndef __WIFI_H__
-#define __WIFI_H__
+#ifndef WIFI_H
+#define WIFI_H
 
 // ========================================================================================================
 //---BIBLIOTECAS---
@@ -95,4 +95,4 @@ void set_timezone(void);
 char* get_current_time(void);
 void test_ntp_connection(void);
 
-#endif // wifi.h
+#endif //wifi.h

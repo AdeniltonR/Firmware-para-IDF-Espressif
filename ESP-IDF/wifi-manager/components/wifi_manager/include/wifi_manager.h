@@ -13,8 +13,8 @@
  * @brief wifi_manager.h
  * 
  */
-#ifndef __WIFI_MANAGER_H__
-#define __WIFI_MANAGER_H__
+#ifndef WIFI_MANAGER_H
+#define WIFI_MANAGER_H
 
 // ========================================================================================================
 // ---BIBLIOTECA---
@@ -42,4 +42,4 @@ void wifi_manager_cancel_timeout(void);
 void reset_AP(void);
 void reset_STA(void);
 
-#endif // wifi_manager.h
+#endif //wifi_manager.h

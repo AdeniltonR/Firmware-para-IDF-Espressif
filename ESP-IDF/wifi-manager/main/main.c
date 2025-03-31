@@ -15,6 +15,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"  
+#include "esp_log.h"
 #include "access_point.h"
 #include "wifi_manager.h"
 #include "wifi.h"
@@ -37,8 +38,8 @@ int NUMERO_MAX_TENTATIVAS         = 0;          // 1 para abilitar ele entrar no
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-//---tag para identificação nos logs---
-static const char *TAG_MAIN = "Main";
+/// @brief Tag para identificação dos logs deste módulo (main)
+static const char *TAG = "main";
 //---variável para travar botão---
 volatile bool ap_started = false; 
 
@@ -79,7 +80,7 @@ void app_main(void) {
  * @param pvParameter Parâmetro da tarefa (não utilizado)
  */
 void check_button_task(void *pvParameter) {
-    ESP_LOGI(TAG_MAIN, "Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
+    ESP_LOGI(TAG, "✅ Tarefa do botão iniciada. Estado inicial de ap_started: %d", ap_started);
 
     while (1) {
         //---verifica o uso da pilha---
@@ -89,14 +90,14 @@ void check_button_task(void *pvParameter) {
         //---verifica se o botão foi pressionado---
         if (gpio_get_level(PIN_start_ap) == 0) {
             if (!ap_started) {
-                ESP_LOGI(TAG_MAIN, "Botão pressionado! Iniciando modo Access Point...");
+                ESP_LOGI(TAG, "Botão pressionado! Iniciando modo Access Point...");
 
                 //---reiniciando em modo AP---
                 reset_AP();
 
                 ap_started = true;
             } else {
-                ESP_LOGI(TAG_MAIN, "Access Point já está ativo.");
+                ESP_LOGI(TAG, "Access Point já está ativo.");
             }
             //---debounce---
             vTaskDelay(500 / portTICK_PERIOD_MS);

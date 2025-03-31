@@ -16,8 +16,8 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-//---tag para identificação nos logs---
-static const char *TAG_MG = "wifi_manager";
+/// @brief Tag para identificação dos logs deste módulo (wifi-manager)
+static const char *TAG = "wifi-manager";
 //---variáveis globais para gerenciar o timeout---
 static TaskHandle_t timeout_task_handle = NULL;  // Handle da tarefa de timeout
 //---flag para controlar o timeout---
@@ -49,11 +49,11 @@ void init_manager(void) {
 
     //---inicia no modo correspondente---
     if (mode == WIFI_MODE_AP) {
-        ESP_LOGI(TAG_MG, "Iniciando no modo Access Point...");
+        ESP_LOGI(TAG, "🔄  Iniciando no modo Access Point...");
         //---iniciando AP---
         wifi_init_softap();
     } else if (mode == WIFI_MODE_STA) {
-        ESP_LOGI(TAG_MG, "Iniciando no modo Station...");
+        ESP_LOGI(TAG, "🔄  Iniciando no modo Station...");
         //---cancela o timeout---
         wifi_manager_cancel_timeout();
         //---iniciando STA---
@@ -63,7 +63,7 @@ void init_manager(void) {
         //---testa a conexão com a internet e obtém a hora---
         test_ntp_connection();
     } else {
-        ESP_LOGI(TAG_MG, "Modo Wi-Fi desconhecido. Iniciando no modo padrão (AP).");
+        ESP_LOGI(TAG, "⚠️  Modo Wi-Fi desconhecido. Iniciando no modo padrão (AP).");
         //---iniciando AP---
         wifi_init_softap();
     }
@@ -105,14 +105,14 @@ esp_err_t wifi_manager_set_mode(wifi_mode_t mode) {
     //---abre a partição NVS no modo de leitura e escrita---
     err = nvs_open("storage", NVS_READWRITE, &nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao abrir a NVS: %s", esp_err_to_name(err));
         return err;
     }
 
     //---salva o modo na NVS---
     err = nvs_set_i32(nvs_handle, "wifi_mode", (int32_t)mode);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao salvar o modo na NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao salvar o modo na NVS: %s", esp_err_to_name(err));
         nvs_close(nvs_handle);
         return err;
     }
@@ -120,13 +120,13 @@ esp_err_t wifi_manager_set_mode(wifi_mode_t mode) {
     //---confirma as alterações na NVS---
     err = nvs_commit(nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao confirmar as alterações na NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao confirmar as alterações na NVS: %s", esp_err_to_name(err));
     }
 
     //---fecha a NVS---
     nvs_close(nvs_handle);
 
-    ESP_LOGI(TAG_MG, "Modo Wi-Fi salvo na NVS: %u", mode);
+    ESP_LOGI(TAG, "💾 Modo Wi-Fi salvo na NVS: %u", mode);
     return ESP_OK;
 }
 
@@ -145,7 +145,7 @@ wifi_mode_t wifi_manager_get_mode(void) {
     //---abre a partição NVS no modo de leitura---
     err = nvs_open("storage", NVS_READONLY, &nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao abrir a NVS: %s", esp_err_to_name(err));
         return WIFI_MODE_AP; // Modo padrão (AP)
     }
 
@@ -153,17 +153,17 @@ wifi_mode_t wifi_manager_get_mode(void) {
     int32_t mode = WIFI_MODE_AP; // Valor padrão
     err = nvs_get_i32(nvs_handle, "wifi_mode", &mode);
     if (err == ESP_ERR_NVS_NOT_FOUND) {
-        ESP_LOGW(TAG_MG, "Chave 'wifi_mode' não encontrada na NVS. Usando valor padrão (AP).");
+        ESP_LOGW(TAG, "⚠️  Chave 'wifi_mode' não encontrada na NVS. Usando valor padrão (AP).");
         mode = WIFI_MODE_AP;  // Define o valor padrão
     } else if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao recuperar o modo da NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao recuperar o modo da NVS: %s", esp_err_to_name(err));
     }
 
     //---fecha a NVS---
     nvs_close(nvs_handle);
 
     //---usa PRId32 para formatar int32_t corretamente---
-    ESP_LOGI(TAG_MG, "Modo Wi-Fi recuperado da NVS: %" PRId32, mode);
+    ESP_LOGI(TAG, "💾 Modo Wi-Fi recuperado da NVS: %" PRId32, mode);
     
     return (wifi_mode_t)mode;
 }
@@ -181,7 +181,7 @@ void wifi_manager_show_saved_credentials(void) {
     //---abre a partição NVS no modo de leitura---
     err = nvs_open("storage", NVS_READONLY, &nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao abrir a NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao abrir a NVS: %s", esp_err_to_name(err));
         return;
     }
 
@@ -189,12 +189,12 @@ void wifi_manager_show_saved_credentials(void) {
     int32_t mode = WIFI_MODE_AP; // Valor padrão
     err = nvs_get_i32(nvs_handle, "wifi_mode", &mode);
     if (err == ESP_ERR_NVS_NOT_FOUND) {
-        ESP_LOGW(TAG_MG, "Chave 'wifi_mode' não encontrada na NVS. Usando valor padrão (AP).");
+        ESP_LOGW(TAG, "⚠️  Chave 'wifi_mode' não encontrada na NVS. Usando valor padrão (AP).");
         mode = WIFI_MODE_AP;  // Define o valor padrão
     } else if (err != ESP_OK) {
-        ESP_LOGE(TAG_MG, "Erro ao recuperar o modo da NVS: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "❌ Erro ao recuperar o modo da NVS: %s", esp_err_to_name(err));
     } else {
-        ESP_LOGI(TAG_MG, "Modo Wi-Fi salvo: %s", (mode == WIFI_MODE_AP) ? "AP" : "STA");
+        ESP_LOGI(TAG, "💾 Modo Wi-Fi salvo: %s", (mode == WIFI_MODE_AP) ? "AP" : "STA");
     }
 
     //---fecha a NVS---
@@ -215,18 +215,18 @@ void wifi_manager_show_saved_credentials(void) {
 static void timeout_task(void *pvParameter) {
     int timeout_seconds = (int)pvParameter;
 
-    ESP_LOGW(TAG_MG, "Iniciando timeout de %d segundos...", timeout_seconds);
+    ESP_LOGI(TAG, "🕓 Iniciando timeout de %d segundos...", timeout_seconds);
 
     //---aguarda o tempo limite---
     for (int i = timeout_seconds; i > 0; i--) {
         if (!timeout_active) {
-            ESP_LOGW(TAG_MG, "Timeout cancelado.");
+            ESP_LOGI(TAG, "🕓 Timeout cancelado.");
             vTaskDelete(NULL);  // Encerra a tarefa
         }
 
         //---exibe uma mensagem a cada 20 segundos---
         if (i % 20 == 0) {
-            ESP_LOGW(TAG_MG, "Tempo restante para reiniciar: %d segundos", i);
+            ESP_LOGI(TAG, "🕓 Tempo restante para reiniciar: %d segundos", i);
         }
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);  // Aguarda 1 segundo
@@ -234,7 +234,7 @@ static void timeout_task(void *pvParameter) {
 
     //---se o timeout expirar, reinicia o ESP32---
     if (timeout_active) {
-        ESP_LOGW(TAG_MG, "Timeout atingido. Reiniciando o ESP32...");
+        ESP_LOGW(TAG, "⚠️  Timeout atingido. Reiniciando o ESP32...");
         esp_restart();
     }
 }
@@ -249,13 +249,13 @@ static void timeout_task(void *pvParameter) {
  */
 void wifi_manager_start_timeout(int timeout_seconds) {
     if (timeout_task_handle != NULL) {
-        ESP_LOGW(TAG_MG, "Timeout já está ativo.");
+        ESP_LOGI(TAG, "✅ Timeout já está ativo.");
         return;
     }
 
     timeout_active = true;
     xTaskCreate(&timeout_task, "timeout_task", 4096, (void *)timeout_seconds, 5, &timeout_task_handle);
-    ESP_LOGW(TAG_MG, "Timeout iniciado com sucesso.");
+    ESP_LOGI(TAG, "✅ Timeout iniciado com sucesso.");
     vTaskDelay(1000 / portTICK_PERIOD_MS); 
 }
 
@@ -267,7 +267,7 @@ void wifi_manager_start_timeout(int timeout_seconds) {
  */
 void wifi_manager_cancel_timeout(void) {
     if (timeout_task_handle == NULL) {
-        ESP_LOGW(TAG_MG, "Nenhum timeout ativo para cancelar.");
+        ESP_LOGI(TAG, "❌ Nenhum timeout ativo para cancelar.");
         return;
     }
 
@@ -275,7 +275,7 @@ void wifi_manager_cancel_timeout(void) {
     //---encerra a tarefa de timeout---
     vTaskDelete(timeout_task_handle);  
     timeout_task_handle = NULL;
-    ESP_LOGW(TAG_MG, "Timeout cancelado com sucesso.");
+    ESP_LOGI(TAG, "✅ Timeout cancelado com sucesso.");
 }
 
 // ========================================================================================================
@@ -286,12 +286,12 @@ void wifi_manager_cancel_timeout(void) {
 void reset_AP(void) {
     //---salva o modo Wi-Fi na NVS (por exemplo, modo AP)---
     wifi_manager_set_mode(WIFI_MODE_AP);
-    ESP_LOGI(TAG_MG, "Modo AP iniciado e estado salvo na NVS.");
+    ESP_LOGI(TAG, "💾 Modo AP iniciado e estado salvo na NVS.");
 
     vTaskDelay(1000 / portTICK_PERIOD_MS); 
 
     //---reinicia o ESP32---
-    ESP_LOGW(TAG_MG, "Reiniciando o ESP32...");
+    ESP_LOGW(TAG, "⚠️  Reiniciando o ESP32...");
     esp_restart();
 }
 
@@ -303,11 +303,11 @@ void reset_AP(void) {
 void reset_STA(void) {
     //---salva o modo Wi-Fi na NVS (por exemplo, modo STA)---
     wifi_manager_set_mode(WIFI_MODE_STA);
-    ESP_LOGI(TAG_MG, "Modo STA iniciado e estado salvo na NVS.");
+    ESP_LOGI(TAG, "✅ Modo STA iniciado e estado salvo na NVS.");
 
     vTaskDelay(1000 / portTICK_PERIOD_MS); 
 
     //---reinicia o ESP32---
-    ESP_LOGW(TAG_MG, "Reiniciando o ESP32...");
+    ESP_LOGW(TAG, "⚠️  Reiniciando o ESP32...");
     esp_restart();
 }

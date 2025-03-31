@@ -16,8 +16,8 @@
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
 
-//---tag para identificação nos logs---
-static const char *TAG_STA = "wifi station";
+/// @brief Tag para identificação dos logs deste módulo (wifi-station)
+static const char *TAG = "wifi-station";
 //---grupo de eventos do FreeRTOS para sinalizar quando estamos conectados---
 static EventGroupHandle_t s_wifi_event_group;
 //---número de tentativas de reconexão---
@@ -45,11 +45,11 @@ void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, voi
         if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
             esp_wifi_connect();
             s_retry_num++;
-            ESP_LOGI(TAG_STA, "tentando reconectar ao AP");
+            ESP_LOGI(TAG, "🔄  tentando reconectar ao AP");
         } else {
             //---se exceder o número máximo de tentativas, sinaliza falha---
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-            ESP_LOGW(TAG_STA, "Número máximo de tentativas excedido. Reiniciando o ESP32...");
+            ESP_LOGW(TAG, "🚫 Número máximo de tentativas excedido. Reiniciando o ESP32...");
             
             //---1 para abilitar ele entrar no modo AP, 0 para ESP32 só reiniciar---
             if (NUMERO_MAX_TENTATIVAS) {
@@ -57,16 +57,16 @@ void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, voi
                 reset_AP();
             } else {
                 //---reinicia o ESP32---
-                ESP_LOGW(TAG_MG, "Reiniciando o ESP32...");
+                ESP_LOGW(TAG, "⚠️  Reiniciando o ESP32...");
                 esp_restart();
             }
         }
-        ESP_LOGI(TAG_STA, "falha ao conectar ao AP");
+        ESP_LOGI(TAG, "❌ falha ao conectar ao AP");
     } 
     //---se o evento for de obtenção de IP (IP_EVENT_STA_GOT_IP), sinaliza sucesso---
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        ESP_LOGI(TAG_STA, "obteve ip:" IPSTR, IP2STR(&event->ip_info.ip));
+        ESP_LOGI(TAG, "obteve ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
     }
@@ -85,14 +85,14 @@ void wifi_init_sta(void) {
 
     //---recupera as credenciais da NVS---
     if (load_wifi_credentials(ssid, sizeof(ssid), password, sizeof(password)) != ESP_OK) {
-        ESP_LOGE(TAG_STA, "Falha ao carregar credenciais da NVS. Usando valores padrão.");
+        ESP_LOGE(TAG, "❌ Falha ao carregar credenciais da NVS. Usando valores padrão.");
         strncpy(ssid, EXAMPLE_ESP_WIFI_SSID, sizeof(ssid));  
         strncpy(password, EXAMPLE_ESP_WIFI_PASS, sizeof(password));
     }
 
     //---erifica se as credenciais são válidas---
     if (strlen(ssid) == 0 || strlen(password) == 0) {
-        ESP_LOGW(TAG_STA, "Credenciais Wi-Fi inválidas! SSID ou senha estão vazios.");
+        ESP_LOGW(TAG, "⚠️  Credenciais Wi-Fi inválidas! SSID ou senha estão vazios.");
         //---reiniciando em modo STA---
         reset_STA();
 
@@ -147,25 +147,25 @@ void wifi_init_sta(void) {
     //---define o modo Wi-Fi como estação (STA)---
     esp_err_t ret = esp_wifi_set_mode(WIFI_MODE_STA);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG_STA, "Erro ao definir o modo Wi-Fi: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "❌ Erro ao definir o modo Wi-Fi: %s", esp_err_to_name(ret));
         return;
     }
 
     //---aplica a configuração Wi-Fi---
     ret = esp_wifi_set_config(WIFI_IF_STA, &wifi_config);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG_STA, "Erro ao aplicar a configuração Wi-Fi: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "❌ Erro ao aplicar a configuração Wi-Fi: %s", esp_err_to_name(ret));
         return;
     }
 
     //---inicia o Wi-Fi---
     ret = esp_wifi_start();
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG_STA, "Erro ao iniciar o Wi-Fi: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "❌ Erro ao iniciar o Wi-Fi: %s", esp_err_to_name(ret));
         return;
     }
 
-    ESP_LOGI(TAG_STA, "wifi_init_sta finalizado.");
+    ESP_LOGI(TAG, "✅ wifi_init_sta finalizado.");
 
     //---aguarda até que a conexão seja estabelecida (WIFI_CONNECTED_BIT) ou falhe após o número máximo de tentativas (WIFI_FAIL_BIT)---
     EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
@@ -176,11 +176,11 @@ void wifi_init_sta(void) {
 
     //---verifica qual evento ocorreu---
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG_STA, "Conectado ao AP SSID:%s senha:%s", ssid, password);
+        ESP_LOGI(TAG, "📶 Conectado ao AP SSID:%s senha:%s", ssid, password);
     } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG_STA, "Falha ao conectar ao SSID:%s, senha:%s", ssid, password);
+        ESP_LOGI(TAG, "❌ Falha ao conectar ao SSID:%s, senha:%s", ssid, password);
     } else {
-        ESP_LOGE(TAG_STA, "EVENTO INESPERADO");
+        ESP_LOGE(TAG, "🌐 EVENTO INESPERADO");
     }
 }
 
@@ -203,7 +203,7 @@ void initialize_hora(void) {
  * @note O servidor utilizado é "pool.ntp.org".
  */
 void initialize_sntp(void) {
-    ESP_LOGI(TAG_STA, "Inicializando SNTP...");
+    ESP_LOGI(TAG, "🔄 Inicializando SNTP...");
     esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     esp_sntp_setservername(0, "pool.ntp.org");
     esp_sntp_init();
@@ -239,7 +239,7 @@ char* get_current_time(void) {
 
     //---verifica se o tempo foi sincronizado---
     if (timeinfo.tm_year < (2024 - 1900)) {
-        ESP_LOGE(TAG_STA, "Tempo não sincronizado. Verifique a conexão com a internet.");
+        ESP_LOGE(TAG, "🌐 Tempo não sincronizado. Verifique a conexão com a internet.");
         strcpy(time_str, "Tempo não disponível");
         return time_str;
     }
@@ -256,19 +256,19 @@ char* get_current_time(void) {
  * @note Aguarda a sincronização do tempo antes de exibir a hora.
  */
 void test_ntp_connection(void) {
-    ESP_LOGI(TAG_STA, "Aguardando sincronização do tempo...");
+    ESP_LOGI(TAG, "🔄 Aguardando sincronização do tempo...");
     int retry = 0;
     const int retry_count = 10;
     
     //---aguarda a sincronização do tempo, com limite de tentativas---
     while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
-        ESP_LOGI(TAG_STA, "Aguardando... (%d/%d)", retry, retry_count);
+        ESP_LOGI(TAG, "🔄 Aguardando... (%d/%d)", retry, retry_count);
         vTaskDelay(2000 / portTICK_PERIOD_MS);  // Aguarda 2 segundos
     }
 
     //---obtém a hora atual---
     char *current_time = get_current_time();
-    ESP_LOGI(TAG_STA, "Hora atual: %s", current_time);
+    ESP_LOGI(TAG, "🕒 Hora atual: %s", current_time);
 
     //---libera a memória alocada para a string de tempo---
     free(current_time);
