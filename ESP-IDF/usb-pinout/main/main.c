@@ -1,7 +1,7 @@
 /*
  * NOME: Nome
  * DATA: 01/04/2025
- * PROJETO: USB
+ * PROJETO: UART
  * VERSAO: 1.0.0
  * DESCRICAO: - feat: Comunição uart usano pinos.
  *            - docs: ESP32-S3 - ESP-IDF v5.4.0
@@ -16,7 +16,7 @@
 #include "freertos/task.h"
 #include "esp_system.h"
 #include "esp_log.h"
-#include "usb.h"
+#include "uart.h"
 
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---

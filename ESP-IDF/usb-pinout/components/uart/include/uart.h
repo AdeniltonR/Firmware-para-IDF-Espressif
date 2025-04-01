@@ -1,7 +1,7 @@
 /*
  * NOME: Nome
  * DATA: 01/04/2025
- * PROJETO: USB
+ * PROJETO: UART
  * VERSAO: 1.0.0
  * DESCRICAO: - feat: Comunição uart usano pinos.
  *            - docs: ESP32-S3 - ESP-IDF v5.4.0
@@ -10,11 +10,11 @@
 
 // ========================================================================================================
 /**
- * @brief usb.h
+ * @brief uart.h
  * 
  */
-#ifndef  USB_H
-#define  USB_H
+#ifndef  UART_H
+#define  UART_H
 
 // ========================================================================================================
 // ---BIBLIOTECA---
@@ -48,4 +48,4 @@ int uart_send_data(const char* logName, const char* data);
 void tx_task(void *arg);
 void rx_task(void *arg);
 
-#endif //usb.h
+#endif //uart.h
