@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/CMakeFiles/bootloader
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/CMakeFiles/bootloader.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/CMakeFiles/bootloader-complete.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/Users/adenilton.ribeiro/Documents/Espressif/pessoal/Firmware-para-IDF-Espressif/ESP-IDF/usb/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
