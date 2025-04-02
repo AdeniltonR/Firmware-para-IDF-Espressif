@@ -19,6 +19,7 @@
     - [DFPlayer Mini](#dfplayer-mini)
     - [Touch Pad](#touch-pad)
     - [Led Strip](#led-strip)
+    - [UART Pinout](#uart-pinout)
 
 ## Histórico de Versão
 
@@ -33,6 +34,7 @@
 | 1.0.0  | 19/03/2025 | Adenilton R  | DFPlayer Mini           |
 | 1.0.0  | 19/03/2025 | Adenilton R  | Touch Pad               |
 | 1.0.0  | 20/03/2025 | Adenilton R  | Led Strip               |
+| 1.0.0  | 01/04/2025 | Adenilton R  | UART Pinout             |
 
 ---
 
@@ -151,3 +153,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/led-strip) a seguir.
 
 ![Led-strip.png](Docs/Led-strip.png)
+
+### UART Pinout
+
+Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
+
+![Led-strip.png](Docs/uart.png)
