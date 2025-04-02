@@ -70,13 +70,13 @@ Implementar uma comunicação UART robusta entre dispositivos ESP32 com:
 
 ## Bibliotecas
 
-[main.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/uart-pinout/main/main.c)
 
-[uart.c]()
+[uart.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/uart-pinout/components/uart/uart.c)
 
-[uart.h]()
+[uart.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/uart-pinout/components/uart/include/uart.h)
 
-[CMakeLists.txt]()
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/uart-pinout/components/uart/CMakeLists.txt)
 
 ## Configuração do Firmware
 

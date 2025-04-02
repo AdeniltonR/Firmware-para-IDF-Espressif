@@ -156,6 +156,6 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 ### UART Pinout
 
-Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/uart-pinout) a seguir.
 
 ![Led-strip.png](Docs/uart.png)
