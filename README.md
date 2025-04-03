@@ -20,6 +20,7 @@
     - [Touch Pad](#touch-pad)
     - [Led Strip](#led-strip)
     - [UART Pinout](#uart-pinout)
+    - [Servo Motor](#servo-motor)
 
 ## Histórico de Versão
 
@@ -35,6 +36,7 @@
 | 1.0.0  | 19/03/2025 | Adenilton R  | Touch Pad               |
 | 1.0.0  | 20/03/2025 | Adenilton R  | Led Strip               |
 | 1.0.0  | 01/04/2025 | Adenilton R  | UART Pinout             |
+| 1.0.0  | 03/04/2025 | Adenilton R  | Servo Motor             |
 
 ---
 
@@ -159,3 +161,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/uart-pinout) a seguir.
 
 ![Led-strip.png](Docs/uart.png)
+
+### Servo Motor
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://www.notion.so/Projeto-Servo-Motor-1cacbcaa7ba980929bafd6cad6a9fb8a?pvs=21) a seguir.
+
+![Servo_motor.png](Docs/Servo_motor.png)
