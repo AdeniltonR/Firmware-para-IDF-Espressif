@@ -1,5 +1,5 @@
 /*
- * NOME: Nome
+ * NOME: Adenilton Ribeiro
  * DATA: 01/04/2025
  * PROJETO: UART
  * VERSAO: 1.0.0

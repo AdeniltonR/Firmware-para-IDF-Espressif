@@ -164,6 +164,6 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 ### Servo Motor
 
-Para obter mais informações sobre o projeto, clique no [**link**](https://www.notion.so/Projeto-Servo-Motor-1cacbcaa7ba980929bafd6cad6a9fb8a?pvs=21) a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/servo-motor) a seguir.
 
 ![Servo_motor.png](Docs/Servo_motor.png)

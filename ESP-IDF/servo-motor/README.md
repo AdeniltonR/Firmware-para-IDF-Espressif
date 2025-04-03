@@ -91,13 +91,13 @@ GPIO_NUM_21
 
 ## Bibliotecas
 
-[main.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/servo-motor/main/main.c)
 
-[servo_motor.c]()
+[servo_motor.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/servo-motor/components/servo_motor/servo_motor.c)
 
-[servo_motor.h]()
+[servo_motor.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/servo-motor/components/servo_motor/include/servo_motor.h)
 
-[CMakeLists.txt]()
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/servo-motor/components/servo_motor/CMakeLists.txt)
 
 ## Configuração do Firmware
 
