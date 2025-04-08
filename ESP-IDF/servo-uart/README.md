@@ -101,13 +101,13 @@ GPIO_NUM_21
 
 ## Bibliotecas
 
-[main.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/servo-uart/main/main.c)
 
-[components]()
+[components](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/servo-uart/components)
 
-[task]()
+[task](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/servo-uart/main/task)
 
-[CMakeLists.txt]()
+[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/servo-uart/main/CMakeLists.txt)
 
 ## Configuração do Firmware
 
