@@ -21,6 +21,7 @@
     - [Led Strip](#led-strip)
     - [UART Pinout](#uart-pinout)
     - [Servo Motor](#servo-motor)
+    - [Servo UART](#servo-uart)
 
 ## Histórico de Versão
 
@@ -37,6 +38,7 @@
 | 1.0.0  | 20/03/2025 | Adenilton R  | Led Strip               |
 | 1.0.0  | 01/04/2025 | Adenilton R  | UART Pinout             |
 | 1.0.0  | 03/04/2025 | Adenilton R  | Servo Motor             |
+| 1.0.0  | 03/04/2025 | Adenilton R  | Servo UART              |
 
 ---
 
@@ -167,3 +169,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/servo-motor) a seguir.
 
 ![Servo_motor.png](Docs/Servo_motor.png)
+
+### Servo UART
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/servo-motor) a seguir.
+
+![Servo_motor.png](Docs/servo_uart.png)
