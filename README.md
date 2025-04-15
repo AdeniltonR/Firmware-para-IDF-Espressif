@@ -21,7 +21,7 @@
     - [Led Strip](#led-strip)
     - [UART Pinout](#uart-pinout)
     - [Servo Motor](#servo-motor)
-    - [Servo UART](#servo-uart)
+    - [Controle de Velocidad](#controle-de-velocidad)
 
 ## Histórico de Versão
 
@@ -39,6 +39,7 @@
 | 1.0.0  | 01/04/2025 | Adenilton R  | UART Pinout             |
 | 1.0.0  | 03/04/2025 | Adenilton R  | Servo Motor             |
 | 1.0.0  | 03/04/2025 | Adenilton R  | Servo UART              |
+| 1.0.0  | 15/04/2025 | Adenilton R  | Controle de Velocidade  |
 
 ---
 
@@ -175,3 +176,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/servo-uart) a seguir.
 
 ![Servo_motor.png](Docs/servo_uart.png)
+
+### Controle de Velocidade
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/calculo-velocidade) a seguir.
+
+![Controle_velocidade.png](Docs/Controle_velocidade.png)

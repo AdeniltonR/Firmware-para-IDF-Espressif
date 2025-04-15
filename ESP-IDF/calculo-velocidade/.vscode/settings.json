@@ -10,6 +10,12 @@
     "files.associations": {
         "stdbool.h": "c",
         "calculo_velocidade.h": "c",
-        "task.h": "c"
-    }
+        "task.h": "c",
+        "random": "c",
+        "gpio.h": "c",
+        "freertos.h": "c",
+        "stdio.h": "c"
+    },
+    "idf.portWin": "COM9",
+    "idf.flashType": "UART"
 }
