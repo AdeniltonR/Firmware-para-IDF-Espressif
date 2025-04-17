@@ -14,6 +14,7 @@
 - [Pinos do projeto eletrônico](#pinos-do-projeto-eletrônico)
 - [Bibliotecas](#bibliotecas)
 - [Configuração do Firmware](#configuração-do-firmware)
+- [Configuração do Ambiente](#configuração-do-ambiente)
 - [Informações](#informações)
 
 
@@ -64,11 +65,11 @@ Sistema completo para monitoramento remoto de equipamentos industriais, composto
 
 ## Bibliotecas
 
-[main.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/comunicacao-api/main/main.c)
 
-[Kconfig.projbuild]()
+[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/comunicacao-api/main/Kconfig.projbuild)
 
-[components]()
+[components](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/comunicacao-api/components)
 
 ## Configuração do Firmware
 
@@ -116,7 +117,7 @@ components/
     - Pressione o botão GPIO0 por 1 segundo
     - Útil para reconfiguração
 
-Importande adicionar o arquivo dentro da pasta main [Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/main/Kconfig.projbuild):
+Importande adicionar o arquivo dentro da pasta main [Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/comunicacao-api/main/Kconfig.projbuild):
 
 Página web:
 
@@ -156,6 +157,8 @@ pip install flask flask-cors
 ```bash
 python api.py
 ```
+
+Exemplo do [**código python**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/comunicacao-api/api.py):
 
 **Testes com URL, abra terminal na raiz do seu api.py e execute o comando, pode mudar o localhost por http://172.17.57.14**
 
