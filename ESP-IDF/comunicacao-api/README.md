@@ -64,33 +64,11 @@ Sistema completo para monitoramento remoto de equipamentos industriais, composto
 
 ## Bibliotecas
 
-[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/main/main.c)
+[main.c]()
 
-[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/main/Kconfig.projbuild)
+[Kconfig.projbuild]()
 
-[wifi.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi/wifi.c)
-
-[wifi.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi/include/wifi.h)
-
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi/CMakeLists.txt)
-
-[wifi_manager.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi_manager/wifi_manager.c)
-
-[wifi_manager.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi_manager/include/wifi_manager.h)
-
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/wifi_manager/CMakeLists.txt)
-
-[access_point.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/access_point/access_point.c)
-
-[access_point.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/access_point/include/access_point.h)
-
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/access_point/CMakeLists.txt)
-
-[html.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/html/html.c)
-
-[html.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/html/include/html.h)
-
-[CMakeLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/wifi-manager/components/html/CMakeLists.txt)
+[components]()
 
 ## Configuração do Firmware
 
@@ -179,7 +157,7 @@ pip install flask flask-cors
 python api.py
 ```
 
-**Testes com cURL, abra terminal na raiz do seu api.py e execute o comando, pode mudar o localhost por http://172.17.57.14**
+**Testes com URL, abra terminal na raiz do seu api.py e execute o comando, pode mudar o localhost por http://172.17.57.14**
 
 ```bash
 curl -X POST http://localhost:5000/api/device \
