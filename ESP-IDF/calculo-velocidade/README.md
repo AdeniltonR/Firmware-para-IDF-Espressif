@@ -30,7 +30,7 @@
 Este projeto implementa um **sistema de medição de velocidade linear** usando encoder óptico de 200 PPR acoplado a uma polia de 160mm de diâmetro.
 
 **Principais características:**
-- Cálculo em tempo real de velocidade (m/s e km/h)
+- Cálculo em tempo real de velocidade (m/s, m/min e km/h)
 - Medição de distância percorrida (mm, cm, m)
 - Filtro de média móvel para suavização de dados
 - Tratamento de interrupções de alta performance (IRAM)

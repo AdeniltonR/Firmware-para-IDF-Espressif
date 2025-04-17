@@ -127,6 +127,17 @@ float velocity_calculate_kmph(uint32_t update_interval_ms) {
 
 // ========================================================================================================
 /**
+ * @brief Calcula a velocidade atual em metros por minuto
+ * @param update_interval_ms Intervalo de tempo para cálculo
+ * @return Velocidade atual em m/min
+ */
+float velocity_calculate_mpm(uint32_t update_interval_ms) {
+    // Converte m/s para m/min (multiplicando por 60)
+    return velocity_calculate_mps(update_interval_ms) * 60.0f;
+}
+
+// ========================================================================================================
+/**
  * @brief Calcula a velocidade suavizada usando média móvel
  * @param window_size Número de amostras para média (máximo MAX_SAMPLES)
  * @return Velocidade suavizada em m/s

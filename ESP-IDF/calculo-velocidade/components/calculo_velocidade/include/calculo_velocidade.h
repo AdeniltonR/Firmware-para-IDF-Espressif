@@ -43,6 +43,7 @@ void velocity_reset_pulses(void);
 //---cálculo de velocidade---
 float velocity_calculate_mps(uint32_t update_interval_ms);
 float velocity_calculate_kmph(uint32_t update_interval_ms);
+float velocity_calculate_mpm(uint32_t update_interval_ms);
 float velocity_get_smoothed_mps(uint32_t window_size);
 bool velocity_is_stopped(float threshold);
 //---cálculo de distância---

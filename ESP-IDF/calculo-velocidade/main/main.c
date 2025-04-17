@@ -19,6 +19,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
+#include "esp_log.h"
 #include "calculo_velocidade.h"
 
 // ========================================================================================================
@@ -35,6 +36,9 @@
 
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
+
+/// @brief Tag para identificação dos logs deste módulo (main)
+static const char* TAG = "main";
 
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
@@ -95,18 +99,16 @@ void IRAM_ATTR encoder_isr_handler(void* arg) {
  */
 void velocity_task(void *pvParameters) {
     while(1) {
-        // Cálculos
+        //---cálculos---
         float speed_mps = velocity_calculate_mps(UPDATE_INTERVAL_MS);
-        float speed_kmph = velocity_calculate_kmph(UPDATE_INTERVAL_MS);
+        float speed_mpm = speed_mps * 60.0f;
+        float speed_kmph = speed_mps * 3.6f;
         float distance_m = velocity_get_distance_meters();
         float mm_per_pulse = velocity_get_mm_per_pulse();
         
-        // Exibição
-        printf("\n--- Dados do Encoder ---\n");
-        printf("Velocidade: %.2f m/s (%.1f km/h)\n", speed_mps, speed_kmph);
-        printf("Distância: %.3f metros\n", distance_m);
-        printf("Resolução: %.4f mm/pulso\n", mm_per_pulse);
-        printf("Pulsos totais: %"PRIu32"\n", velocity_get_raw_pulses());
+        //---exibição---
+        ESP_LOGI(TAG, "🅱️  Velocidade: (%.2f m/s) (%.1f m/min) (%.1f km/h) | Distância: %.3f m | Resolução: %.4f mm/pulso | Pulsos: %"PRIu32,
+                speed_mps, speed_mpm, speed_kmph, distance_m, mm_per_pulse, velocity_get_raw_pulses());
         
         vTaskDelay(pdMS_TO_TICKS(UPDATE_INTERVAL_MS));
     }
