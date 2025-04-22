@@ -29,6 +29,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime
 import time
+from datetime import datetime
+import pytz
+
 
 app = Flask(__name__)
 CORS(app)  # Isso permite acesso público à API (apenas para desenvolvimento)
@@ -64,8 +67,13 @@ def receive_device_data():
             return jsonify({"error": "Velocidade deve ser um número"}), 400
         
         # Adiciona timestamp aos dados recebidos
-        data['timestamp'] = datetime.now().isoformat()
-        
+        #data['timestamp'] = datetime.now().isoformat()
+        #data['timestamp'] = datetime.now().strftime("%H:%M %d/%m/%Y")
+
+        # Adiciona timestamp com horário de Brasília
+        br_tz = pytz.timezone("America/Sao_Paulo")
+        data['timestamp'] = datetime.now(br_tz).strftime("%H:%M %d/%m/%Y")
+
         # Armazena os dados no "banco de dados"
         device_id = data['id']
         devices_db[device_id] = data

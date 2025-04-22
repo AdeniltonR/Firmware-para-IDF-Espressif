@@ -149,9 +149,18 @@ python -m venv venv
 
 **Instalação de Dependências**
 
+[Flask-cors](https://pypi.org/project/flask-cors/), v5.0.1
+
 ```bash
 pip install flask flask-cors
 ```
+
+[pytz](https://pypi.org/project/pytz/), v2025.2
+
+```basic
+pip install pytz
+```
+
 **Testando a API**
 
 ```bash
@@ -160,7 +169,7 @@ python api.py
 
 Exemplo do [**código python**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/comunicacao-api/api.py):
 
-**Testes com URL, abra terminal na raiz do seu api.py e execute o comando, pode mudar o localhost por http://172.17.57.14**
+**Testes com URL, abra terminal GIT Bash e execute o comando, pode mudar o localhost por http://172.17.57.14**
 
 ```bash
 curl -X POST http://localhost:5000/api/device \
