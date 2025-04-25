@@ -24,6 +24,16 @@ static rmt_pulsein_channel_t pulsein_channels[MAX_CHANNELS] = {0};
 
 // ========================================================================================================
 /**
+ * @brief Callback chamado quando um pulso é detectado pelo RMT
+ */
+static bool rmt_rx_callback(rmt_channel_handle_t channel, const rmt_rx_done_event_data_t *edata, void *user_data) {
+    int channel_index = (int)user_data;
+    pulsein_channels[channel_index].receiving = false;
+    return false;
+}
+
+// ========================================================================================================
+/**
  * @brief Inicializa um canal RMT para leitura de pulso em um pino
  *
  * @param gpio GPIO a ser usado
@@ -47,10 +57,20 @@ esp_err_t rmt_pulsein_init(gpio_num_t gpio, int index, uint32_t resolution_hz) {
 
     ESP_ERROR_CHECK(rmt_new_rx_channel(&rx_config, &pulsein_channels[index].channel));
 
+    //---configura o callback para este canal---
+    rmt_rx_event_callbacks_t cbs = {
+        .on_recv_done = rmt_rx_callback
+    };
+    ESP_ERROR_CHECK(rmt_rx_register_event_callbacks(pulsein_channels[index].channel, &cbs, (void*)index));
+
+    //---habilitar o canal antes de usar---
+    ESP_ERROR_CHECK(rmt_enable(pulsein_channels[index].channel));
+
     //---armazena configurações do canal---
     pulsein_channels[index].gpio = gpio;
     pulsein_channels[index].resolution_hz = resolution_hz;
     pulsein_channels[index].active = true;
+    pulsein_channels[index].receiving = false;
 
     ESP_LOGI(TAG, "✅ Canal RMT inicializado no GPIO %d com resolução %lu Hz (index %d)", gpio, resolution_hz, index);
 
@@ -70,6 +90,7 @@ esp_err_t rmt_pulsein_deinit(int index) {
         return ESP_ERR_INVALID_ARG;
     }
 
+    ESP_ERROR_CHECK(rmt_disable(pulsein_channels[index].channel));
     ESP_ERROR_CHECK(rmt_del_channel(pulsein_channels[index].channel));
 
     pulsein_channels[index].active = false;
@@ -93,27 +114,38 @@ int64_t rmt_pulsein_read_us(int index, uint32_t timeout_us) {
         return -1;
     }
 
-    rmt_symbol_word_t symbols[64];
-    size_t received = 0;
-
     //---configuração de recepção---
     rmt_receive_config_t recv_cfg = {
-        .signal_range_min_ns = 1000,        // Mínimo de 1 us
-        .signal_range_max_ns = 10000000,   // Máximo de 10 ms
+        .signal_range_min_ns = 1000,
+        .signal_range_max_ns = 10000000,
     };
 
-    //---inicia a recepção. Essa função é bloqueante e retorna quando o buffer enche ou dá timeout---
-    esp_err_t ret = rmt_receive(pulsein_channels[index].channel, symbols, sizeof(symbols), &recv_cfg);
+    //---inicia a recepção---
+    pulsein_channels[index].receiving = true;
+    ESP_ERROR_CHECK(rmt_receive(pulsein_channels[index].channel, 
+                              pulsein_channels[index].symbols, 
+                              sizeof(pulsein_channels[index].symbols), 
+                              &recv_cfg));
 
-    if (ret != ESP_OK || received == 0) {
-        ESP_LOGW(TAG, "❌ Timeout ou falha na leitura do canal %d", index);
+    //---espera pelo pulso com timeout---
+    uint64_t start_time = esp_timer_get_time();
+    while (pulsein_channels[index].receiving && 
+          (esp_timer_get_time() - start_time) < timeout_us) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+        taskYIELD();      // permite outras tarefas rodarem
+    }
+
+    if (pulsein_channels[index].receiving) {
+        ESP_LOGW(TAG, "❌ Timeout na leitura do canal %d", index);
+        rmt_disable(pulsein_channels[index].channel);
+        rmt_enable(pulsein_channels[index].channel); // Reinicia o canal
         return 0;
     }
 
-    // Para este exemplo, vamos assumir que symbols[0] contém o pulso de nível alto
-    uint32_t high_us = (symbols[0].duration0 * 1000000ULL) / pulsein_channels[index].resolution_hz;
+    uint32_t high_us = (pulsein_channels[index].symbols[0].duration0 * 1000000ULL) / 
+                      pulsein_channels[index].resolution_hz;
 
-    ESP_LOGI(TAG, "⚡  Pulso detectado no canal %d: %lu us", index, high_us);
+    ESP_LOGI(TAG, "⚡ Pulso detectado no canal %d: %lu us", index, high_us);
 
     return high_us;
 }

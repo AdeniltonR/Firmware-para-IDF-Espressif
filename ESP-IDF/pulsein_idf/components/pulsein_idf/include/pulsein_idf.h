@@ -20,12 +20,13 @@
 // ---BIBLIOTECA---
 
 #include <stdint.h>
-#include <string.h>
-#include "driver/rmt_tx.h"
 #include "driver/rmt_rx.h"
 #include "driver/gpio.h"
 #include "esp_log.h"
 #include "esp_err.h"
+#include "esp_timer.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---
@@ -36,10 +37,13 @@
 //---CONSTANTS---
 
 typedef struct {
-    rmt_channel_handle_t channel;  // Handle do canal RMT
-    gpio_num_t gpio;               // GPIO utilizado
-    uint32_t resolution_hz;        // Resolução do canal
-    bool active;                   // Status do canal
+    rmt_channel_handle_t channel;  // Conexão com o hardware RMT
+    gpio_num_t gpio;               // Pino físico usado (ex: GPIO4)
+    uint32_t resolution_hz;        // Precisão da medição (ex: 1.000.000 = 1μs)
+    bool active;                   // Se o canal está pronto para uso
+    bool receiving;                // Se está no meio de uma leitura
+    uint8_t missing_pulses;        // Quantos pulsos seguintes falharam
+    rmt_symbol_word_t symbols[64]; // Onde ficam armazenados os pulsos medidos
 } rmt_pulsein_channel_t;
 
 // ========================================================================================================

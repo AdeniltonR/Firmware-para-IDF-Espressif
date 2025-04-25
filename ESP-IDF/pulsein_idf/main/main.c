@@ -17,6 +17,8 @@
 #include "esp_log.h"
 #include "pulsein_idf.h"
 
+#define TIMEOUT_MS 100  // Tempo máximo de espera por pulso (em ms)
+
 // ========================================================================================================
 //---MAPEAMENTO DE HARDWARE---
 
@@ -60,17 +62,16 @@ void app_main(void) {
  *       A função utiliza `vTaskDelay` para criar um intervalo de 500ms entre cada iteração da leitura.
  */
 void pulsein_task(void *pvParameter) {
-    rmt_pulsein_init(PIN_ch1, 0, 1 * 1000 * 1000); // 1 MHz resolução
-    //rmt_pulsein_init(PIN_ch2, 1, 1 * 1000 * 1000);
+    rmt_pulsein_init(PIN_ch1, 0, 1000000); // 1 MHz resolução
+    rmt_pulsein_init(PIN_ch2, 1, 1000000);
 
     while (1) {
         //---leitura dos pulsos com timeout de 2.5 segundo (2.5000000 us)---
         int64_t pulse1 = rmt_pulsein_read_us(0, 2500000); 
-        //int64_t pulse2 = rmt_pulsein_read_us(1, 1000000);
+        int64_t pulse2 = rmt_pulsein_read_us(1, 2500000);
 
         //---log dos valores de pulso---
-        //ESP_LOGI(TAG, "🕒 Pino %d: %lld us\tPino %d: %lld us", PIN_ch1, pulse1, PIN_ch2, pulse2);
-        ESP_LOGI(TAG, "🕒 Pino %d: %lld us", PIN_ch1, pulse1);
+        ESP_LOGI(TAG, "⚙️  Pino %d: %lld us\tPino %d: %lld us", PIN_ch1, pulse1, PIN_ch2, pulse2);
 
         //---atraso de 500ms entre as leituras---
         vTaskDelay(pdMS_TO_TICKS(500));

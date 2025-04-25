@@ -8,7 +8,9 @@
     "idf.portWin": "COM5",
     "idf.toolsPathWin": "c:\\Espressif",
     "files.associations": {
-        "task.h": "c"
+        "task.h": "c",
+        "gpio.h": "c",
+        "rmt_rx.h": "c"
     },
     "idf.flashType": "UART"
 }
