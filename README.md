@@ -23,6 +23,7 @@
     - [Servo Motor](#servo-motor)
     - [Controle de Velocidad](#controle-de-velocidad)
     - [Comunicação API](#comunicação-api)
+    - [Pulsein IDF](#uulsein-idf)
 
 ## Histórico de Versão
 
@@ -42,6 +43,7 @@
 | 1.0.0  | 03/04/2025 | Adenilton R  | Servo UART              |
 | 1.0.0  | 15/04/2025 | Adenilton R  | Controle de Velocidade  |
 | 1.0.0  | 17/04/2025 | Adenilton R  | Comunicação API         |
+| 1.0.0  | 25/04/2025 | Adenilton R  | Pulsein IDF             |
 
 ---
 
@@ -190,3 +192,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/comunicacao-api) a seguir.
 
 ![web_api.png](Docs/web_api.png)
+
+### Pulsein IDF
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/pulsein_idf) a seguir.
+
+![Pulsein.png](Docs/Pulsein.png)
