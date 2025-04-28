@@ -23,7 +23,7 @@
     - [Servo Motor](#servo-motor)
     - [Controle de Velocidad](#controle-de-velocidad)
     - [Comunicação API](#comunicação-api)
-    - [Pulsein IDF](#uulsein-idf)
+    - [Pulsein IDF](#Pulsein-idf)
 
 ## Histórico de Versão
 
