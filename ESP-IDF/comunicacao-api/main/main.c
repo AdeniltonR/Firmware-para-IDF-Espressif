@@ -61,6 +61,9 @@ void send_data_to_api_task(void *pvParameters);
  *
  */
 void app_main(void) {
+    //---cria a task do botão primeiro---
+    xTaskCreate(&check_button_task, "check_button_task", 4096, NULL, 2, NULL);
+
     //---inicia o timeout  Manager (180 segundos, por exemplo)---
     wifi_manager_start_timeout(180);
 
@@ -71,10 +74,13 @@ void app_main(void) {
     gpio_reset_pin(PIN_start_ap);
     gpio_set_direction(PIN_start_ap, GPIO_MODE_INPUT);
     gpio_set_pull_mode(PIN_start_ap, GPIO_PULLUP_ONLY);  // Habilita o resistor de pull-up interno
-
-    //---cria as tarefa---
-    xTaskCreate(&send_data_to_api_task, "api_task", 4096, NULL, 5, NULL);
-    xTaskCreate(&check_button_task, "check_button_task", 4096, NULL, 2, NULL);
+  
+    //---verifica se está no modo Station---
+    if (wifi_manager_get_mode() == WIFI_MODE_STA) {
+        xTaskCreate(&send_data_to_api_task, "api_task", 4096, NULL, 5, NULL);
+    } else {
+        ESP_LOGW("main", "⚠️  Task API NÃO iniciada — modo Access Point");
+    }
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(1000)); 
