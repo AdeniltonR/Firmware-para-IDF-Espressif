@@ -184,7 +184,7 @@ Navegue até `Use the full default certificate bundle` e ative:
 ( ) Do not use the default certificate bundle
 ```
 
-Quando geral buid e der erro de memoria, navegue até `Two large size OTA partitions` e ative:
+Quando geral buid e der erro de memória, navegue até `Two large size OTA partitions` e ative:
 
 ```basic
 (Top) → Partition Table → Partition Table                                                                                                                                                                                Espressif IoT Development Framework Configuration                                                        
