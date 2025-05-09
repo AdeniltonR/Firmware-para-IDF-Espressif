@@ -129,6 +129,74 @@ Para usar outra API mude URL e dependendo das mensagens que forem enviados tem q
 
 ![url_api.png](Docs/url_api.png)
 
+**Para usar API HTTPS precisa ajustar as seguintes configurações**
+
+No arquivo components/api_clent/api_clent.c descomente a linha:
+
+```c
+.crt_bundle_attach = esp_crt_bundle_attach, // 🔒 Usa o bundle de certificados da Espressif para validar HTTPS (sem precisar de .pem manual)
+.disable_auto_redirect = true,              // 🔄 Se true, desativa redirecionamento automático (útil para debug)
+.buffer_size = 1024,                        // 📥 Tamanho do buffer de leitura (recepção da resposta)
+.buffer_size_tx = 1024,                     // 📤 Tamanho do buffer de escrita (envio do corpo da requisição)
+```
+
+Em:
+
+![Config_API.png](Docs/Config_API.png)
+
+No arquivo components/api_clent/api_clent.h descomente a linha:
+
+```basic
+#include "esp_crt_bundle.h”
+```
+
+Em:
+
+![Biblioteca.png](Docs/Biblioteca.png)
+
+Agora abra o Open ESP-IDF terminal e digite seguinte comandos:
+
+```basic
+idf.py menuconfig 
+```
+
+Navegue até `Enable trusted root certificate bundle` e ative:
+
+```basic
+(Top) → Component config → mbedTLS → Certificate Bundle                                                                                                                                                                  Espressif IoT Development Framework Configuration                                                        
+[*] Enable trusted root certificate bundle                                                                                                                       
+        Default certificate bundle options (Use the full default certificate bundle)  --->                                                                       
+[ ]     Add custom certificates to the default bundle                                                                                                            
+[ ]     Add deprecated root certificates                                                                                                                         
+(200)   Maximum no of certificates allowed in certificate bundle                                                                                                 
+                
+```
+
+Navegue até `Use the full default certificate bundle` e ative:
+
+```basic
+(Top) → Component config → mbedTLS → Certificate Bundle → Enable trusted root certificate bundle → Default certificate bundle options                                                                                    Espressif IoT Development Framework Configuration
+
+(X) Use the full default certificate bundle
+
+( ) Use only the most common certificates from the default bundles
+
+( ) Do not use the default certificate bundle
+```
+
+Quando geral buid e der erro de memoria, navegue até `Two large size OTA partitions` e ative:
+
+```basic
+(Top) → Partition Table → Partition Table                                                                                                                                                                                Espressif IoT Development Framework Configuration                                                        
+( ) Single factory app, no OTA                                                                                                                                   
+( ) Single factory app (large), no OTA                                                                                                                           
+( ) Factory app, two OTA definitions                                                                                                                             
+(X) Two large size OTA partitions                                                                                                                                
+( ) Custom partition table CSV    
+```
+
+Com isso vai estar configurado para usar API HTTPS.
+
 ## Configuração do Ambiente
 
 Recomendado para isolamento de dependências:

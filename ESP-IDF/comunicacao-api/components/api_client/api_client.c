@@ -26,6 +26,7 @@
 
 /// @brief Tag para identificação dos logs deste módulo (api-client)
 static const char *TAG = "api-client";  
+
 //---buffer para armazenar URL base---
 static char api_url[128] = {0};         
 
@@ -85,20 +86,41 @@ esp_err_t api_send_device_data(const device_data_t *data) {
     }
 
     //---monta URL completa---
-    char full_url[160];
+    char full_url[256];
+
+    //---receber quebrada---
     snprintf(full_url, sizeof(full_url), "%s/api/device", api_url);
+
+    //---receber inteira---
+    //strncpy(full_url, api_url, sizeof(full_url) - 1);
+    //full_url[sizeof(full_url) - 1] = '\0';          // garante terminação nula
 
     //---configura cliente HTTP---
     esp_http_client_config_t config = {
-        .url = full_url,
-        .method = HTTP_METHOD_POST,
-        .timeout_ms = 5000,  // Timeout de 5s
+        .url = full_url,                              // ✅ URL completa para a requisição (ex: "https://api.com/endpoint")
+        .method = HTTP_METHOD_POST,                   // ✅ Tipo de requisição HTTP (GET, POST, PUT, DELETE, etc.)
+        .timeout_ms = 5000,                           // ⏱️ Tempo máximo de espera pela resposta (em milissegundos)
+        //.crt_bundle_attach = esp_crt_bundle_attach, // 🔒 Usa o bundle de certificados da Espressif para validar HTTPS (sem precisar de .pem manual)
+        //.disable_auto_redirect = true,              // 🔄 Se true, desativa redirecionamento automático (útil para debug)
+        //.buffer_size = 1024,                        // 📥 Tamanho do buffer de leitura (recepção da resposta)
+        //.buffer_size_tx = 1024,                     // 📤 Tamanho do buffer de escrita (envio do corpo da requisição)
     };
 
-    //---executa requisição---
+    //vTaskDelay(pdMS_TO_TICKS(100));
+
+    //---inicializa o cliente HTTP com a configuração fornecida---
     esp_http_client_handle_t client = esp_http_client_init(&config);
+    if (!client) {
+        ESP_LOGE(TAG, "❌ Falha ao inicializar cliente HTTP");
+        free(post_data);
+        return ESP_FAIL;;
+    }
+
+    //---executa requisição---
     esp_http_client_set_header(client, "Content-Type", "application/json");
+    esp_http_client_set_header(client, "Accept", "application/json");
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
+    esp_http_client_set_header(client, "Connection", "close");
 
     ESP_LOGI(TAG, "📤 Enviando dados para %s", full_url);
     esp_err_t err = esp_http_client_perform(client);
@@ -107,16 +129,24 @@ esp_err_t api_send_device_data(const device_data_t *data) {
     if (err == ESP_OK) {
         int status_code = esp_http_client_get_status_code(client);
         if (status_code == 200) {
-            ESP_LOGI(TAG, "✅ Dados enviados | Status: %d", status_code);
+            ESP_LOGI(TAG, "✅ Dados enviados com sucesso | Status: %d", status_code);
+        } else if (status_code == 201) {
+            ESP_LOGI(TAG, "✅ Novo recurso criado com sucesso | Status: %d", status_code);
         } else {
-            ESP_LOGW(TAG, "⚠️ Resposta inesperada | Status: %d", status_code);
+            ESP_LOGW(TAG, "⚠️  Resposta inesperada | Status: %d", status_code);
         }
     } else {
         ESP_LOGE(TAG, "❌ Falha na requisição: %s", esp_err_to_name(err));
+        //---verificação alternativa de erro para versões mais antigas do ESP-IDF---
+        int sock_errno = esp_http_client_get_errno(client);
+        if (sock_errno != 0) {
+            ESP_LOGE(TAG, "Socket error: %d (%s)", sock_errno, strerror(sock_errno));
+        }
     }
 
     //---limpeza---
-    esp_http_client_cleanup(client);
     free(post_data);
+    esp_http_client_cleanup(client);
+
     return err;
 }

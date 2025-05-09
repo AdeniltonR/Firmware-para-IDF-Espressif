@@ -77,7 +77,7 @@ void app_main(void) {
   
     //---verifica se está no modo Station---
     if (wifi_manager_get_mode() == WIFI_MODE_STA) {
-        xTaskCreate(&send_data_to_api_task, "api_task", 4096, NULL, 5, NULL);
+        xTaskCreate(&send_data_to_api_task, "api_task", 8192, NULL, 5, NULL);
     } else {
         ESP_LOGW("main", "⚠️  Task API NÃO iniciada — modo Access Point");
     }
