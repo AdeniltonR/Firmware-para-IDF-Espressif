@@ -24,6 +24,7 @@
     - [Controle de Velocidad](#controle-de-velocidad)
     - [Comunicação API](#comunicação-api)
     - [Pulsein IDF](#Pulsein-idf)
+    - [Controle PWM](#controle-pwm)
 
 ## Histórico de Versão
 
@@ -44,6 +45,7 @@
 | 1.0.0  | 15/04/2025 | Adenilton R  | Controle de Velocidade  |
 | 1.0.0  | 17/04/2025 | Adenilton R  | Comunicação API         |
 | 1.0.0  | 25/04/2025 | Adenilton R  | Pulsein IDF             |
+| 1.0.0  | 16/05/2025 | Adenilton R  | Controle PWM com RTOS   |
 
 ---
 
@@ -198,3 +200,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/pulsein_idf) a seguir.
 
 ![Pulsein.png](Docs/Pulsein.png)
+
+### Controle PWM
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/pwm-rtos) a seguir.
+
+![PWM.png](Docs/PWM.png)

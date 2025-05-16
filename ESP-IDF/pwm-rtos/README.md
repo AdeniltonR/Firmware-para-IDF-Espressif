@@ -58,7 +58,7 @@ Este projeto implementa um controle PWM com FreeRTOS no ESP32, permitindo ajuste
 
 ## Bibliotecas
 
-[main.c]()
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/pwm-rtos/main/main.c)
 
 ## Configuração do Firmware
 
