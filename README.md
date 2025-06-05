@@ -25,6 +25,7 @@
     - [Comunicação API](#comunicação-api)
     - [Pulsein IDF](#Pulsein-idf)
     - [Controle PWM](#controle-pwm)
+    - [Display Oled](#display-oled)
 
 ## Histórico de Versão
 
