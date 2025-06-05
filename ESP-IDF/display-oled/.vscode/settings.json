@@ -12,6 +12,14 @@
     "IDF_TARGET": "esp32s3"
   },
   "files.associations": {
-    "freertos.h": "c"
-  }
+    "freertos.h": "c",
+    "spi_master.h": "c",
+    "gpio.h": "c",
+    "i2c.h": "c",
+    "task.h": "c",
+    "esp_log.h": "c",
+    "string.h": "c",
+    "display_oled.h": "c"
+  },
+  "idf.flashType": "UART"
 }
