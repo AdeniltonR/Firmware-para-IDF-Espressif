@@ -28,24 +28,25 @@
 
 ## Histórico de Versão
 
-| Versão | Data       | Autor        | Descrição               |
-|--------|------------|--------------|-------------------------|
-| 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto       |
-| 1.0.0  | 17/03/2025 | Adenilton R  | Wi-Fi Manager           |
-| 1.0.0  | 18/03/2025 | Adenilton R  | RGB-Ws2812B             |
-| 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib                 |
-| 1.0.0  | 13/03/2025 | Adenilton R  | Access Point com ESP32  |
-| 1.0.0  | 16/03/2025 | Adenilton R  | Wi-FI Manual            |
-| 1.0.0  | 19/03/2025 | Adenilton R  | DFPlayer Mini           |
-| 1.0.0  | 19/03/2025 | Adenilton R  | Touch Pad               |
-| 1.0.0  | 20/03/2025 | Adenilton R  | Led Strip               |
-| 1.0.0  | 01/04/2025 | Adenilton R  | UART Pinout             |
-| 1.0.0  | 03/04/2025 | Adenilton R  | Servo Motor             |
-| 1.0.0  | 03/04/2025 | Adenilton R  | Servo UART              |
-| 1.0.0  | 15/04/2025 | Adenilton R  | Controle de Velocidade  |
-| 1.0.0  | 17/04/2025 | Adenilton R  | Comunicação API         |
-| 1.0.0  | 25/04/2025 | Adenilton R  | Pulsein IDF             |
-| 1.0.0  | 16/05/2025 | Adenilton R  | Controle PWM com RTOS   |
+| Versão | Data       | Autor        | Descrição                        |
+|--------|------------|--------------|----------------------------------|
+| 1.0.0  | 29/08/2024 | Adenilton R  | Início do Projeto                |
+| 1.0.0  | 17/03/2025 | Adenilton R  | Wi-Fi Manager                    |
+| 1.0.0  | 18/03/2025 | Adenilton R  | RGB-Ws2812B                      |
+| 1.0.0  | 11/03/2025 | Adenilton R  | Emonlib                          |
+| 1.0.0  | 13/03/2025 | Adenilton R  | Access Point com ESP32           |
+| 1.0.0  | 16/03/2025 | Adenilton R  | Wi-FI Manual                     |
+| 1.0.0  | 19/03/2025 | Adenilton R  | DFPlayer Mini                    |
+| 1.0.0  | 19/03/2025 | Adenilton R  | Touch Pad                        |
+| 1.0.0  | 20/03/2025 | Adenilton R  | Led Strip                        |
+| 1.0.0  | 01/04/2025 | Adenilton R  | UART Pinout                      |
+| 1.0.0  | 03/04/2025 | Adenilton R  | Servo Motor                      |
+| 1.0.0  | 03/04/2025 | Adenilton R  | Servo UART                       |
+| 1.0.0  | 15/04/2025 | Adenilton R  | Controle de Velocidade           |
+| 1.0.0  | 17/04/2025 | Adenilton R  | Comunicação API                  |
+| 1.0.0  | 25/04/2025 | Adenilton R  | Pulsein IDF                      |
+| 1.0.0  | 16/05/2025 | Adenilton R  | Controle PWM com RTOS            |
+| 1.0.0  | 04/06/2025 | Adenilton R  | Controle Display Oled com RTOS   |
 
 ---
 
@@ -104,7 +105,7 @@ Este conjunto de exemplos de firmware foi desenvolvido para facilitar a utiliza�
 /**
  * @brief Void main
  *
- */
+*/
 void app_main(void) {
 
     while(1) {
@@ -206,3 +207,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/pwm-rtos) a seguir.
 
 ![PWM.png](Docs/PWM.png)
+
+### Display Oled
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/display-oled) a seguir.
+
+![PWM.png](Docs/Display.png)
