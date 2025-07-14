@@ -44,14 +44,15 @@ void ibus_init(int uart_num, int tx_pin) {
     uart_config_t uart_config = {
         .baud_rate = IBUS_BAUD_RATE,
         .data_bits = UART_DATA_8_BITS,
-        .parity = UART_PARITY_DISABLE,
+        .parity = UART_PARITY_EVEN,  
         .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_DEFAULT
     };
 
-    uart_driver_install(uart_port, 512, 0, 0, NULL, 0);
-    uart_param_config(uart_port, &uart_config);
-    uart_set_pin(uart_port, tx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    ESP_ERROR_CHECK(uart_driver_install(uart_port, 1024, 0, 0, NULL, 0));
+    ESP_ERROR_CHECK(uart_param_config(uart_port, &uart_config));
+    ESP_ERROR_CHECK(uart_set_pin(uart_port, tx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
     ESP_LOGI(TAG, "✅ IBUS UART inicializada na porta %d, TX GPIO %d", uart_port, tx_pin);
 }
@@ -72,13 +73,21 @@ void ibus_set_sensor_value(uint8_t id, uint16_t value) {
 }
 
 void ibus_send_all(void) {
-    int count = ibus_sensor_count;
-    if (count > IBUS_MAX_SENSORS) count = IBUS_MAX_SENSORS;
+      if (ibus_sensor_count == 0) {
+        ESP_LOGW(TAG, "Nenhum sensor adicionado para envio");
+        return;
+    }
 
+    int count = (ibus_sensor_count > IBUS_MAX_SENSORS) ? IBUS_MAX_SENSORS : ibus_sensor_count;
     uint8_t payload_len = count * 4;
-    uint8_t packet[2 + payload_len + 2];
+    uint8_t packet[2 + payload_len + 2];  // Remove a inicialização aqui
+    
+    // Inicializa manualmente o array
+    memset(packet, 0, sizeof(packet));  // Adiciona esta linha para zerar o array
+    
     int idx = 0;
 
+    // Restante do código permanece igual...
     packet[idx++] = IBUS_HEADER;
     packet[idx++] = payload_len;
 
@@ -87,21 +96,24 @@ void ibus_send_all(void) {
         packet[idx++] = ibus_sensors[i].id;
         packet[idx++] = ibus_sensors[i].value & 0xFF;
         packet[idx++] = (ibus_sensors[i].value >> 8) & 0xFF;
-
-        ESP_LOGD(TAG, "📡 Sensor %d → tipo=0x%02X, id=%d, valor=%d",
-                 i, ibus_sensors[i].type, ibus_sensors[i].id, ibus_sensors[i].value);
     }
 
-    uint16_t checksum = 0;
+    // Cálculo do checksum (0xFFFF - soma de todos os bytes anteriores)
+    uint16_t checksum = IBUS_CHECKSUM_INIT;
     for (int i = 0; i < idx; i++) {
-        checksum += packet[i];
+        checksum -= packet[i];
     }
 
     packet[idx++] = checksum & 0xFF;
     packet[idx++] = (checksum >> 8) & 0xFF;
 
-    uart_write_bytes(uart_port, (const char *)packet, idx);
-    ESP_LOGI(TAG, "📨 Enviado %d sensores (%d bytes)", count, idx);
+    // Envio com verificação de erro
+    int sent = uart_write_bytes(uart_port, (const char *)packet, idx);
+    if (sent != idx) {
+        ESP_LOGE(TAG, "Erro no envio: %d/%d bytes enviados", sent, idx);
+    } else {
+        ESP_LOGD(TAG, "📨 Enviado %d sensores (%d bytes)", count, idx);
+    }
 }
 
 // ========================================================================================================

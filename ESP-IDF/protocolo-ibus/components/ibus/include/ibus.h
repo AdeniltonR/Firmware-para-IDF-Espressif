@@ -30,6 +30,8 @@
 #define IBUS_BAUD_RATE 9600
 #define IBUS_MAX_SENSORS 14
 #define IBUS_HEADER 0xFE
+#define IBUS_CHECKSUM_INIT 0xFFFF
+#define IBUS_TIMEOUT_MS 20
 
 // --------------------------
 // Modos de voo (Flight Modes)

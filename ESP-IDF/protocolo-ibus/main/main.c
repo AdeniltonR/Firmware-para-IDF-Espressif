@@ -21,7 +21,7 @@
 // ========================================================================================================
 //---MAPEAMENTO DE HARDWARE---
 
-#define PIN_ibus 6  // GPIO1 → porta SENS do receptor FlySky
+#define PIN_ibus 4  // GPIO1 → porta SENS do receptor FlySky
 
 // ========================================================================================================
 //---VARIAVEIS GLOBAIS---
@@ -59,18 +59,22 @@ void app_main(void) {
  * @param pvParameters Não utilizado (NULL)
 */
 static void ibus_task(void *pvParameters) {
-
     while (1) {
         uint16_t tensao_mV = 1180;  // 11.80 V → representado como 1180 (décimos)
 
-        // Define o valor da tensão
         ibus_set_sensor_value(2, tensao_mV);
-
-        ESP_LOGI(TAG, "⚡ Enviando tensão: %d mV", tensao_mV);
-
-        // Envia para o receptor via i-BUS
+        
+        // Adicione um pequeno delay antes do envio
+        vTaskDelay(pdMS_TO_TICKS(10));
+        
         ibus_send_all();
 
-        vTaskDelay(pdMS_TO_TICKS(500));  // A cada 1 segundo
+        // Log reduzido para evitar poluição serial
+        static int count = 0;
+        if (++count % 10 == 0) {  // Log a cada 5 segundos
+            ESP_LOGI(TAG, "⚡ Tensão: %d.%02dV", tensao_mV/100, tensao_mV%100);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
