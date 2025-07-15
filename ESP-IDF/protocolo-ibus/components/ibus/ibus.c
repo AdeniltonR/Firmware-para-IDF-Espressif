@@ -19,140 +19,247 @@
 /// @brief Tag para identificação dos logs deste módulo (ibus)
 static const char *TAG = "ibus";
 
-static int uart_port = UART_NUM_1;
+// Comandos do protocolo
+#define IBUS_CMD_SERVO       0x40
+#define IBUS_CMD_DISCOVER    0x80
+#define IBUS_CMD_TYPE        0x90
+#define IBUS_CMD_VALUE       0xA0
 
-// Estrutura interna do sensor
-typedef struct {
-    uint8_t type;
-    uint8_t id;
-    uint16_t value;
-} ibus_sensor_t;
+// Estados da máquina de estados
+typedef enum {
+    IBUS_STATE_DISCARD,
+    IBUS_STATE_GET_LENGTH,
+    IBUS_STATE_GET_DATA,
+    IBUS_STATE_GET_CHKSUM_L,
+    IBUS_STATE_GET_CHKSUM_H
+} ibus_state_t;
 
-static ibus_sensor_t ibus_sensors[IBUS_MAX_SENSORS];
-static int ibus_sensor_count = 0;
+static void send_response(ibus_handle_t *handle, uint8_t *data, uint8_t len) {
+    if (uart_write_bytes(handle->uart_num, (const char *)data, len) != len) {
+        ESP_LOGE(TAG, "Falha ao enviar resposta");
+    }
+}
 
-// ========================================================================================================
-/**
- * @brief Inicializa o barramento i-BUS via UART
- * 
- * @param uart_num UART a ser usada (ex: UART_NUM_1)
- * @param tx_pin GPIO conectado à porta SENS do receptor FlySky
- */
-void ibus_init(int uart_num, int tx_pin) {
-    uart_port = uart_num;
+esp_err_t ibus_init(ibus_handle_t *handle, uart_port_t uart_num, int tx_pin, int rx_pin, int baud_rate) {
+    if (!handle) {
+        ESP_LOGE(TAG, "Handle inválido");
+        return ESP_ERR_INVALID_ARG;
+    }
 
+    // Configuração da UART
     uart_config_t uart_config = {
-        .baud_rate = IBUS_BAUD_RATE,
+        .baud_rate = baud_rate,
         .data_bits = UART_DATA_8_BITS,
-        .parity = UART_PARITY_EVEN,  
+        .parity = UART_PARITY_EVEN,
         .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-        .source_clk = UART_SCLK_DEFAULT
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
     };
 
-    ESP_ERROR_CHECK(uart_driver_install(uart_port, 1024, 0, 0, NULL, 0));
-    ESP_ERROR_CHECK(uart_param_config(uart_port, &uart_config));
-    ESP_ERROR_CHECK(uart_set_pin(uart_port, tx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
+    esp_err_t ret = uart_param_config(uart_num, &uart_config);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Falha na configuração da UART: %s", esp_err_to_name(ret));
+        return ret;
+    }
 
-    ESP_LOGI(TAG, "✅ IBUS UART inicializada na porta %d, TX GPIO %d", uart_port, tx_pin);
+    ret = uart_set_pin(uart_num, tx_pin, rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao configurar pinos da UART: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ret = uart_driver_install(uart_num, 256, 0, 0, NULL, 0);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao instalar driver UART: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Inicializa estrutura
+    handle->uart_num = uart_num;
+    handle->tx_pin = tx_pin;
+    handle->rx_pin = rx_pin;
+    handle->sensor_count = 0;
+    handle->last_update_ms = 0;
+    handle->poll_count = 0;
+    handle->sensor_response_count = 0;
+    handle->channel_update_count = 0;
+
+    memset(handle->channels, 0, sizeof(handle->channels));
+    memset(handle->sensors, 0, sizeof(handle->sensors));
+
+    ESP_LOGI(TAG, "iBUS inicializado na UART%d (TX:GPIO%d, RX:GPIO%d)", 
+             uart_num, tx_pin, rx_pin);
+    return ESP_OK;
 }
 
-void ibus_add_sensor(uint8_t type, uint8_t id) {
-    if (ibus_sensor_count >= IBUS_MAX_SENSORS) return;
-    ibus_sensors[ibus_sensor_count++] = (ibus_sensor_t){ .type = type, .id = id, .value = 0 };
-    ESP_LOGI(TAG, "📦 Sensor adicionado: tipo=0x%02X, id=%d", type, id);
+uint8_t ibus_add_sensor(ibus_handle_t *handle, uint8_t type, uint8_t length) {
+    if (!handle) {
+        ESP_LOGE(TAG, "Handle inválido ao adicionar sensor");
+        return 0;
+    }
+
+    if (length != 2 && length != 4) {
+        length = 2; // Padrão para 2 bytes
+    }
+
+    if (handle->sensor_count >= IBUS_MAX_SENSORS) {
+        ESP_LOGE(TAG, "Número máximo de sensores atingido");
+        return 0;
+    }
+
+    ibus_sensor_t *sensor = &handle->sensors[handle->sensor_count];
+    sensor->type = type;
+    sensor->length = length;
+    sensor->value = 0;
+
+    ESP_LOGI(TAG, "Sensor %d adicionado: tipo=0x%02X, tamanho=%d", 
+             handle->sensor_count + 1, type, length);
+
+    return ++handle->sensor_count;
 }
 
-void ibus_set_sensor_value(uint8_t id, uint16_t value) {
-    for (int i = 0; i < ibus_sensor_count; i++) {
-        if (ibus_sensors[i].id == id) {
-            ibus_sensors[i].value = value;
-            return;
+esp_err_t ibus_set_sensor_value(ibus_handle_t *handle, uint8_t sensor_num, int32_t value) {
+    if (!handle || sensor_num == 0 || sensor_num > handle->sensor_count) {
+        ESP_LOGE(TAG, "Número de sensor inválido: %d", sensor_num);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    handle->sensors[sensor_num - 1].value = value;
+    return ESP_OK;
+}
+
+uint16_t ibus_read_channel(ibus_handle_t *handle, uint8_t channel_num) {
+    if (!handle || channel_num >= IBUS_MAX_CHANNELS) {
+        return 0;
+    }
+    return handle->channels[channel_num];
+}
+
+esp_err_t ibus_loop(ibus_handle_t *handle) {
+    if (!handle) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    uint8_t buffer[IBUS_PROTOCOL_LENGTH];
+    ibus_state_t state = IBUS_STATE_DISCARD;
+    uint8_t ptr = 0;
+    uint8_t len = 0;
+    uint16_t chksum = 0;
+    uint8_t lchksum = 0;
+    uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
+
+    // Processa dados disponíveis
+    size_t available = 0;
+    uart_get_buffered_data_len(handle->uart_num, &available);
+    
+    while (available > 0) {
+        uint8_t v;
+        int read = uart_read_bytes(handle->uart_num, &v, 1, 0);
+        if (read != 1) break;
+        available--;
+
+        // Verifica gap entre pacotes
+        if (now - handle->last_update_ms >= IBUS_PROTOCOL_TIMEGAP_MS) {
+            state = IBUS_STATE_GET_LENGTH;
+        }
+        handle->last_update_ms = now;
+
+        switch (state) {
+            case IBUS_STATE_GET_LENGTH:
+                if (v <= IBUS_PROTOCOL_LENGTH && v > IBUS_PROTOCOL_OVERHEAD) {
+                    ptr = 0;
+                    len = v - IBUS_PROTOCOL_OVERHEAD;
+                    chksum = 0xFFFF - v;
+                    state = IBUS_STATE_GET_DATA;
+                } else {
+                    state = IBUS_STATE_DISCARD;
+                }
+                break;
+
+            case IBUS_STATE_GET_DATA:
+                buffer[ptr++] = v;
+                chksum -= v;
+                if (ptr == len) {
+                    state = IBUS_STATE_GET_CHKSUM_L;
+                }
+                break;
+
+            case IBUS_STATE_GET_CHKSUM_L:
+                lchksum = v;
+                state = IBUS_STATE_GET_CHKSUM_H;
+                break;
+
+            case IBUS_STATE_GET_CHKSUM_H:
+                // Verifica checksum
+                if (chksum == (v << 8) + lchksum) {
+                    uint8_t adr = buffer[0] & 0x0F;
+                    
+                    // Comando de servo
+                    if (buffer[0] == IBUS_CMD_SERVO) {
+                        for (uint8_t i = 1; i < IBUS_MAX_CHANNELS * 2 + 1; i += 2) {
+                            handle->channels[i / 2] = buffer[i] | (buffer[i + 1] << 8);
+                        }
+                        handle->channel_update_count++;
+                    } 
+                    // Comandos de sensor (len==1 para evitar loopback)
+                    else if (adr <= handle->sensor_count && adr > 0 && len == 1) {
+                        ibus_sensor_t *sensor = &handle->sensors[adr - 1];
+                        uint8_t response[6];
+                        uint8_t resp_len = 0;
+                        
+                        switch (buffer[0] & 0xF0) {
+                            case IBUS_CMD_DISCOVER:
+                                handle->poll_count++;
+                                response[0] = 0x04;
+                                response[1] = IBUS_CMD_DISCOVER + adr;
+                                chksum = 0xFFFF - (0x04 + IBUS_CMD_DISCOVER + adr);
+                                resp_len = 2;
+                                break;
+                                
+                            case IBUS_CMD_TYPE:
+                                response[0] = 0x06;
+                                response[1] = IBUS_CMD_TYPE + adr;
+                                response[2] = sensor->type;
+                                response[3] = sensor->length;
+                                chksum = 0xFFFF - (0x06 + IBUS_CMD_TYPE + adr + sensor->type + sensor->length);
+                                resp_len = 4;
+                                break;
+                                
+                            case IBUS_CMD_VALUE:
+                                handle->sensor_response_count++;
+                                resp_len = 4 + sensor->length;
+                                response[0] = resp_len;
+                                response[1] = IBUS_CMD_VALUE + adr;
+                                response[2] = sensor->value & 0xFF;
+                                response[3] = (sensor->value >> 8) & 0xFF;
+                                chksum = 0xFFFF - (resp_len + IBUS_CMD_VALUE + adr + (sensor->value & 0xFF) + ((sensor->value >> 8) & 0xFF));
+                                
+                                if (sensor->length == 4) {
+                                    response[4] = (sensor->value >> 16) & 0xFF;
+                                    response[5] = (sensor->value >> 24) & 0xFF;
+                                    chksum -= response[4] + response[5];
+                                }
+                                break;
+                                
+                            default:
+                                adr = 0; // Comando desconhecido
+                                break;
+                        }
+                        
+                        if (adr > 0) {
+                            send_response(handle, response, resp_len);
+                            uint8_t chksum_bytes[2] = {chksum & 0xFF, chksum >> 8};
+                            send_response(handle, chksum_bytes, 2);
+                        }
+                    }
+                }
+                state = IBUS_STATE_DISCARD;
+                break;
+                
+            default:
+                state = IBUS_STATE_DISCARD;
+                break;
         }
     }
-}
-
-void ibus_send_all(void) {
-      if (ibus_sensor_count == 0) {
-        ESP_LOGW(TAG, "Nenhum sensor adicionado para envio");
-        return;
-    }
-
-    int count = (ibus_sensor_count > IBUS_MAX_SENSORS) ? IBUS_MAX_SENSORS : ibus_sensor_count;
-    uint8_t payload_len = count * 4;
-    uint8_t packet[2 + payload_len + 2];  // Remove a inicialização aqui
     
-    // Inicializa manualmente o array
-    memset(packet, 0, sizeof(packet));  // Adiciona esta linha para zerar o array
-    
-    int idx = 0;
-
-    // Restante do código permanece igual...
-    packet[idx++] = IBUS_HEADER;
-    packet[idx++] = payload_len;
-
-    for (int i = 0; i < count; i++) {
-        packet[idx++] = ibus_sensors[i].type;
-        packet[idx++] = ibus_sensors[i].id;
-        packet[idx++] = ibus_sensors[i].value & 0xFF;
-        packet[idx++] = (ibus_sensors[i].value >> 8) & 0xFF;
-    }
-
-    // Cálculo do checksum (0xFFFF - soma de todos os bytes anteriores)
-    uint16_t checksum = IBUS_CHECKSUM_INIT;
-    for (int i = 0; i < idx; i++) {
-        checksum -= packet[i];
-    }
-
-    packet[idx++] = checksum & 0xFF;
-    packet[idx++] = (checksum >> 8) & 0xFF;
-
-    // Envio com verificação de erro
-    int sent = uart_write_bytes(uart_port, (const char *)packet, idx);
-    if (sent != idx) {
-        ESP_LOGE(TAG, "Erro no envio: %d/%d bytes enviados", sent, idx);
-    } else {
-        ESP_LOGD(TAG, "📨 Enviado %d sensores (%d bytes)", count, idx);
-    }
-}
-
-// ========================================================================================================
-/**
- * @brief Envia dados de até 14 sensores i-BUS para o receptor
- * 
- * @param types      Array com tipos de sensor (ex: 0xA1, 0x01, 0x02)
- * @param ids        Array com IDs dos sensores (0-13)
- * @param values     Array com os valores (16 bits) de cada sensor
- * @param count      Quantidade de sensores a enviar (máx: 14)
- */
-void ibus_send(const uint8_t *types, const uint8_t *ids, const uint16_t *values, int count) {
-    if (count > IBUS_MAX_SENSORS) count = IBUS_MAX_SENSORS;
-
-    uint8_t payload_len = count * 4;
-    uint8_t packet[2 + payload_len + 2];  // header + len + payload + checksum
-    int idx = 0;
-
-    packet[idx++] = IBUS_HEADER;
-    packet[idx++] = payload_len;
-
-    for (int i = 0; i < count; i++) {
-        packet[idx++] = types[i];
-        packet[idx++] = ids[i];
-        packet[idx++] = values[i] & 0xFF;
-        packet[idx++] = (values[i] >> 8) & 0xFF;
-
-        ESP_LOGD(TAG, "🔅  Sensor %d (tipo 0x%02X, ID %d): valor = %d", i, types[i], ids[i], values[i]);
-    }
-
-    uint16_t checksum = 0;
-    for (int i = 0; i < idx; i++) {
-        checksum += packet[i];
-    }
-
-    packet[idx++] = checksum & 0xFF;
-    packet[idx++] = (checksum >> 8) & 0xFF;
-
-    uart_write_bytes(uart_port, (const char *)packet, idx);
-
-    ESP_LOGI(TAG, "🗂️  Pacote i-BUS enviado com %d sensores (tamanho total: %d bytes)", count, idx);
+    return ESP_OK;
 }

@@ -8,73 +8,75 @@
  * LINKS: 
 */
 
-// ========================================================================================================
-//---BIBLIOTECAS---
-
+#include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
-#include "esp_log.h"
-
 #include "ibus.h"
 
-// ========================================================================================================
-//---MAPEAMENTO DE HARDWARE---
-
-#define PIN_ibus 4  // GPIO1 → porta SENS do receptor FlySky
-
-// ========================================================================================================
-//---VARIAVEIS GLOBAIS---
-
-/// @brief Tag para identificação dos logs deste módulo (main)
 static const char *TAG = "main";
 
-// ========================================================================================================
-//---PROTOTIPO DA FUNCAO---
+// Definições de hardware
+#define IBUS_UART_NUM    UART_NUM_1
+#define IBUS_TX_PIN      16
+#define IBUS_RX_PIN      15
+#define LED_GPIO         2
 
-static void ibus_task(void *pvParameters);
+// Constantes de telemetria
+#define TEMP_BASE        400  // Base para 0°C (400 = -40°C)
+#define TEMP_OFFSET      237  // 23.7°C
 
-// ========================================================================================================
-/**
- * @brief Void main
- *
-*/
-void app_main(void) {
-    ibus_init(UART_NUM_1, PIN_ibus);  // GPIO1 → porta SENS do receptor FlySky
+// Variáveis globais
+static ibus_handle_t ibus;
+static uint16_t rpm = 1000;
+static uint16_t temp = TEMP_BASE + TEMP_OFFSET;
+static uint32_t last_poll_count = 0;
 
-    // Adiciona sensor de tensão com tipo EXT_V (tensão externa) e ID 0
-    ibus_add_sensor(IBUS_MEAS_TYPE_EXTV, 2);
-
-    ESP_LOGI(TAG, "✅ Inicializando task iBUS...");
-
-    xTaskCreatePinnedToCore(ibus_task, "ibus_task", 4096, NULL, 5, NULL, 1);
-}
-
-// ========================================================================================================
-/**
- * @brief Task responsável por enviar dados simulados via i-BUS para o receptor.
- *
- * @note Os valores são atualizados a cada 100 ms e enviados pelo barramento UART.
- * 
- * @param pvParameters Não utilizado (NULL)
-*/
-static void ibus_task(void *pvParameters) {
+void app_main() {
+    // Configura LED
+    gpio_reset_pin(LED_GPIO);
+    gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
+    
+    // Inicializa iBUS
+    esp_err_t ret = ibus_init(&ibus, IBUS_UART_NUM, IBUS_TX_PIN, IBUS_RX_PIN, 115200);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao inicializar iBUS: %s", esp_err_to_name(ret));
+        return;
+    }
+    
+    // Adiciona sensores
+    if (!ibus_add_sensor(&ibus, IBUSS_RPM, 2) || !ibus_add_sensor(&ibus, IBUSS_TEMP, 2)) {
+        ESP_LOGE(TAG, "Falha ao adicionar sensores");
+        return;
+    }
+    
+    ESP_LOGI(TAG, "Telemetria iBUS inicializada");
+    
     while (1) {
-        uint16_t tensao_mV = 1180;  // 11.80 V → representado como 1180 (décimos)
-
-        ibus_set_sensor_value(2, tensao_mV);
+        // Pisca LED a cada 1s
+        static uint32_t last_blink = 0;
+        uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
         
-        // Adicione um pequeno delay antes do envio
-        vTaskDelay(pdMS_TO_TICKS(10));
-        
-        ibus_send_all();
-
-        // Log reduzido para evitar poluição serial
-        static int count = 0;
-        if (++count % 10 == 0) {  // Log a cada 5 segundos
-            ESP_LOGI(TAG, "⚡ Tensão: %d.%02dV", tensao_mV/100, tensao_mV%100);
+        if (now - last_blink > 1000) {
+            last_blink = now;
+            gpio_set_level(LED_GPIO, !gpio_get_level(LED_GPIO));
+            
+            // Loga estado atual
+            ESP_LOGI(TAG, "RPM: %" PRIu16 ", Temp: %.1f°C", rpm, (temp - TEMP_BASE) / 10.0f);
         }
-
-        vTaskDelay(pdMS_TO_TICKS(500));
+        
+        // Atualiza valores dos sensores
+        ibus_set_sensor_value(&ibus, 1, rpm);
+        ibus_set_sensor_value(&ibus, 2, temp);
+        
+        // Detecta polls do receptor
+        if (ibus.poll_count != last_poll_count) {
+            last_poll_count = ibus.poll_count;
+            ESP_LOGI(TAG, "Poll recebido do receptor (total: %" PRIu32 ")", ibus.poll_count);
+        }
+        
+        // Processa comunicação iBUS
+        ibus_loop(&ibus);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
