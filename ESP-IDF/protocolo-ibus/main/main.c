@@ -8,75 +8,113 @@
  * LINKS: 
 */
 
+// ========================================================================================================
+// ---BIBLIOTECA---
+
 #include <stdio.h>
+#include <inttypes.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
+#include "esp_log.h"
 #include "ibus.h"
 
+// ========================================================================================================
+//---VARIAVEIS GLOBAIS---
+
+/// @brief Tag para identificação dos logs deste módulo (main)
 static const char *TAG = "main";
 
-// Definições de hardware
-#define IBUS_UART_NUM    UART_NUM_1
-#define IBUS_TX_PIN      16
-#define IBUS_RX_PIN      15
-#define LED_GPIO         2
+//---instância principal do protocolo iBUS---
+static ibusbm_t ibus;                
+//---Endereço do sensor registrado no protocolo---
+static uint8_t sensor_voltage_addr = 0;
+static uint8_t sensor_temp_addr = 0;
+static uint8_t sensor_rpm_addr = 0;      
 
-// Constantes de telemetria
-#define TEMP_BASE        400  // Base para 0°C (400 = -40°C)
-#define TEMP_OFFSET      237  // 23.7°C
+// ========================================================================================================
+//---PROTOTIPO DA FUNCAO---
 
-// Variáveis globais
-static ibus_handle_t ibus;
-static uint16_t rpm = 1000;
-static uint16_t temp = TEMP_BASE + TEMP_OFFSET;
-static uint32_t last_poll_count = 0;
+void update_sensor_task(void *arg);
+void loop_task(void *arg);
 
-void app_main() {
-    // Configura LED
-    gpio_reset_pin(LED_GPIO);
-    gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
-    
-    // Inicializa iBUS
-    esp_err_t ret = ibus_init(&ibus, IBUS_UART_NUM, IBUS_TX_PIN, IBUS_RX_PIN, 115200);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Falha ao inicializar iBUS: %s", esp_err_to_name(ret));
-        return;
+// ========================================================================================================
+/**
+ * @brief Função principal da aplicação.
+ *
+ * Inicializa o protocolo iBUS, registra sensor simulado,
+ * e cria as tasks de atualização e processamento do protocolo.
+*/
+void app_main(void) {
+    ESP_LOGI(TAG, "✅ Inicializando protocolo iBUS...");
+
+    //---inicializa protocolo iBUS com UART e pinos definidos---
+    ibusbm_init(&ibus, UART_NUM, UART_RX_PIN, UART_TX_PIN);
+    ESP_LOGI(TAG, "✅ UART configurada: TX=%d, RX=%d", UART_TX_PIN, UART_RX_PIN);
+
+    //---adiciona sensores---
+    sensor_voltage_addr = ibusbm_add_sensor(&ibus, IBUSS_EXTV, 2);
+    sensor_temp_addr    = ibusbm_add_sensor(&ibus, IBUSS_TEMP, 2);
+    sensor_rpm_addr     = ibusbm_add_sensor(&ibus, IBUSS_RPM, 2);
+
+    ESP_LOGI(TAG, "⚙️  Sensores registrados: Tensão=%d, Temperatura=%d, RPM=%d",
+             sensor_voltage_addr, sensor_temp_addr, sensor_rpm_addr);
+
+    //---cria tarefas para gerenciar protocolo e simulação de sensor---
+    xTaskCreate(loop_task, "ibus_loop", 4096, NULL, 5, NULL);
+    xTaskCreate(update_sensor_task, "update_sensor", 4096, NULL, 5, NULL);
+
+    while(1) {
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
-    
-    // Adiciona sensores
-    if (!ibus_add_sensor(&ibus, IBUSS_RPM, 2) || !ibus_add_sensor(&ibus, IBUSS_TEMP, 2)) {
-        ESP_LOGE(TAG, "Falha ao adicionar sensores");
-        return;
-    }
-    
-    ESP_LOGI(TAG, "Telemetria iBUS inicializada");
-    
+}
+
+// ========================================================================================================
+/**
+ * @brief Task de atualização periódica dos dados do sensor.
+ *
+ * Essa tarefa simula uma leitura de tensão (ex: bateria 12.3V),
+ * e envia o valor para o protocolo iBUS a cada 100ms.
+ *
+ * @param arg Ponteiro não utilizado.
+*/
+void update_sensor_task(void *arg) {
     while (1) {
-        // Pisca LED a cada 1s
-        static uint32_t last_blink = 0;
-        uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
-        
-        if (now - last_blink > 1000) {
-            last_blink = now;
-            gpio_set_level(LED_GPIO, !gpio_get_level(LED_GPIO));
-            
-            // Loga estado atual
-            ESP_LOGI(TAG, "RPM: %" PRIu16 ", Temp: %.1f°C", rpm, (temp - TEMP_BASE) / 10.0f);
-        }
-        
-        // Atualiza valores dos sensores
-        ibus_set_sensor_value(&ibus, 1, rpm);
-        ibus_set_sensor_value(&ibus, 2, temp);
-        
-        // Detecta polls do receptor
-        if (ibus.poll_count != last_poll_count) {
-            last_poll_count = ibus.poll_count;
-            ESP_LOGI(TAG, "Poll recebido do receptor (total: %" PRIu32 ")", ibus.poll_count);
-        }
-        
-        // Processa comunicação iBUS
-        ibus_loop(&ibus);
-        vTaskDelay(pdMS_TO_TICKS(10));
+        //---tensão simulada (7,86 V)---
+        int32_t voltage_cv = 786; // centivolts
+        ibusbm_set_sensor_value(&ibus, sensor_voltage_addr, voltage_cv);
+        ESP_LOGI(TAG, "⚡ Tensão enviada: %.2f V", voltage_cv / 100.0);
+
+        //---temperatura simulada (24,5 °C)---
+        float temp_celsius = 24.5;
+        int32_t temp_raw = (int32_t)((temp_celsius + 40.0) * 10);  // Conversão para protocolo iBUS
+        ibusbm_set_sensor_value(&ibus, sensor_temp_addr, temp_raw);
+        ESP_LOGI(TAG, "🌡️  Temperatura enviada: %.1f °C (raw=%" PRId32 ")", temp_celsius, temp_raw);
+
+        //---RPM simulado (3.00rpm) ---
+        int32_t rpm = 300;
+        ibusbm_set_sensor_value(&ibus, sensor_rpm_addr, rpm);
+        ESP_LOGI(TAG, "🌀  RPM enviado: %" PRId32, rpm);
+
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
+// ========================================================================================================
+/**
+ * @brief Task principal de loop do protocolo iBUS.
+ *
+ * Executa a função `ibusbm_loop()` para tratar comandos do transmissor
+ * e responder com dados de sensores registrados.
+ *
+ * @note Essa task deve rodar com intervalo baixo (ex: 1ms) para garantir
+ *       resposta rápida ao transmissor FlySky.
+ *
+ * @param arg Ponteiro não utilizado.
+*/
+void loop_task(void *arg) {
+    while (1) {
+        ibusbm_loop(&ibus);               // Processa dados do protocolo iBUS
+        vTaskDelay(pdMS_TO_TICKS(1));     // Delay curto para evitar travamento
     }
 }

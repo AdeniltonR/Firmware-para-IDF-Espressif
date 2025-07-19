@@ -15,8 +15,9 @@
   },
   "files.associations": {
     "task.h": "c",
-    "gpio.h": "c"
+    "gpio.h": "c",
+    "string.h": "c"
   },
-  "idf.portWin": "COM8",
+  "idf.portWin": "COM17",
   "idf.flashType": "UART"
 }

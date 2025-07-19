@@ -24,12 +24,20 @@
 #include <inttypes.h>
 #include "driver/uart.h"
 #include <esp_err.h>
+#include "esp_timer.h"
 #include "esp_log.h"
+
+// ========================================================================================================
+//---MAPEAMENTO DE HARDWARE---
+
+#define UART_NUM        UART_NUM_1   ///< UART utilizada para comunicação iBUS
+#define UART_TX_PIN     16           ///< Pino GPIO para TX
+#define UART_RX_PIN     15           ///< Pino GPIO para RX
 
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---
 
-// Tipos de sensor suportados (compatíveis com OpenTX/Turnigy)
+//---tipos de sensor suportados (compatíveis com OpenTX/Turnigy)---
 #define IBUSS_INTV  0x00  // Tensão interna (em 0.01V)
 #define IBUSS_TEMP  0x01  // Temperatura (em 0.1°C, onde 0=-40°C)
 #define IBUSS_RPM   0x02  // RPM
@@ -37,12 +45,9 @@
 #define IBUS_PRESS  0x41  // Pressão (em Pa)
 #define IBUS_SERVO  0xFD  // Valor do servo
 
-// Constantes do protocolo
-#define IBUS_PROTOCOL_LENGTH       0x20
-#define IBUS_PROTOCOL_OVERHEAD     3
-#define IBUS_PROTOCOL_TIMEGAP_MS   3
-#define IBUS_MAX_CHANNELS          14
-#define IBUS_MAX_SENSORS           10
+//---Constantes do protocolo---
+#define SENSORMAX 10
+#define PROTOCOL_CHANNELS 14
 
 // --------------------------
 // Modos de voo (Flight Modes)
@@ -109,33 +114,42 @@
 
 // ========================================================================================================
 //---ESTRUTURAS DE DADOS---
-typedef struct {
-    uint8_t type;       // Tipo do sensor (IBUSS_*)
-    uint8_t length;     // Tamanho dos dados (2 ou 4 bytes)
-    int32_t value;      // Valor atual do sensor
-} ibus_sensor_t;
 
 typedef struct {
-    uart_port_t uart_num;           // Número da UART (ex: UART_NUM_2)
-    int tx_pin;                     // Pino TX
-    int rx_pin;                     // Pino RX
-    uint16_t channels[IBUS_MAX_CHANNELS];  // Canais recebidos
-    ibus_sensor_t sensors[IBUS_MAX_SENSORS]; // Sensores configurados
-    uint8_t sensor_count;           // Número de sensores ativos
-    uint32_t last_update_ms;        // Última atualização
-    uint32_t poll_count;            // Contador de polls recebidos
-    uint32_t sensor_response_count; // Contador de respostas enviadas
-    uint32_t channel_update_count;  // Contador de atualizações de canal
-} ibus_handle_t;
+    uint8_t sensorType;
+    uint8_t sensorLength;
+    int32_t sensorValue;
+} sensorinfo_t;
 
+typedef struct {
+    uart_port_t uart_num;
+    int tx_pin;
+    int rx_pin;
+    sensorinfo_t sensors[SENSORMAX];
+    uint8_t num_sensors;
+    uint16_t channels[PROTOCOL_CHANNELS];
+
+    uint8_t buffer[32];
+    uint8_t ptr;
+    uint8_t len;
+    uint16_t chksum;
+    uint8_t lchksum;
+    uint8_t state;
+
+    uint32_t last_millis;
+    
+    uint8_t cnt_poll;
+    uint8_t cnt_sensor;
+    uint8_t cnt_rec;
+} ibusbm_t;
 
 // ========================================================================================================
 //---PROTOTIPO DA FUNCAO---
 
-esp_err_t ibus_init(ibus_handle_t *handle, uart_port_t uart_num, int tx_pin, int rx_pin, int baud_rate);
-uint8_t ibus_add_sensor(ibus_handle_t *handle, uint8_t type, uint8_t length);
-esp_err_t ibus_set_sensor_value(ibus_handle_t *handle, uint8_t sensor_num, int32_t value);
-uint16_t ibus_read_channel(ibus_handle_t *handle, uint8_t channel_num);
-esp_err_t ibus_loop(ibus_handle_t *handle);
+void ibusbm_init(ibusbm_t *ibus, uart_port_t uart_num, int rx_pin, int tx_pin);
+void ibusbm_loop(ibusbm_t *ibus);
+uint16_t ibusbm_read_channel(ibusbm_t *ibus, uint8_t channel);
+uint8_t ibusbm_add_sensor(ibusbm_t *ibus, uint8_t type, uint8_t len);
+void ibusbm_set_sensor_value(ibusbm_t *ibus, uint8_t addr, int32_t value);
 
 #endif //ibus.h
