@@ -134,7 +134,7 @@ O **FS-iA10B** é um receptor de rádio controle de alto desempenho, ideal para 
 - Compatível com protocolos como **I-BUS**, facilitando a comunicação digital com controladoras de voo ou microcontroladores;
 - Interface dedicada para aquisição de dados.
 
-![Receptor.png](Docs/Receptor.png)
+![Receptor.png](Docs/Receptor_FS-iA10B.png)
 
 **Informações Técnicas:**
 
