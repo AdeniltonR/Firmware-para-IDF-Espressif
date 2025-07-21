@@ -77,7 +77,7 @@ Esquemático da ligação:
 
 ![Pinout.png](Docs/Pinout.png)
 
-Nota: Se nenhum outro sensor estiver conectado ao iBUS, você tem a opção de substituir o diodo por um resistor de 1,2 k Ohm.
+> Nota: Se nenhum outro sensor estiver conectado ao iBUS, você tem a opção de substituir o diodo por um resistor de 1,2 k Ohm.
 
 ## Bibliotecas
 
