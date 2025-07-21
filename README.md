@@ -25,7 +25,7 @@
     - [Comunicação API](#comunicação-api)
     - [Pulsein IDF](#Pulsein-idf)
     - [Controle PWM](#controle-pwm)
-    - [Display Oled](#display-oled)
+    - [Protocolo iBUS](#protocolo-ibus)
 
 ## Histórico de Versão
 
@@ -48,6 +48,7 @@
 | 1.0.0  | 25/04/2025 | Adenilton R  | Pulsein IDF                      |
 | 1.0.0  | 16/05/2025 | Adenilton R  | Controle PWM com RTOS            |
 | 1.0.0  | 04/06/2025 | Adenilton R  | Controle Display Oled com RTOS   |
+| 1.0.0  | 11/07/2025 | Adenilton R  | Protocolo iBus                   |
 
 ---
 
@@ -214,3 +215,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/display-oled) a seguir.
 
 ![PWM.png](Docs/Display.png)
+
+### Protocolo iBUS
+
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/protocolo-ibus) a seguir.
+
+![Receptor.jpeg](Docs/Receptor.jpeg)
