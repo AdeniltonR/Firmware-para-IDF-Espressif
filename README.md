@@ -28,6 +28,7 @@
     - [Protocolo iBUS](#protocolo-ibus)
     - [Protocolo iBUS](#protocolo-ibus)
     - [Pisca Led](#pisca-led)
+    - [IMU C0](#imu-c0)
 
 ## Histórico de Versão
 
@@ -52,6 +53,7 @@
 | 1.0.0  | 04/06/2025 | Adenilton R  | Controle Display Oled com RTOS   |
 | 1.0.0  | 11/07/2025 | Adenilton R  | Protocolo iBus                   |
 | 1.0.0  | 05/08/2025 | Adenilton R  | Pisca Led com RTOS               |
+| 1.0.0  | 05/08/2025 | Adenilton R  | IMU C0                           |
 
 ---
 
@@ -230,3 +232,7 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/pisca-led) a seguir.
 
 ![Logi.png](Docs/Logi.png)
+
+### IMU C0
+
+Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
