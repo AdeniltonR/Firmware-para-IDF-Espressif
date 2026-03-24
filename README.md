@@ -26,7 +26,6 @@
     - [Pulsein IDF](#Pulsein-idf)
     - [Controle PWM](#controle-pwm)
     - [Protocolo iBUS](#protocolo-ibus)
-    - [Protocolo iBUS](#protocolo-ibus)
     - [Pisca Led](#pisca-led)
     - [IMU C3](#imu-c3)
 

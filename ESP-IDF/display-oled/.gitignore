@@ -1,4 +1,30 @@
+# Build
 build/
-sdkconfig
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# ESP-IDF config
 sdkconfig.old
-sdkconfig.old
+sdkconfig.cmake
+
+# Binários
+*.elf
+*.bin
+*.map
+*.log
+
+# Python (scripts auxiliares)
+__pycache__/
+*.pyc
+venv/
+.env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
