@@ -21,10 +21,12 @@
     - [Led Strip](#led-strip)
     - [UART Pinout](#uart-pinout)
     - [Servo Motor](#servo-motor)
-    - [Controle de Velocidad](#controle-de-velocidad)
+    - [Servo UART](#servo-uart)
+    - [Controle de Velocidade](#controle-de-velocidade)
     - [Comunicação API](#comunicação-api)
     - [Pulsein IDF](#Pulsein-idf)
     - [Controle PWM](#controle-pwm)
+    - [Controle Oled](#controle-oled)
     - [Protocolo iBUS](#protocolo-ibus)
     - [Pisca Led](#pisca-led)
     - [IMU C3](#imu-c3)
@@ -234,4 +236,4 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 
 ### IMU C3
 
-Para obter mais informações sobre o projeto, clique no [**link**]() a seguir.
+Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/imu-c3) a seguir.
