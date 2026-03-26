@@ -1,0 +1,10 @@
+## IDF Component Manager Manifest File
+dependencies:
+
+  # Versão do ESP-IDF (compatível com seu ambiente)
+  idf:
+    version: ">=5.4.0"
+
+  # Driver da câmera ESP32
+  espressif/esp32-camera:
+    version: "^2.0.0"

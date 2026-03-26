@@ -30,6 +30,7 @@
     - [Protocolo iBUS](#protocolo-ibus)
     - [Pisca Led](#pisca-led)
     - [IMU C3](#imu-c3)
+    - [ESP32-CAM](#esp32-cam)
 
 ## Histórico de Versão
 
@@ -218,3 +219,9 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 ### IMU C3
 
 Para obter mais informações sobre o projeto, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/imu-c3) a seguir.
+
+### ESP32-CAM
+
+Para obter mais informações sobre o projeto do Firmware, clique no [**link**](https://github.com/AdeniltonR/Detector-Dracco/tree/main/Firmware/esp32_cam) a seguir.
+
+![ESP32-CAM.png](Docs/ESP32-CAM.png)

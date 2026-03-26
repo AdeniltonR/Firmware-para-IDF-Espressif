@@ -1,0 +1,48 @@
+# ========================
+# ESP-IDF
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+
+# ========================
+# VS Code
+.vscode/
+
+# ========================
+# Arquivos de compilação
+*.d
+*.o
+*.obj
+*.elf
+
+# ========================
+# Linker
+*.map
+*.exp
+*.ilk
+
+# ========================
+# Bibliotecas
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# ========================
+# Executáveis
+*.exe
+*.out
+
+# ========================
+# Debug
+*.pdb
+*.idb
+*.su
+*.dSYM/
+
+# ========================
+# Sistema
+.DS_Store
+Thumbs.db

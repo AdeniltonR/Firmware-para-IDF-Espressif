@@ -1,0 +1,73 @@
+menu "Configuração da Aplicação"
+
+	menu "Configuração do Wi-Fi"
+
+		config ESPCAM_WIFI_SSID
+			string "Nome da rede Wi-Fi (SSID)"
+			default "myssid"
+			help
+				Informe o nome da rede Wi-Fi (SSID) à qual o dispositivo irá se conectar.
+
+		config ESPCAM_WIFI_PASSWORD
+			string "Senha do Wi-Fi"
+			default "mypassword"
+			help
+				Informe a senha da rede Wi-Fi (WPA ou WPA2).
+
+		config ESPCAM_MAXIMUM_RETRY
+			int "Número máximo de tentativas de conexão"
+			default 5
+			help
+				Define o número máximo de tentativas de reconexão ao ponto de acesso.
+				Evita tentativas infinitas caso a rede não esteja disponível.
+
+	endmenu
+
+	# ================= CONFIGURAÇÃO DE REDE =================
+	menu "Configuração de Rede (IP)"
+
+		config ESPCAM_USE_STATIC_IP
+			bool "Usar IP fixo"
+			default y
+			help
+				Ativa o uso de IP fixo ao invés de DHCP automático.
+
+		config ESPCAM_STATIC_IP
+			string "Endereço IP"
+			default "192.168.1.100"
+			depends on ESPCAM_USE_STATIC_IP
+
+		config ESPCAM_GATEWAY
+			string "Gateway"
+			default "192.168.1.1"
+			depends on ESPCAM_USE_STATIC_IP
+
+		config ESPCAM_NETMASK
+			string "Máscara de rede"
+			default "255.255.255.0"
+			depends on ESPCAM_USE_STATIC_IP
+
+	endmenu
+	# =======================================================
+
+	choice BOARD
+		bool "Seleção da placa"
+		default BOARD_ESP32CAM_AITHINKER
+		help
+			Selecione o modelo da placa utilizada no projeto.
+
+		config BOARD_WROVER_KIT
+			bool "Placa Freenove ESP32-WROVER CAM"
+
+		config BOARD_CAMERA_MODEL_ESP_EYE
+			bool "Espressif ESP-EYE"
+
+		config BOARD_ESP32CAM_AITHINKER
+			bool "AiThinker ESP32-CAM"
+
+		config BOARD_CAMERA_MODEL_TTGO_T_JOURNAL
+			bool "TTGO T-Journal ESP32 com câmera"
+
+	endchoice
+
+endmenu
