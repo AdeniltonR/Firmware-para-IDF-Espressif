@@ -215,19 +215,19 @@ http://192.168.15.30
 
 ## Bibliotecas
 
-camera_pins.c
+[camera_pins.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/camera_pins.h)
 
-CMakerLists.txt
+[CMakerLists.txt](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/CMakeLists.txt)
 
-connect_wifi.c
+[connect_wifi.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/connect_wifi.c)
 
-connect_wifi.h
+[connect_wifi.h](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/connect_wifi.h)
 
-idf_componente.yml
+[idf_componente.yml](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/idf_component.yml)
 
-Kconfig.projbuild
+[Kconfig.projbuild](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/Kconfig.projbuild)
 
-main.c
+[main.c](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/blob/main/ESP-IDF/esp32_cam/main/main.c)
 
 ## Estrutura do Projeto
 
