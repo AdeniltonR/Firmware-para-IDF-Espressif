@@ -1,6 +1,6 @@
 # _Wi-Fi Manager_
 
-![Firmware version](https://img.shields.io/badge/Firmware_version-1.0.0-blue)
+![Firmware version](https://img.shields.io/badge/Firmware_version-1.0.1-blue)
 
 ---
 
@@ -19,9 +19,10 @@
 
 ## Histórico de versão
 
-| Versão | Data       | Autor         | Descrição          |
-|--------|------------|---------------|--------------------|
-| 1.0.0  | 17/03/2025 | Adenilton R   | Inicio do projeto  |
+| Versão | Data       | Autor         | Descrição                          |
+|--------|------------|---------------|------------------------------------|
+| 1.0.0  | 17/03/2025 | Adenilton R   | Inicio do projeto                  |
+| 1.0.1  | 12/06/2016 | Adenilton R   | Adicionando Scan Wi-Fi e Kconfig   |
 
 ---
 
@@ -114,6 +115,31 @@ Este projeto implementa um **Wi-Fi Manager** completo para ESP32, com capacidade
 **Parâmetros Ajustáveis:**
 
 ![access_point.png](Docs/access_point.png)
+
+**Parâmetros usando Kconfig.projbuild:**
+
+Depois execute:
+
+```basic
+idf.py menuconfig
+```
+
+e aparecerá um novo menu:
+
+```
+Configuracoes do Wi-Fi Manager
+│
+├── SSID do Access Point
+├── Senha do Access Point
+├── Canal do Access Point
+├── Numero maximo de dispositivos conectados
+├── Numero maximo de tentativas de conexao
+└── Entrar em modo AP apos falha de conexao
+```
+
+Fica totalmente configurável sem precisar alterar o código-fonte.
+
+![Kconfig.png](docs/Kconfig.png)
 
 **Estrutura do Projeto:**
 

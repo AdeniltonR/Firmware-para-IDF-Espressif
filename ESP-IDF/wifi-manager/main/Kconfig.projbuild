@@ -1,53 +1,81 @@
-menu "Example Configuration"
+menu "Configurações do Wi-Fi Manager"
 
     config ESP_WIFI_SSID
-        string "WiFi SSID"
-        default "myssid"
+        string "SSID do Access Point"
+        default "ESPIDF"
         help
-            SSID (network name) for the example to connect to.
+            Define o SSID (nome da rede) do Access Point Wi-Fi que será criado pelo ESP32.
 
     config ESP_WIFI_PASSWORD
-        string "WiFi Password"
-        default "mypassword"
+        string "Senha do Access Point"
+        default "12345678"
         help
-            WiFi password (WPA or WPA2) for the example to use.
+            Define a senha do Access Point Wi-Fi. 
+            Se a senha for deixada em branco (""), a rede será aberta (sem senha).
+
+    config ESP_WIFI_CHANNEL
+        int "Canal de frequência do AP"
+        range 1 13
+        default 1
+        help
+            Define o canal de frequência Wi-Fi que o Access Point usará. 
+            O canal 1, 6 ou 11 são os mais comuns para redes 2.4 GHz.
+
+    config MAX_STA_CONN
+        int "Número máximo de conexões simultâneas no AP"
+        range 1 10
+        default 2
+        help
+            Define o número máximo de dispositivos (estações) que podem 
+            se conectar ao seu Access Point simultaneamente.
+
+    config ESP_MAXIMUM_RETRY
+        int "Tentativas de conexão (Station)"
+        default 10
+        help
+            Define o número máximo de tentativas de conexão ao roteador 
+            antes do ESP32 desistir e tomar uma ação de falha.
+
+    config NUMERO_MAX_TENTATIVAS
+        int "Ação após falha (0 = Reiniciar, 1 = Modo AP)"
+        range 0 1
+        default 0
+        help
+            Ação tomada caso o limite de tentativas de conexão seja atingido:
+            1 -> Habilita a entrada no modo Access Point (AP).
+            0 -> O ESP32 apenas reinicia.
 
     choice ESP_WIFI_SAE_MODE
-        prompt "WPA3 SAE mode selection"
+        prompt "Seleção do modo WPA3 SAE"
         default ESP_WPA3_SAE_PWE_BOTH
         help
-            Select mode for SAE as Hunt and Peck, H2E or both.
+            Selecione o modo de segurança SAE (Hunt and Peck, H2E ou ambos).
+            
         config ESP_WPA3_SAE_PWE_HUNT_AND_PECK
             bool "HUNT AND PECK"
         config ESP_WPA3_SAE_PWE_HASH_TO_ELEMENT
             bool "H2E"
         config ESP_WPA3_SAE_PWE_BOTH
-            bool "BOTH"
+            bool "AMBOS (BOTH)"
     endchoice
 
     config ESP_WIFI_PW_ID
-        string "PASSWORD IDENTIFIER"
-        depends on  ESP_WPA3_SAE_PWE_HASH_TO_ELEMENT|| ESP_WPA3_SAE_PWE_BOTH
+        string "Identificador de Senha (SAE H2E)"
+        depends on ESP_WPA3_SAE_PWE_HASH_TO_ELEMENT || ESP_WPA3_SAE_PWE_BOTH
         default ""
         help
-            password identifier for SAE H2E
-
-    config ESP_MAXIMUM_RETRY
-        int "Maximum retry"
-        default 5
-        help
-            Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+            Identificador de senha usado especificamente para segurança SAE H2E.
 
     choice ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD
-        prompt "WiFi Scan auth mode threshold"
+        prompt "Autenticação mínima aceita no Scan"
         default ESP_WIFI_AUTH_WPA2_PSK
         help
-            The weakest authmode to accept in the scan mode.
-            This value defaults to ESP_WIFI_AUTH_WPA2_PSK incase password is present and ESP_WIFI_AUTH_OPEN is used.
-            Please select ESP_WIFI_AUTH_WEP/ESP_WIFI_AUTH_WPA_PSK incase AP is operating in WEP/WPA mode.
+            O nível de segurança mais fraco que o ESP32 aceitará ao buscar redes.
+            O padrão é WPA2_PSK. Selecione WEP ou WPA_PSK caso o roteador local
+            opere nesses modos mais antigos.
 
         config ESP_WIFI_AUTH_OPEN
-            bool "OPEN"
+            bool "OPEN (Aberta)"
         config ESP_WIFI_AUTH_WEP
             bool "WEP"
         config ESP_WIFI_AUTH_WPA_PSK

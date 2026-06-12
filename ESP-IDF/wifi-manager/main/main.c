@@ -23,12 +23,19 @@
 // ========================================================================================================
 //---MAPEAMENTO DE ESTADO---
 
-const char *EXAMPLE_ESP_WIFI_SSID = "ESPIDF";   // Define o SSID (nome da rede) do Access Point Wi-Fi que será criado pelo ESP32.
-const char *EXAMPLE_ESP_WIFI_PASS = "12345678"; // Define a senha do Access Point Wi-Fi. Se a senha for deixada em branco (""), a rede será aberta (sem senha).
-int EXAMPLE_ESP_WIFI_CHANNEL      = 1;          // Define o canal de frequência Wi-Fi que o Access Point usará. O canal 6 é comum para redes 2.4 GHz.
-int EXAMPLE_MAX_STA_CONN          = 2;          // Define o número máximo de dispositivos (estações) que podem se conectar ao Access Point simultaneamente.
-int EXAMPLE_ESP_MAXIMUM_RETRY     = 10;         // Número máximo de tentativas de conexão 
-int NUMERO_MAX_TENTATIVAS         = 0;          // 1 para abilitar ele entrar no modo AP, 0 para ESP32 só reiniciar
+// const char *EXAMPLE_ESP_WIFI_SSID = "ESPIDF";   // Define o SSID (nome da rede) do Access Point Wi-Fi que será criado pelo ESP32.
+// const char *EXAMPLE_ESP_WIFI_PASS = "12345678"; // Define a senha do Access Point Wi-Fi. Se a senha for deixada em branco (""), a rede será aberta (sem senha).
+// int EXAMPLE_ESP_WIFI_CHANNEL      = 1;          // Define o canal de frequência Wi-Fi que o Access Point usará. O canal 6 é comum para redes 2.4 GHz.
+// int EXAMPLE_MAX_STA_CONN          = 2;          // Define o número máximo de dispositivos (estações) que podem se conectar ao Access Point simultaneamente.
+// int EXAMPLE_ESP_MAXIMUM_RETRY     = 10;         // Número máximo de tentativas de conexão 
+// int NUMERO_MAX_TENTATIVAS         = 0;          // 1 para abilitar ele entrar no modo AP, 0 para ESP32 só reiniciar
+
+const char *EXAMPLE_ESP_WIFI_SSID = CONFIG_ESP_WIFI_SSID;
+const char *EXAMPLE_ESP_WIFI_PASS = CONFIG_ESP_WIFI_PASSWORD;
+int EXAMPLE_ESP_WIFI_CHANNEL = CONFIG_ESP_WIFI_CHANNEL;
+int EXAMPLE_MAX_STA_CONN = CONFIG_MAX_STA_CONN;
+int EXAMPLE_ESP_MAXIMUM_RETRY = CONFIG_ESP_MAXIMUM_RETRY;
+int NUMERO_MAX_TENTATIVAS = CONFIG_NUMERO_MAX_TENTATIVAS;
 
 // ========================================================================================================
 //---MAPEAMENTO DE HARDWARE---
