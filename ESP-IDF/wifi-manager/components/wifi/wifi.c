@@ -273,3 +273,74 @@ void test_ntp_connection(void) {
     //---libera a memória alocada para a string de tempo---
     free(current_time);
 }
+
+// ========================================================================================================
+/**
+ * @brief Realiza um scan das redes WiFi disponíveis e retorna um JSON com as informações.
+ * 
+ * @return Ponteiro para uma string JSON contendo as redes WiFi encontradas.
+ * @note A memória alocada deve ser liberada pelo chamador usando `free()`.
+ */
+char* wifi_scan_networks(void) {
+    //---inicia o scan WiFi---
+    wifi_scan_config_t scan_config = {
+        .ssid = NULL,
+        .bssid = NULL,
+        .channel = 0,
+        .show_hidden = false,
+        .scan_type = WIFI_SCAN_TYPE_ACTIVE,
+        .scan_time.active.min = 100,
+        .scan_time.active.max = 300,
+    };
+
+    ESP_LOGI(TAG, "🔍 Iniciando scan de redes WiFi...");
+    esp_wifi_scan_start(&scan_config, true);  // true = bloqueante
+
+    //---obtém o número de APs encontrados---
+    uint16_t ap_num = 0;
+    esp_wifi_scan_get_ap_num(&ap_num);
+    ESP_LOGI(TAG, "📶 %d redes WiFi encontradas", ap_num);
+
+    //---aloca memória para armazenar os registros de scan---
+    wifi_ap_record_t *ap_records = (wifi_ap_record_t *)malloc(ap_num * sizeof(wifi_ap_record_t));
+    if (ap_records == NULL) {
+        ESP_LOGE(TAG, "❌ Erro ao alocar memória para registros de AP");
+        return strdup("{\"networks\": [], \"error\": \"Memória insuficiente\"}");
+    }
+
+    //---obtém os registros de todos os APs encontrados---
+    esp_wifi_scan_get_ap_records(&ap_num, ap_records);
+
+    //---cria o JSON com as redes encontradas---
+    char *json_str = (char *)malloc(4096 * sizeof(char));
+    if (json_str == NULL) {
+        free(ap_records);
+        ESP_LOGE(TAG, "❌ Erro ao alocar memória para JSON");
+        return strdup("{\"networks\": [], \"error\": \"Memória insuficiente\"}");
+    }
+
+    //---inicializa o JSON---
+    strcpy(json_str, "{\"networks\": [");
+
+    //---adiciona cada rede ao JSON---
+    for (int i = 0; i < ap_num; i++) {
+        char temp_str[256];
+        snprintf(temp_str, sizeof(temp_str), 
+                 "%s{\"ssid\": \"%s\", \"rssi\": %d, \"channel\": %d, \"authmode\": %d}",
+                 i > 0 ? "," : "",
+                 (char *)ap_records[i].ssid,
+                 ap_records[i].rssi,
+                 ap_records[i].primary,
+                 ap_records[i].authmode);
+        strcat(json_str, temp_str);
+    }
+
+    strcat(json_str, "]}");
+
+    //---libera a memória dos registros de AP---
+    free(ap_records);
+
+    ESP_LOGI(TAG, "✅ Scan concluído. JSON gerado com sucesso");
+    return json_str;
+}
+

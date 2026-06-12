@@ -94,5 +94,7 @@ void initialize_sntp(void);
 void set_timezone(void);
 char* get_current_time(void);
 void test_ntp_connection(void);
+//---scan de redes WiFi---
+char* wifi_scan_networks(void);
 
 #endif //wifi.h

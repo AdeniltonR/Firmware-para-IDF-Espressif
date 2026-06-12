@@ -142,6 +142,15 @@ void start_webserver(void) {
         };
         httpd_register_uri_handler(server, &wifi_connect_uri);
 
+        //---registra o manipulador para /wifi/scan---
+        httpd_uri_t wifi_scan_uri = {
+            .uri = "/wifi/scan",
+            .method = HTTP_GET,
+            .handler = wifi_scan_handler,
+            .user_ctx = NULL
+        };
+        httpd_register_uri_handler(server, &wifi_scan_uri);
+
         //---registra o manipulador para /connected_html---
         httpd_uri_t connected_html_uri = {
             .uri = "/connected_html",
@@ -298,15 +307,41 @@ void wifi_init_softap(void) {
 
     //---parar e reinicializar o Wi-Fi antes de configurar---
     ESP_ERROR_CHECK(esp_wifi_stop());
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_LOGI(TAG,"📡  Interface STA habilitada para Scan WiFi");
 
     ESP_LOGI(TAG, "📶 wifi_init_softap finalizado. SSID:%s senha:%s canal:%d",
              EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS, EXAMPLE_ESP_WIFI_CHANNEL);
 
     start_webserver();  // Iniciar o servidor HTTP após o Wi-Fi estar pronto
     start_dns_server(); // Iniciar o servidor DNS
+}
+
+// ========================================================================================================
+/**
+ * @brief Manipulador de requisições HTTP para /wifi/scan
+ * @param req Requisição HTTP recebida
+ * @return ESP_OK se a requisição foi tratada com sucesso
+ */
+esp_err_t wifi_scan_handler(httpd_req_t *req) {
+    ESP_LOGI(TAG, "📶 Iniciando scan de redes WiFi...");
+    
+    //---obtém o JSON com as redes WiFi---
+    char *json_networks = wifi_scan_networks();
+    
+    //---configura o tipo de resposta como JSON---
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Content-Type", "application/json; charset=UTF-8");
+    
+    //---envia a resposta---
+    httpd_resp_send(req, json_networks, HTTPD_RESP_USE_STRLEN);
+    
+    //---libera a memória alocada---
+    free(json_networks);
+    
+    return ESP_OK;
 }
 
 // ========================================================================================================

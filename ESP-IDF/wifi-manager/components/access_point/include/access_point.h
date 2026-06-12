@@ -66,6 +66,7 @@ void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id
 //---manipuladores de requisições HTTP---
 esp_err_t root_handler(httpd_req_t *req);
 esp_err_t wifi_connect_handler(httpd_req_t *req); 
+esp_err_t wifi_scan_handler(httpd_req_t *req);
 esp_err_t close_ap_handler(httpd_req_t *req);
 esp_err_t connected_html_handler(httpd_req_t *req);
 esp_err_t favicon_handler(httpd_req_t *req);
