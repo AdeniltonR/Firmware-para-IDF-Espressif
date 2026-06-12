@@ -16,5 +16,7 @@
     "--background-index",
     "--query-driver=**",
     "--compile-commands-dir=c:\\Users\\adenilton.ribeiro\\Documents\\GitHub\\Firmware-para-IDF-Espressif\\ESP-IDF\\ota-https\\build"
-  ]
+  ],
+  "idf.flashType": "UART",
+  "idf.portWin": "COM17"
 }
