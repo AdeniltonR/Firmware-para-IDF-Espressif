@@ -1,8 +1,8 @@
 /*
  * NOME: Adenilton Ribeiro
- * DATA: 13/03/2025
+ * DATA: 12/06/2026
  * PROJETO: access point.c
- * VERSAO: 1.0.0
+ * VERSAO: 1.0.1
  * DESCRICAO: - feat: Biblioteca atualizada para criar um access point e abrir uma página HTML para configuração de Wi-Fi.
  *            - docs: ESP32 32D - ESP-IDF v5.4.0
  * LINKS:

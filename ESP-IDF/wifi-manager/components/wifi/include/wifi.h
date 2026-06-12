@@ -1,8 +1,8 @@
 /*
  * NOME: Adenilton
- * DATA: 16/03/2025
+ * DATA: 12/06/2026
  * PROJETO: Wi-Fi
- * VERSAO: 1.0.0
+ * VERSAO: 1.0.1
  * DESCRICAO: - feat: Conexão de wifi com teste de internet com horário.
  *            - docs: ESP32 32D - ESP-IDF v5.4.0
  * LINKS: 
