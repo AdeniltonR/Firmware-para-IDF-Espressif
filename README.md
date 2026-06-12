@@ -31,6 +31,7 @@
     - [Pisca Led](#pisca-led)
     - [IMU C3](#imu-c3)
     - [ESP32-CAM](#esp32-cam)
+    - [OTA HTTPS](#ota-https)
 
 ## Histórico de Versão
 
@@ -225,3 +226,7 @@ Para obter mais informações sobre o projeto, clique no [**link**](https://git
 Para obter mais informações sobre o projeto do Firmware, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/esp32_cam) a seguir.
 
 ![ESP32-CAM.png](Docs/ESP32-CAM.png)
+
+### OTA HTTPS
+
+Para obter mais informações sobre o projeto do Firmware, clique no [**link**](https://github.com/AdeniltonR/Firmware-para-IDF-Espressif/tree/main/ESP-IDF/ota-https) a seguir.
