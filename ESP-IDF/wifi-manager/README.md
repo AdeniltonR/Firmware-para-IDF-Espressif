@@ -139,7 +139,7 @@ Configuracoes do Wi-Fi Manager
 
 Fica totalmente configurável sem precisar alterar o código-fonte.
 
-![Kconfig.png](docs/Kconfig.png)
+![Kconfig.png](Docs/Kconfig.png)
 
 **Estrutura do Projeto:**
 
