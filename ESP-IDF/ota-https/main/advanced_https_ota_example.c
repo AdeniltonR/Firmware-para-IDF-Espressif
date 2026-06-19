@@ -19,6 +19,8 @@
 #include "nvs.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
+#include "esp_crt_bundle.h"
+#include "driver/gpio.h"
 
 #if CONFIG_BOOTLOADER_APP_ANTI_ROLLBACK
 #include "esp_efuse.h"
@@ -32,9 +34,11 @@
 #include "ble_api.h"
 #endif
 
+#define OTA_BUTTON GPIO_NUM_0
+
 static const char *TAG = "advanced_https_ota_example";
-extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
-extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
+//extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
+//extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
 #define OTA_URL_SIZE 256
 
@@ -125,9 +129,13 @@ void advanced_ota_example_task(void *pvParameter)
     esp_err_t ota_finish_err = ESP_OK;
     esp_http_client_config_t config = {
         .url = CONFIG_EXAMPLE_FIRMWARE_UPGRADE_URL,
-        .cert_pem = (char *)server_cert_pem_start,
+        //.cert_pem = (char *)server_cert_pem_start,
+        .crt_bundle_attach = esp_crt_bundle_attach,
         .timeout_ms = CONFIG_EXAMPLE_OTA_RECV_TIMEOUT,
         .keep_alive_enable = true,
+
+        .buffer_size = 8192,
+        .buffer_size_tx = 2048,
     };
 
 #ifdef CONFIG_EXAMPLE_FIRMWARE_UPGRADE_URL_FROM_STDIN
@@ -211,6 +219,34 @@ ota_end:
     vTaskDelete(NULL);
 }
 
+void button_task(void *pvParameter) {
+    gpio_config_t io_conf = {
+        .pin_bit_mask = (1ULL << OTA_BUTTON),
+        .mode = GPIO_MODE_INPUT,
+        .pull_up_en = GPIO_PULLUP_ENABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+
+    gpio_config(&io_conf);
+
+    while (1) {
+        if(gpio_get_level(OTA_BUTTON) == 0) {
+            vTaskDelay(pdMS_TO_TICKS(3000));
+
+            if(gpio_get_level(OTA_BUTTON) == 0) {
+                ESP_LOGI(TAG, "OTA solicitado pelo usuario");
+
+                xTaskCreate(&advanced_ota_example_task, "advanced_ota_example_task", 1024 * 8, NULL, 5, NULL);
+
+                vTaskDelete(NULL);
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
+
 void app_main(void)
 {
     ESP_LOGI(TAG, "Inicializando aplicação OTA");
@@ -275,5 +311,5 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_ble_helper_init());
 #endif
 
-    xTaskCreate(&advanced_ota_example_task, "advanced_ota_example_task", 1024 * 8, NULL, 5, NULL);
+    xTaskCreate(button_task, "button_task", 4096, NULL, 5, NULL);
 }
