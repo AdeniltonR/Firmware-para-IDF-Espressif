@@ -85,6 +85,24 @@ Dados do monitor serial:
 
 Importande adicionar o arquivo dentro da pasta main Kconfig.projbuild:
 
+Você está usando:
+
+https://www.dropbox.com/scl/fi/p6w7pkdantxpyiq27btt2/ota-https.bin?rlkey=cv5ktp81piacjugf5p6vvrbhk&st=skucstqw&dl=0
+
+Troque o final:
+
+&dl=0
+
+por:
+
+&raw=1
+
+Ficando:
+
+https://www.dropbox.com/scl/fi/p6w7pkdantxpyiq27btt2/ota-https.bin?rlkey=cv5ktp81piacjugf5p6vvrbhk&st=skucstqw&raw=1
+
+O parâmetro raw=1 faz o Dropbox entregar o arquivo diretamente, o que
+
 ## Informações
 
 | Info        | Modelo           |

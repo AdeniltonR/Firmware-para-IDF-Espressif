@@ -6,6 +6,12 @@
 # Directory metadata
 .directory
 
+# IDE and editor specific files
+.vscode/
+
+# Node.js dependencies
+dependencies.lock
+
 # Temporary files
 *~
 *.swp

@@ -1,14 +1,19 @@
 {
   "idf.openOcdConfigs": [
-    "interface/ftdi/esp32_devkitj_v1.cfg",
+    "interface/ftdi/esp_ftdi.cfg",
     "target/esp32s3.cfg"
   ],
-  "idf.portWin": "COM8",
+  "idf.portWin": "COM17",
   "idf.customExtraVars": {
     "OPENOCD_SCRIPTS": "c:\\Espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20240318/openocd-esp32/share/openocd/scripts",
     "IDF_CCACHE_ENABLE": "1",
     "ESP_ROM_ELF_DIR": "c:\\Espressif\\tools\\esp-rom-elfs\\20240305/",
     "IDF_TARGET": "esp32s3"
   },
-  "idf.flashType": "UART"
+  "clangd.path": "c:\\Espressif\\tools\\esp-clang\\esp-18.1.2_20240912\\esp-clang\\bin\\clangd.exe",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=c:\\Users\\adenilton.ribeiro\\Documents\\GitHub\\Firmware-para-IDF-Espressif\\ESP-IDF\\ota-https\\build"
+  ]
 }
