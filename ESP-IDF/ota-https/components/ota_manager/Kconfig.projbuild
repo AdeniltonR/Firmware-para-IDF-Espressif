@@ -1,0 +1,54 @@
+menu "OTA Manager"
+
+    config OTA_MANAGER_FIRMWARE_URL
+        string "URL para atualização de firmware"
+        default "https://example.com/firmware.bin"
+        help
+            URL HTTPS onde está hospedado o firmware .bin.
+
+    config OTA_MANAGER_SKIP_COMMON_NAME_CHECK
+        bool "Ignorar verificação do CN do certificado"
+        default n
+        help
+            Ignora a validação do Common Name do certificado.
+
+            ATENCAO:
+            Reduz a segurança da conexão TLS.
+            Não recomendado para produção.
+
+    config OTA_MANAGER_SKIP_VERSION_CHECK
+        bool "Ignorar verificação de versão"
+        default n
+        help
+            Permite instalar firmware com a mesma versão atual.
+
+    config OTA_MANAGER_RECV_TIMEOUT
+        int "Timeout de recepção OTA (ms)"
+        default 5000
+        range 1000 120000
+        help
+            Tempo máximo de espera durante operações de rede.
+
+    config OTA_MANAGER_RX_BUFFER_SIZE
+        int "Tamanho do buffer HTTP RX"
+        default 8192
+        range 1024 32768
+
+    config OTA_MANAGER_TX_BUFFER_SIZE
+        int "Tamanho do buffer HTTP TX"
+        default 2048
+        range 512 16384
+
+    config OTA_MANAGER_ENABLE_PARTIAL_HTTP_DOWNLOAD
+        bool "Habilitar download HTTP parcial"
+        default n
+        help
+            Habilita download utilizando múltiplas requisições HTTP.
+
+    config OTA_MANAGER_HTTP_REQUEST_SIZE
+        int "Tamanho máximo de cada requisição HTTP"
+        default 4096
+        range 1024 16384
+        depends on OTA_MANAGER_ENABLE_PARTIAL_HTTP_DOWNLOAD
+
+endmenu
