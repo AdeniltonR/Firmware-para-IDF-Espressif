@@ -1,3 +1,19 @@
+/*
+ * NOME: Adenilton Ribeiro
+ * DATA: 12/06/2026
+ * PROJETO: Wi-Fi Manager + OTA Manager
+ * VERSAO: 1.1.0
+ * DESCRICAO:
+ *          - feat: OTA Manager via HTTPS com verificação de certificado.
+ *          - feat: Validação de imagem (versão e secure version anti-rollback).
+ *          - feat: Janela de auto-teste com rollback automático.
+ *          - docs: ESP32 - ESP-IDF v5.4.0
+ * LINKS:
+*/
+
+// ========================================================================================================
+//---BIBLIOTECAS AUXILIARES---
+
 #include "ota_manager.h"
 
 #include <string.h>
@@ -18,24 +34,29 @@
 #include "esp_efuse.h"
 #endif
 
-static const char *TAG = "ota_manager";
+// ========================================================================================================
+//---MAPEAMENTO DE ESTADO---
 
 static bool s_ota_running = false;
 static bool s_initialized = false;
 
 static ota_manager_validation_cb_t s_validation_cb = NULL;
 
+// ========================================================================================================
+//---VARIAVEIS GLOBAIS---
 
-/* ============================================================
- * Handler de eventos OTA
- * ============================================================ */
+/// @brief Tag para identificação dos logs deste módulo (ota_manager)
+static const char *TAG = "ota_manager";
 
-static void ota_event_handler(
-    void *arg,
-    esp_event_base_t event_base,
-    int32_t event_id,
-    void *event_data)
-{
+// ========================================================================================================
+/**
+ * @brief Handler de eventos do processo OTA (ESP_HTTPS_OTA_EVENT)
+ * @param arg Não utilizado
+ * @param event_base Base do evento
+ * @param event_id Identificador do evento
+ * @param event_data Dados associados ao evento
+ */
+static void ota_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data) {
     if (event_base != ESP_HTTPS_OTA_EVENT) {
         return;
     }
@@ -55,11 +76,7 @@ static void ota_event_handler(
             break;
 
         case ESP_HTTPS_OTA_VERIFY_CHIP_ID:
-            ESP_LOGI(
-                TAG,
-                "Verificando ID do chip da nova imagem: %d",
-                *(esp_chip_id_t *)event_data
-            );
+            ESP_LOGI(TAG, "Verificando ID do chip da nova imagem: %d", *(esp_chip_id_t *)event_data);
             break;
 
         case ESP_HTTPS_OTA_DECRYPT_CB:
@@ -67,19 +84,11 @@ static void ota_event_handler(
             break;
 
         case ESP_HTTPS_OTA_WRITE_FLASH:
-            ESP_LOGD(
-                TAG,
-                "Gravando na flash: %d bytes",
-                *(int *)event_data
-            );
+            ESP_LOGD(TAG, "Gravando na flash: %d bytes", *(int *)event_data);
             break;
 
         case ESP_HTTPS_OTA_UPDATE_BOOT_PARTITION:
-            ESP_LOGI(
-                TAG,
-                "Partição de boot atualizada. Próxima partição: %d",
-                *(esp_partition_subtype_t *)event_data
-            );
+            ESP_LOGI(TAG, "Partição de boot atualizada. Próxima partição: %d", *(esp_partition_subtype_t *)event_data);
             break;
 
         case ESP_HTTPS_OTA_FINISH:
@@ -96,13 +105,16 @@ static void ota_event_handler(
 }
 
 
-/* ============================================================
- * Validação da imagem
- * ============================================================ */
-
-static esp_err_t validate_image_header(
-    const esp_app_desc_t *new_app_info)
-{
+// ========================================================================================================
+/**
+ * @brief Valida a imagem nova antes de aplicar o OTA (versão e secure version)
+ * @param new_app_info Descrição da nova imagem de firmware
+ * @return
+ *      - ESP_OK: imagem válida
+ *      - ESP_FAIL: versão igual à atual ou secure version inválida
+ *      - ESP_ERR_INVALID_ARG: new_app_info é NULL
+ */
+static esp_err_t validate_image_header(const esp_app_desc_t *new_app_info) {
     if (new_app_info == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
@@ -112,46 +124,23 @@ static esp_err_t validate_image_header(
 
     esp_app_desc_t running_app_info;
 
-    esp_err_t err =
-        esp_ota_get_partition_description(
-            running,
-            &running_app_info
-        );
+    esp_err_t err = esp_ota_get_partition_description(running, &running_app_info);
 
     if (err != ESP_OK) {
-        ESP_LOGE(
-            TAG,
-            "Falha ao obter descrição do firmware atual"
-        );
+        ESP_LOGE(TAG, "Falha ao obter descrição do firmware atual");
 
         return err;
     }
 
-    ESP_LOGI(
-        TAG,
-        "Versão atual: %s",
-        running_app_info.version
-    );
+    ESP_LOGI(TAG, "Versão atual: %s", running_app_info.version);
 
-    ESP_LOGI(
-        TAG,
-        "Nova versão: %s",
-        new_app_info->version
-    );
+    ESP_LOGI(TAG, "Nova versão: %s", new_app_info->version);
 
 
 #ifndef CONFIG_OTA_MANAGER_SKIP_VERSION_CHECK
 
-    if (memcmp(
-            new_app_info->version,
-            running_app_info.version,
-            sizeof(new_app_info->version)
-        ) == 0)
-    {
-        ESP_LOGW(
-            TAG,
-            "A versão atual é igual à nova"
-        );
+    if (memcmp(new_app_info->version, running_app_info.version, sizeof(new_app_info->version)) == 0) {
+        ESP_LOGW(TAG, "A versão atual é igual à nova");
 
         return ESP_FAIL;
     }
@@ -161,17 +150,10 @@ static esp_err_t validate_image_header(
 
 #if CONFIG_BOOTLOADER_APP_ANTI_ROLLBACK
 
-    const uint32_t hw_sec_version =
-        esp_efuse_read_secure_version();
+    const uint32_t hw_sec_version = esp_efuse_read_secure_version();
 
-    if (new_app_info->secure_version < hw_sec_version)
-    {
-        ESP_LOGW(
-            TAG,
-            "Secure version inválida: %" PRIu32 " < %" PRIu32,
-            new_app_info->secure_version,
-            hw_sec_version
-        );
+    if (new_app_info->secure_version < hw_sec_version) {
+        ESP_LOGW(TAG, "Secure version inválida: %" PRIu32 " < %" PRIu32, new_app_info->secure_version, hw_sec_version);
 
         return ESP_FAIL;
     }
@@ -182,30 +164,28 @@ static esp_err_t validate_image_header(
 }
 
 
-/* ============================================================
- * Callback HTTP
- * ============================================================ */
-
-static esp_err_t http_client_init_cb(
-    esp_http_client_handle_t http_client)
-{
+// ========================================================================================================
+/**
+ * @brief Callback de inicialização do cliente HTTP usado pelo esp_https_ota
+ * @param http_client Handle do cliente HTTP
+ * @return ESP_OK
+ */
+static esp_err_t http_client_init_cb(esp_http_client_handle_t http_client) {
     return ESP_OK;
 }
 
-
-/* ============================================================
- * Task OTA interna
- * ============================================================ */
-
-static void ota_manager_task(void *pvParameter)
-{
+// ========================================================================================================
+/**
+ * @brief Task interna que executa o download e a gravação do firmware via HTTPS OTA
+ * @param pvParameter Parâmetro da tarefa (não utilizado)
+ */
+static void ota_manager_task(void *pvParameter) {
     ESP_LOGI(TAG, "Iniciando atualização OTA");
 
     esp_err_t err = ESP_FAIL;
     esp_err_t ota_finish_err = ESP_OK;
 
     esp_https_ota_handle_t https_ota_handle = NULL;
-
 
     /* --------------------------------------------------------
      * Configuração HTTP/HTTPS
@@ -232,7 +212,6 @@ static void ota_manager_task(void *pvParameter)
 
 #endif
 
-
     /* --------------------------------------------------------
      * Configuração OTA
      * -------------------------------------------------------- */
@@ -252,27 +231,17 @@ static void ota_manager_task(void *pvParameter)
 
 #endif
 
-
     /* --------------------------------------------------------
      * Inicia OTA
      * -------------------------------------------------------- */
 
-    err = esp_https_ota_begin(
-        &ota_config,
-        &https_ota_handle
-    );
+    err = esp_https_ota_begin(&ota_config, &https_ota_handle);
 
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha ao iniciar OTA: %s",
-            esp_err_to_name(err)
-        );
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao iniciar OTA: %s", esp_err_to_name(err));
 
         goto ota_cleanup;
     }
-
 
     /* --------------------------------------------------------
      * Obtém descrição da nova imagem
@@ -280,21 +249,13 @@ static void ota_manager_task(void *pvParameter)
 
     esp_app_desc_t app_desc;
 
-    err = esp_https_ota_get_img_desc(
-        https_ota_handle,
-        &app_desc
-    );
+    err = esp_https_ota_get_img_desc(https_ota_handle, &app_desc);
 
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha ao obter descrição da imagem"
-        );
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao obter descrição da imagem");
 
         goto ota_abort;
     }
-
 
     /* --------------------------------------------------------
      * Valida imagem
@@ -302,333 +263,246 @@ static void ota_manager_task(void *pvParameter)
 
     err = validate_image_header(&app_desc);
 
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha na validação do firmware"
-        );
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Falha na validação do firmware");
 
         goto ota_abort;
     }
-
 
     /* --------------------------------------------------------
      * Download e gravação
      * -------------------------------------------------------- */
 
-    while (1)
-    {
-        err = esp_https_ota_perform(
-            https_ota_handle
-        );
+    while (1) {
+        err = esp_https_ota_perform(https_ota_handle);
 
-        if (err != ESP_ERR_HTTPS_OTA_IN_PROGRESS)
-        {
+        if (err != ESP_ERR_HTTPS_OTA_IN_PROGRESS) {
             break;
         }
 
-        ESP_LOGD(
-            TAG,
-            "Bytes recebidos: %d",
-            esp_https_ota_get_image_len_read(
-                https_ota_handle
-            )
-        );
+        ESP_LOGD(TAG, "Bytes recebidos: %d", esp_https_ota_get_image_len_read(https_ota_handle));
     }
-
 
     /* --------------------------------------------------------
      * Verifica download completo
      * -------------------------------------------------------- */
 
-    if (!esp_https_ota_is_complete_data_received(
-            https_ota_handle))
-    {
-        ESP_LOGE(
-            TAG,
-            "Firmware não foi recebido completamente"
-        );
+    if (!esp_https_ota_is_complete_data_received(https_ota_handle)) {
+        ESP_LOGE(TAG, "Firmware não foi recebido completamente");
 
         goto ota_abort;
     }
-
 
     /* --------------------------------------------------------
      * Finaliza OTA
      * -------------------------------------------------------- */
 
-    ota_finish_err =
-        esp_https_ota_finish(
-            https_ota_handle
-        );
+    ota_finish_err = esp_https_ota_finish(https_ota_handle);
 
     https_ota_handle = NULL;
 
+    if ((err == ESP_OK) && (ota_finish_err == ESP_OK)) {
+        ESP_LOGI(TAG, "OTA concluído com sucesso");
 
-    if ((err == ESP_OK) &&
-        (ota_finish_err == ESP_OK))
-    {
-        ESP_LOGI(
-            TAG,
-            "OTA concluído com sucesso"
-        );
+        ESP_LOGI(TAG, "Reiniciando dispositivo...");
 
-        ESP_LOGI(
-            TAG,
-            "Reiniciando dispositivo..."
-        );
-
-        vTaskDelay(
-            pdMS_TO_TICKS(1000)
-        );
+        vTaskDelay(pdMS_TO_TICKS(1000));
 
         esp_restart();
     }
 
-
-    if (ota_finish_err ==
-        ESP_ERR_OTA_VALIDATE_FAILED)
-    {
-        ESP_LOGE(
-            TAG,
-            "Validação final da imagem falhou"
-        );
+    if (ota_finish_err == ESP_ERR_OTA_VALIDATE_FAILED) {
+        ESP_LOGE(TAG, "Validação final da imagem falhou");
     }
 
-    ESP_LOGE(
-        TAG,
-        "Falha ao finalizar OTA: %s",
-        esp_err_to_name(ota_finish_err)
-    );
+    ESP_LOGE(TAG, "Falha ao finalizar OTA: %s", esp_err_to_name(ota_finish_err));
 
     goto ota_cleanup;
 
-
 ota_abort:
 
-    if (https_ota_handle != NULL)
-    {
-        esp_https_ota_abort(
-            https_ota_handle
-        );
+    if (https_ota_handle != NULL) {
+        esp_https_ota_abort(https_ota_handle);
 
         https_ota_handle = NULL;
     }
-
 
 ota_cleanup:
 
     s_ota_running = false;
 
-    ESP_LOGW(
-        TAG,
-        "Processo OTA encerrado"
-    );
+    ESP_LOGW(TAG, "Processo OTA encerrado");
 
     vTaskDelete(NULL);
 }
 
-/* ============================================================
- * Validação do firmware após OTA
- * ============================================================ */
+// ========================================================================================================
+/**
+ * @brief Aguarda a janela de auto-teste e decide se o firmware
+ *        deve ser confirmado como válido ou revertido.
+ *
+ * Enquanto esta task aguarda, o firmware permanece no estado
+ * ESP_OTA_IMG_PENDING_VERIFY. Se o dispositivo reiniciar por
+ * qualquer motivo (crash, watchdog, brownout, etc.) antes do
+ * tempo configurado, a confirmação nunca acontece e o bootloader
+ * faz rollback automático para a partição anterior no próximo boot.
+ *
+ * Só se o tempo de auto-teste se esgotar sem reinicialização é que
+ * o callback de validação da aplicação é executado.
+ *
+ * @param pvParameter Parâmetro da tarefa (não utilizado)
+ */
+static void ota_manager_validation_task(void *pvParameter) {
+    ESP_LOGI(TAG, "Aguardando %d s de auto-teste antes de validar o firmware", CONFIG_OTA_MANAGER_VALIDATION_TIME_SEC);
 
-static esp_err_t ota_manager_check_rollback(void)
-{
+    vTaskDelay(pdMS_TO_TICKS(CONFIG_OTA_MANAGER_VALIDATION_TIME_SEC * 1000));
+
+    ESP_LOGI(TAG, "Janela de auto-teste concluída sem reinicializações");
+
+    /* --------------------------------------------------------
+     * Executa teste da aplicação
+     * -------------------------------------------------------- */
+
+    bool firmware_ok = true;
+
+    if (s_validation_cb == NULL) {
+        ESP_LOGW(TAG, "Nenhum callback de validação registrado, aprovando por padrão");
+    } else {
+        ESP_LOGI(TAG, "Executando callback de validação");
+
+        firmware_ok = s_validation_cb();
+    }
+
+    /* --------------------------------------------------------
+     * Firmware aprovado
+     * -------------------------------------------------------- */
+
+    if (firmware_ok) {
+        ESP_LOGI(TAG, "Firmware aprovado");
+
+        esp_err_t err = esp_ota_mark_app_valid_cancel_rollback();
+
+        if (err == ESP_OK) {
+            ESP_LOGI(TAG, "Firmware marcado como válido");
+
+            ESP_LOGI(TAG, "Rollback cancelado");
+        } else {
+            ESP_LOGE(TAG, "Falha ao marcar firmware como válido: %s", esp_err_to_name(err));
+        }
+
+        vTaskDelete(NULL);
+        return;
+    }
+
+    /* --------------------------------------------------------
+     * Firmware reprovado
+     * -------------------------------------------------------- */
+
+    ESP_LOGE(TAG,"Firmware reprovado pela aplicação");
+
+    ESP_LOGW(TAG, "Executando rollback para firmware anterior");
+
+    /*
+     * Esta função marca a imagem atual como inválida
+     * e reinicia automaticamente o dispositivo.
+     */
+    esp_ota_mark_app_invalid_rollback_and_reboot();
+
+    vTaskDelete(NULL);
+}
+
+// ========================================================================================================
+/**
+ * @brief Verifica se o firmware atual aguarda validação de rollback e, se
+ *        necessário, inicia a task de auto-teste
+ * @return
+ *      - ESP_OK: verificação concluída (com ou sem rollback pendente)
+ *      - ESP_FAIL: falha ao obter partição/estado da imagem
+ *      - ESP_ERR_NO_MEM: falha ao criar a task de validação
+ */
+static esp_err_t ota_manager_check_rollback(void) {
 #if CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE
 
-    const esp_partition_t *running =
-        esp_ota_get_running_partition();
+    const esp_partition_t *running = esp_ota_get_running_partition();
 
-    if (running == NULL)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha ao obter partição atual"
-        );
+    if (running == NULL) {
+        ESP_LOGE(TAG, "Falha ao obter partição atual");
 
         return ESP_FAIL;
     }
 
-    ESP_LOGI(
-        TAG,
-        "Partição atual: %s",
-        running->label
-    );
+    ESP_LOGI(TAG, "Partição atual: %s", running->label);
 
     esp_ota_img_states_t ota_state;
 
-    esp_err_t err =
-        esp_ota_get_state_partition(
-            running,
-            &ota_state
-        );
+    esp_err_t err = esp_ota_get_state_partition(running, &ota_state);
 
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha ao obter estado da imagem OTA: %s",
-            esp_err_to_name(err)
-        );
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao obter estado da imagem OTA: %s", esp_err_to_name(err));
 
         return err;
     }
 
-    ESP_LOGI(
-        TAG,
-        "Estado da imagem OTA: %d",
-        ota_state
-    );
-
+    ESP_LOGI(TAG, "Estado da imagem OTA: %d", ota_state);
 
     /* --------------------------------------------------------
      * Novo firmware aguardando validação
      * -------------------------------------------------------- */
 
-    if (ota_state == ESP_OTA_IMG_PENDING_VERIFY)
-    {
-        ESP_LOGW(
-            TAG,
-            "Novo firmware aguardando validação"
-        );
-
+    if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
+        ESP_LOGW(TAG, "Novo firmware aguardando validação");
 
         /* ----------------------------------------------------
-         * Verifica callback
+         * Inicia a janela de auto-teste em background.
+         *
+         * A confirmação (ou rollback) só acontece ao final da
+         * task, então uma reinicialização inesperada durante a
+         * espera deixa o firmware como PENDING_VERIFY e o
+         * bootloader reverte automaticamente no próximo boot.
          * ---------------------------------------------------- */
 
-        if (s_validation_cb == NULL)
-        {
-            ESP_LOGE(
-                TAG,
-                "Nenhum callback de validação registrado"
-            );
+        BaseType_t result = xTaskCreate(ota_manager_validation_task, "ota_manager_validation_task", 4096, NULL, 5, NULL);
 
-            ESP_LOGW(
-                TAG,
-                "Firmware não será marcado como válido"
-            );
+        if (result != pdPASS){
+            ESP_LOGE(TAG, "Falha ao criar task de validação do firmware");
 
-            return ESP_ERR_INVALID_STATE;
+            return ESP_ERR_NO_MEM;
         }
 
+        ESP_LOGI(TAG, "Task de validação do firmware criada");
 
-        /* ----------------------------------------------------
-         * Executa teste da aplicação
-         * ---------------------------------------------------- */
-
-        ESP_LOGI(
-            TAG,
-            "Executando callback de validação"
-        );
-
-        bool firmware_ok =
-            s_validation_cb();
-
-
-        /* ----------------------------------------------------
-         * Firmware aprovado
-         * ---------------------------------------------------- */
-
-        if (firmware_ok)
-        {
-            ESP_LOGI(
-                TAG,
-                "Firmware aprovado pela aplicação"
-            );
-
-            err =
-                esp_ota_mark_app_valid_cancel_rollback();
-
-            if (err == ESP_OK)
-            {
-                ESP_LOGI(
-                    TAG,
-                    "Firmware marcado como válido"
-                );
-
-                ESP_LOGI(
-                    TAG,
-                    "Rollback cancelado"
-                );
-            }
-            else
-            {
-                ESP_LOGE(
-                    TAG,
-                    "Falha ao marcar firmware como válido: %s",
-                    esp_err_to_name(err)
-                );
-            }
-
-            return err;
-        }
-
-
-        /* ----------------------------------------------------
-         * Firmware reprovado
-         * ---------------------------------------------------- */
-
-        ESP_LOGE(
-            TAG,
-            "Firmware reprovado pela aplicação"
-        );
-
-        ESP_LOGW(
-            TAG,
-            "Executando rollback para firmware anterior"
-        );
-
-        /*
-         * Esta função marca a imagem atual como inválida
-         * e reinicia automaticamente o dispositivo.
-         */
-        return
-            esp_ota_mark_app_invalid_rollback_and_reboot();
+        return ESP_OK;
     }
-
 
     /* --------------------------------------------------------
      * Firmware não necessita validação
      * -------------------------------------------------------- */
 
-    ESP_LOGI(
-        TAG,
-        "Firmware não possui validação pendente"
-    );
+    ESP_LOGI(TAG, "Firmware não possui validação pendente");
 
     return ESP_OK;
 
 #else
 
-    ESP_LOGW(
-        TAG,
-        "Rollback não está habilitado no bootloader"
-    );
+    ESP_LOGW(TAG, "Rollback não está habilitado no bootloader");
 
     return ESP_OK;
 
 #endif
 }
 
-/* ============================================================
- * API pública
- * ============================================================ */
-
-esp_err_t ota_manager_init(
-    ota_manager_validation_cb_t validation_cb)
-{
-    if (s_initialized)
-    {
-        ESP_LOGW(
-            TAG,
-            "OTA Manager já inicializado"
-        );
+// ========================================================================================================
+/**
+ * @brief Inicializa o OTA Manager
+ * @param validation_cb Callback de validação da aplicação (pode ser NULL)
+ * @return ESP_OK em caso de sucesso
+ */
+esp_err_t ota_manager_init(ota_manager_validation_cb_t validation_cb) {
+    if (s_initialized){
+        ESP_LOGW(TAG, "OTA Manager já inicializado");
 
         return ESP_OK;
     }
-
 
     /* --------------------------------------------------------
      * Salva callback da aplicação
@@ -636,30 +510,17 @@ esp_err_t ota_manager_init(
 
     s_validation_cb = validation_cb;
 
-
     /* --------------------------------------------------------
      * Registra eventos OTA
      * -------------------------------------------------------- */
 
-    esp_err_t err =
-        esp_event_handler_register(
-            ESP_HTTPS_OTA_EVENT,
-            ESP_EVENT_ANY_ID,
-            ota_event_handler,
-            NULL
-        );
+    esp_err_t err = esp_event_handler_register(ESP_HTTPS_OTA_EVENT, ESP_EVENT_ANY_ID, ota_event_handler, NULL);
 
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha ao registrar eventos OTA: %s",
-            esp_err_to_name(err)
-        );
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Falha ao registrar eventos OTA: %s", esp_err_to_name(err));
 
         return err;
     }
-
 
     /* --------------------------------------------------------
      * Marca componente como inicializado
@@ -667,11 +528,7 @@ esp_err_t ota_manager_init(
 
     s_initialized = true;
 
-    ESP_LOGI(
-        TAG,
-        "OTA Manager inicializado"
-    );
-
+    ESP_LOGI(TAG, "OTA Manager inicializado");
 
     /* --------------------------------------------------------
      * Verifica se firmware aguarda validação
@@ -679,13 +536,8 @@ esp_err_t ota_manager_init(
 
     err = ota_manager_check_rollback();
 
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(
-            TAG,
-            "Falha na verificação de rollback: %s",
-            esp_err_to_name(err)
-        );
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Falha na verificação de rollback: %s", esp_err_to_name(err));
 
         return err;
     }
@@ -693,63 +545,49 @@ esp_err_t ota_manager_init(
     return ESP_OK;
 }
 
-
-esp_err_t ota_manager_start(void)
-{
-    if (!s_initialized)
-    {
-        ESP_LOGE(
-            TAG,
-            "OTA Manager não inicializado"
-        );
+// ========================================================================================================
+/**
+ * @brief Inicia uma atualização OTA em uma tarefa FreeRTOS
+ * @return
+ *      - ESP_OK: OTA iniciado
+ *      - ESP_ERR_INVALID_STATE: OTA Manager não inicializado ou OTA já em andamento
+ *      - ESP_ERR_NO_MEM: falha ao criar a task OTA
+ */
+esp_err_t ota_manager_start(void) {
+    if (!s_initialized) {
+        ESP_LOGE(TAG, "OTA Manager não inicializado");
 
         return ESP_ERR_INVALID_STATE;
     }
 
-    if (s_ota_running)
-    {
-        ESP_LOGW(
-            TAG,
-            "OTA já está em andamento"
-        );
+    if (s_ota_running) {
+        ESP_LOGW(TAG, "OTA já está em andamento");
 
         return ESP_ERR_INVALID_STATE;
     }
 
     s_ota_running = true;
 
-    BaseType_t result =
-        xTaskCreate(
-            ota_manager_task,
-            "ota_manager_task",
-            8192,
-            NULL,
-            5,
-            NULL
-        );
+    BaseType_t result = xTaskCreate(ota_manager_task, "ota_manager_task", 8192, NULL, 5, NULL);
 
-    if (result != pdPASS)
-    {
+    if (result != pdPASS) {
         s_ota_running = false;
 
-        ESP_LOGE(
-            TAG,
-            "Falha ao criar task OTA"
-        );
+        ESP_LOGE(TAG, "Falha ao criar task OTA");
 
         return ESP_ERR_NO_MEM;
     }
 
-    ESP_LOGI(
-        TAG,
-        "Task OTA criada"
-    );
+    ESP_LOGI(TAG, "Task OTA criada");
 
     return ESP_OK;
 }
 
-
-bool ota_manager_is_running(void)
-{
+// ========================================================================================================
+/**
+ * @brief Informa se existe uma atualização OTA em andamento
+ * @return true se OTA estiver ativo
+ */
+bool ota_manager_is_running(void) {
     return s_ota_running;
 }

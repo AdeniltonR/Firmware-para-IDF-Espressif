@@ -70,12 +70,8 @@ volatile bool ap_started = false;
 void check_button_task(void *pvParameter);             // Tarefa responsável pelo botão do Access Point
 static void check_ota_button_task(void *pvParameter);  // Tarefa responsável pelo botão de atualização OTA
 
-static bool app_firmware_validation(void)
-{
-    ESP_LOGI(
-        TAG,
-        "Executando validação do firmware"
-    );
+static bool app_firmware_validation(void) {
+    ESP_LOGI(TAG,"Executando validação do firmware");
 
     /*
      * Aqui futuramente você pode testar:
@@ -92,18 +88,12 @@ static bool app_firmware_validation(void)
 
     if (sistema_ok)
     {
-        ESP_LOGI(
-            TAG,
-            "Sistema funcionando corretamente"
-        );
+        ESP_LOGI(TAG,"Sistema funcionando corretamente");
 
         return true;
     }
 
-    ESP_LOGE(
-        TAG,
-        "Falha detectada no sistema"
-    );
+    ESP_LOGE(TAG,"Falha detectada no sistema");
 
     return false;
 }

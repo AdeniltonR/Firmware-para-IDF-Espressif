@@ -22,6 +22,20 @@ menu "OTA Manager"
         help
             Permite instalar firmware com a mesma versão atual.
 
+    config OTA_MANAGER_VALIDATION_TIME_SEC
+        int "Tempo de auto-teste antes de validar o firmware (s)"
+        default 10
+        range 1 300
+        depends on BOOTLOADER_APP_ROLLBACK_ENABLE
+        help
+            Tempo, em segundos, que o novo firmware aguarda após o boot
+            antes de ser marcado como válido.
+
+            Se o dispositivo reiniciar (crash, watchdog, brownout, etc.)
+            antes desse tempo, a confirmação nunca acontece e o
+            bootloader faz rollback automático para a versão anterior
+            no próximo boot.
+
     config OTA_MANAGER_RECV_TIMEOUT
         int "Timeout de recepção OTA (ms)"
         default 5000

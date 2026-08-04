@@ -1,5 +1,21 @@
+/*
+ * NOME: Adenilton Ribeiro
+ * DATA: 12/06/2026
+ * PROJETO: Wi-Fi Manager + OTA Manager
+ * VERSAO: 1.1.0
+ * DESCRICAO:
+ *          - feat: OTA Manager via HTTPS com verificação de certificado.
+ *          - feat: Validação de imagem (versão e secure version anti-rollback).
+ *          - feat: Janela de auto-teste com rollback automático.
+ *          - docs: ESP32 - ESP-IDF v5.4.0
+ * LINKS:
+*/
+
 #ifndef OTA_MANAGER_H
 #define OTA_MANAGER_H
+
+// ========================================================================================================
+//---BIBLIOTECAS AUXILIARES---
 
 #include <stdbool.h>
 #include "esp_err.h"
@@ -8,50 +24,12 @@
 extern "C" {
 #endif
 
-/**
- * @brief Callback usado para validar a saúde do firmware.
- *
- * A aplicação define quais testes devem ser executados.
- *
- * @return
- *      - true: firmware funcional
- *      - false: firmware com falha
- */
+// ========================================================================================================
+//---API PUBLICA---
+
 typedef bool (*ota_manager_validation_cb_t)(void);
-
-/**
- * @brief Inicializa o OTA Manager.
- *
- * Registra os eventos internos necessários para o processo OTA
- * e verifica se o firmware atual aguarda validação de rollback.
- *
- * @param validation_cb Callback de validação da aplicação.
- *                      Pode ser NULL se não houver validação pendente.
- *
- * @return ESP_OK em caso de sucesso.
- */
-esp_err_t ota_manager_init(
-    ota_manager_validation_cb_t validation_cb
-);
-
-/**
- * @brief Inicia uma atualização OTA em uma tarefa FreeRTOS.
- *
- * A URL, TLS, timeout e demais parâmetros são obtidos
- * das configurações do menuconfig.
- *
- * @return
- *      - ESP_OK: OTA iniciado
- *      - ESP_ERR_INVALID_STATE: OTA já está em andamento
- *      - Outro erro ESP-IDF em caso de falha
- */
+esp_err_t ota_manager_init(ota_manager_validation_cb_t validation_cb);
 esp_err_t ota_manager_start(void);
-
-/**
- * @brief Informa se existe uma atualização OTA em andamento.
- *
- * @return true se OTA estiver ativo.
- */
 bool ota_manager_is_running(void);
 
 #ifdef __cplusplus
